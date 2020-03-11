@@ -29,7 +29,11 @@
 }
 
 .Background {
-  background-color: #B1B1B1;
+  background-color: #6A6A6A;
+}
+
+.Header {
+  color: #61dafb;
 }
 
 @keyframes App-logo-spin {

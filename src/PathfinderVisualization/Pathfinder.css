@@ -3,6 +3,22 @@
 }
 
 .button {
+    border-radius: 15px;
+    background: #6A6A6A;
+    border: 2px solid #61dafb;
+    color: #61dafb;
+    padding: 10px;
     margin: 10px;
+    margin-left: 15px;
+}
+
+.button-clear {
+    border: 2px solid #ffe815;
+    color: #ffe815;
+}
+
+.button-run {
+    border: 2px solid #ff2020;
+    color: #ff2020;
 }
 

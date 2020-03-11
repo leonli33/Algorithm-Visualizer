@@ -3,9 +3,9 @@ import Node from './Node/Node'
 import './Pathfinder.css';
 
 const START_NODE_ROW = 12;
-const START_NODE_COL = 12;
-const FINISH_NODE_ROW = 35;
-const FINISH_NODE_COL = 10;
+const START_NODE_COL = 10;
+const FINISH_NODE_ROW = 45;
+const FINISH_NODE_COL = 15;
 
 const GRID_WIDTH = 50;
 const GRID_LENGTH = 50;
@@ -44,7 +44,54 @@ export default class Pathfinder extends Component {
 
   handleMouseUp = () => {
 
+    
   }
+
+  visualizeAStar = () => {
+    let data = this.state.grid;
+    let nodesToVisit = [];
+    let visitedNodes = [];
+    let shortestPath = [];
+    let startNode = this.state.grid[START_NODE_COL][START_NODE_ROW];
+
+    startNode.distance = 0;
+    startNode.isVisited = true;
+    nodesToVisit.push(startNode);
+
+    while(nodesToVisit.length !== 0) {
+      nodesToVisit.sort((nodeA, nodeB) => nodeA.distance - nodeB.distance);
+      let currentNode = nodesToVisit.shift();
+      if(currentNode.isFinish) {
+        shortestPath.push(currentNode);
+        let current = currentNode.previousNode;
+        while(current !== null) {
+          shortestPath.push(current);
+          current = current.previousNode;
+        }
+        break;
+      }
+      if(currentNode.isWall) continue;
+      let surroundingNodes = this.getNeighbors(currentNode,data);
+      for(let i = 0; i < surroundingNodes.length; i++) {
+        if(!surroundingNodes[i].isWall && !surroundingNodes[i].isStart) {
+          let neighbor = surroundingNodes[i];
+          if(!neighbor.isVisited) {
+            let distanceFromEndX = (neighbor.row - FINISH_NODE_ROW) * 10;
+            let distanceFromEndY = (neighbor.col - FINISH_NODE_COL) * 10;
+            let distanceFromEndNode = Math.sqrt((distanceFromEndX * distanceFromEndX) + (distanceFromEndY * distanceFromEndY));
+            neighbor.previousNode = currentNode;
+            neighbor.distance = 1 + distanceFromEndNode;
+            neighbor.isVisited = true;
+            nodesToVisit.push(neighbor);
+          }
+        }
+      }
+      visitedNodes.push(currentNode);
+    }
+
+    this.displayAlgo(visitedNodes,shortestPath);
+  }
+
 
   visualizeDijkstra = () => {
     let data = this.state.grid;
@@ -85,10 +132,12 @@ export default class Pathfinder extends Component {
       visitedNodes.push(currentNode);
     }
 
-    this.displayDijkstra(visitedNodes,shortestPath);
+    this.displayAlgo(visitedNodes,shortestPath);
   }
 
-  displayDijkstra(nodes, shortestPath) {
+
+
+  displayAlgo(nodes, shortestPath) {
     for(let i = 0; i <= nodes.length;i++) {
       if(i === nodes.length) {
           setTimeout(() => {
@@ -106,6 +155,7 @@ export default class Pathfinder extends Component {
       }
   }
 
+
   visualizeShortestPath(shortestPath) {
     for(let j = 0; j < shortestPath.length;j++)  {
       setTimeout(() => {
@@ -117,6 +167,8 @@ export default class Pathfinder extends Component {
       }, 10 * j);
     }
   };
+
+
 
   getNeighbors(currentNode, grid) {
     let neighbors = [];
@@ -166,8 +218,26 @@ export default class Pathfinder extends Component {
       const {grid, mouseIsPressed} = this.state;
       return (
         <>
+        <button className="button" onClick={this.visualizeAStar}>
+            Greedy Best-First Search
+          </button>
+          <button className="button" onClick={this.visualizeAStar}>
+            A* Algorithm
+          </button>
           <button className="button" onClick={this.visualizeDijkstra}>
-            Visualize Dijkstra's Algorithm
+            Dijkstra's Algorithm
+          </button>
+          <button className="button button-run" onClick={this.visualizeAStar}>
+            Visualize Algorithm!
+          </button>
+          <button className="button" onClick={this.visualizeAStar}>
+            Breadth First Search
+          </button>
+          <button className="button" onClick={this.visualizeAStar}>
+            Depth First Search
+          </button>
+          <button className="button button-clear" onClick={this.visualizeDijkstra}>
+            Clear Grid
           </button>
           <div className="grid">
             {this.state.grid.map((row, rowIdx) => {
