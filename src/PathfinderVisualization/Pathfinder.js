@@ -1,11 +1,16 @@
 import React, {Component} from 'react'
 import Node from './Node/Node'
+import {dijkstra} from '../Algos/Dijkstra';
+import {aStar} from '../Algos/AStar';
+import {BFS} from '../Algos/BreadthFirstSearch';
+import {DFS} from '../Algos/DepthFirstSearch';
+
 import './Pathfinder.css';
 
-const START_NODE_ROW = 12;
+const START_NODE_ROW = 10;
 const START_NODE_COL = 10;
 const FINISH_NODE_ROW = 45;
-const FINISH_NODE_COL = 15;
+const FINISH_NODE_COL = 10;
 
 const GRID_WIDTH = 50;
 const GRID_LENGTH = 50;
@@ -47,114 +52,51 @@ export default class Pathfinder extends Component {
     
   }
 
-  visualizeAStar = () => {
-    let data = this.state.grid;
-    let nodesToVisit = [];
-    let visitedNodes = [];
-    let shortestPath = [];
+  visualizeDepthFirstSearch = () => {
     let startNode = this.state.grid[START_NODE_COL][START_NODE_ROW];
+    let path = DFS(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH);
+    console.log(path);
+    this.displayAlgo(path,path);
+  }
 
-    startNode.distance = 0;
-    startNode.isVisited = true;
-    nodesToVisit.push(startNode);
+  // this is pretty much the same thing as dijkstra's except we are not sorting
+  visualizeBreadthFirstSearch = () => {
+    let startNode = this.state.grid[START_NODE_COL][START_NODE_ROW];
+    let path = BFS(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH);
+    this.displayAlgo(path.visited,path.shortest);
+  }
 
-    while(nodesToVisit.length !== 0) {
-      nodesToVisit.sort((nodeA, nodeB) => nodeA.distance - nodeB.distance);
-      let currentNode = nodesToVisit.shift();
-      if(currentNode.isFinish) {
-        shortestPath.push(currentNode);
-        let current = currentNode.previousNode;
-        while(current !== null) {
-          shortestPath.push(current);
-          current = current.previousNode;
-        }
-        break;
-      }
-      if(currentNode.isWall) continue;
-      let surroundingNodes = this.getNeighbors(currentNode,data);
-      for(let i = 0; i < surroundingNodes.length; i++) {
-        if(!surroundingNodes[i].isWall && !surroundingNodes[i].isStart) {
-          let neighbor = surroundingNodes[i];
-          if(!neighbor.isVisited) {
-            let distanceFromEndX = (neighbor.row - FINISH_NODE_ROW) * 10;
-            let distanceFromEndY = (neighbor.col - FINISH_NODE_COL) * 10;
-            let distanceFromEndNode = Math.sqrt((distanceFromEndX * distanceFromEndX) + (distanceFromEndY * distanceFromEndY));
-            neighbor.previousNode = currentNode;
-            neighbor.distance = 1 + distanceFromEndNode;
-            neighbor.isVisited = true;
-            nodesToVisit.push(neighbor);
-          }
-        }
-      }
-      visitedNodes.push(currentNode);
-    }
 
-    this.displayAlgo(visitedNodes,shortestPath);
+  visualizeAStar = () => {
+    let startNode = this.state.grid[START_NODE_COL][START_NODE_ROW];
+    let path = aStar(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH,FINISH_NODE_ROW,FINISH_NODE_COL);
+    this.displayAlgo(path.visited,path.shortest);
   }
 
 
   visualizeDijkstra = () => {
-    let data = this.state.grid;
-    let nodesToVisit = [];
-    let visitedNodes = [];
-    let shortestPath = [];
     let startNode = this.state.grid[START_NODE_COL][START_NODE_ROW];
-
-    startNode.distance = 0;
-    startNode.isVisited = true;
-    nodesToVisit.push(startNode);
-
-    while(nodesToVisit.length !== 0) {
-      nodesToVisit.sort((nodeA, nodeB) => nodeA.distance - nodeB.distance);
-      let currentNode = nodesToVisit.shift();
-      if(currentNode.isFinish) {
-        shortestPath.push(currentNode);
-        let current = currentNode.previousNode;
-        while(current !== null) {
-          shortestPath.push(current);
-          current = current.previousNode;
-        }
-        break;
-      }
-      if(currentNode.isWall) continue;
-      let surroundingNodes = this.getNeighbors(currentNode,data);
-      for(let i = 0; i < surroundingNodes.length; i++) {
-        if(!surroundingNodes[i].isWall && !surroundingNodes[i].isStart) {
-          let neighbor = surroundingNodes[i];
-          if(!neighbor.isVisited) {
-            neighbor.previousNode = currentNode;
-            neighbor.distance = currentNode.distance + 1;
-            neighbor.isVisited = true;
-            nodesToVisit.push(neighbor);
-          }
-        }
-      }
-      visitedNodes.push(currentNode);
-    }
-
-    this.displayAlgo(visitedNodes,shortestPath);
+    let path = dijkstra(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH);
+    this.displayAlgo(path.visited,path.shortest);
   }
-
-
 
   displayAlgo(nodes, shortestPath) {
     for(let i = 0; i <= nodes.length;i++) {
       if(i === nodes.length) {
           setTimeout(() => {
             this.visualizeShortestPath(shortestPath);
-          }, 7 * i);
+          }, 5 * i);
       } else {
         setTimeout(() => {
         const node = nodes[i];
-        if(!node.isStart) {
+        if(!node.isStart && !node.isFinish) {
           document.getElementById(`node-${node.row}-${node.col}`).className =
           'node node-visited';
-        }}, 7 * i);
+        }}, 5 * i);
       }
       
       }
   }
-
 
   visualizeShortestPath(shortestPath) {
     for(let j = 0; j < shortestPath.length;j++)  {
@@ -167,8 +109,6 @@ export default class Pathfinder extends Component {
       }, 10 * j);
     }
   };
-
-
 
   getNeighbors(currentNode, grid) {
     let neighbors = [];
@@ -230,10 +170,10 @@ export default class Pathfinder extends Component {
           <button className="button button-run" onClick={this.visualizeAStar}>
             Visualize Algorithm!
           </button>
-          <button className="button" onClick={this.visualizeAStar}>
+          <button className="button" onClick={this.visualizeBreadthFirstSearch}>
             Breadth First Search
           </button>
-          <button className="button" onClick={this.visualizeAStar}>
+          <button className="button" onClick={this.visualizeDepthFirstSearch}>
             Depth First Search
           </button>
           <button className="button button-clear" onClick={this.visualizeDijkstra}>

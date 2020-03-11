@@ -3,7 +3,7 @@ const EAST = 1;
 const SOUTH = 1;
 const WEST = -1;
 
-export function dijkstra(grid, startN, GRID_LENGTH, GRID_WIDTH) {
+export function BFS(grid, startN, GRID_LENGTH, GRID_WIDTH) {
     let nodesToVisit = [];
     let visitedNodes = [];
     let shortestPath = [];
@@ -14,7 +14,6 @@ export function dijkstra(grid, startN, GRID_LENGTH, GRID_WIDTH) {
     nodesToVisit.push(startNode);
 
     while(nodesToVisit.length !== 0) {
-      nodesToVisit.sort((nodeA, nodeB) => nodeA.distance - nodeB.distance);
       let currentNode = nodesToVisit.shift();
       if(currentNode.isFinish) {
         shortestPath.push(currentNode);

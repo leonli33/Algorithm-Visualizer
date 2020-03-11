@@ -3,48 +3,40 @@ const EAST = 1;
 const SOUTH = 1;
 const WEST = -1;
 
-export function dijkstra(grid, startN, GRID_LENGTH, GRID_WIDTH) {
+export function DFS(grid, startN, GRID_LENGTH, GRID_WIDTH) {
     let nodesToVisit = [];
-    let visitedNodes = [];
-    let shortestPath = [];
-    let startNode = grid[startN.col][startN.row];
-
-    startNode.distance = 0;
-    startNode.isVisited = true;
-    nodesToVisit.push(startNode);
-
-    while(nodesToVisit.length !== 0) {
-      nodesToVisit.sort((nodeA, nodeB) => nodeA.distance - nodeB.distance);
-      let currentNode = nodesToVisit.shift();
-      if(currentNode.isFinish) {
-        shortestPath.push(currentNode);
-        let current = currentNode.previousNode;
-        while(current !== null) {
-          shortestPath.push(current);
-          current = current.previousNode;
-        }
-        break;
-      }
-      if(currentNode.isWall) continue;
-      let surroundingNodes = getNeighbors(currentNode,grid,GRID_LENGTH,GRID_WIDTH);
-      for(let i = 0; i < surroundingNodes.length; i++) {
-        if(!surroundingNodes[i].isWall && !surroundingNodes[i].isStart) {
-          let neighbor = surroundingNodes[i];
-          if(!neighbor.isVisited) {
-            neighbor.previousNode = currentNode;
-            neighbor.distance = currentNode.distance + 1;
-            neighbor.isVisited = true;
-            nodesToVisit.push(neighbor);
-          }
-        }
-      }
-      visitedNodes.push(currentNode);
-    }
-    let path = {
-        visited : visitedNodes,
-        shortest: shortestPath
-    }
+    nodesToVisit.push(startN);
+    let nodesVisited = [];
+    let path = helperDFS(grid,GRID_LENGTH,GRID_WIDTH,nodesToVisit,nodesVisited);
     return path;
+}
+
+function helperDFS(grid,GRID_LENGTH,GRID_WIDTH,nodesToVisit,nodesVisited) {
+    if(nodesToVisit.length !== 0 && nodesToVisit[nodesToVisit.length - 1].isFinish) {
+        return nodesVisited;
+    }
+    else if(nodesToVisit.length === 0) {
+        return null;
+    }
+    else {
+        let currentNode = nodesToVisit[nodesToVisit.length - 1];
+        let neighbors = getNeighbors(currentNode,grid,GRID_LENGTH,GRID_WIDTH);
+        for(let i = 0; i < neighbors.length; i++) {
+            if(!neighbors[i].isWall && !neighbors[i].isStart) {
+                let neighbor = neighbors[i];
+                if(!neighbor.isVisited) {
+                    neighbor.isVisited = true;
+                    nodesVisited.push(neighbor);
+                    nodesToVisit.push(neighbor);
+                    let recursiveResult = helperDFS(grid,GRID_LENGTH,GRID_WIDTH,nodesToVisit,nodesVisited);
+                    if(recursiveResult !== null) {
+                        return recursiveResult;
+                    }
+                }
+            }
+        }
+        nodesToVisit.pop();
+    }
 }
 
 function getNeighbors(currentNode, grid,GRID_LENGTH,GRID_WIDTH) {

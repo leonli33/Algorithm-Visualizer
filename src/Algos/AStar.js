@@ -3,7 +3,8 @@ const EAST = 1;
 const SOUTH = 1;
 const WEST = -1;
 
-export function dijkstra(grid, startN, GRID_LENGTH, GRID_WIDTH) {
+
+export function aStar(grid, startN, GRID_LENGTH, GRID_WIDTH,FINISH_NODE_ROW,FINISH_NODE_COL) {
     let nodesToVisit = [];
     let visitedNodes = [];
     let shortestPath = [];
@@ -31,8 +32,11 @@ export function dijkstra(grid, startN, GRID_LENGTH, GRID_WIDTH) {
         if(!surroundingNodes[i].isWall && !surroundingNodes[i].isStart) {
           let neighbor = surroundingNodes[i];
           if(!neighbor.isVisited) {
+            let distanceFromEndX = (neighbor.row - FINISH_NODE_ROW) * 10;
+            let distanceFromEndY = (neighbor.col - FINISH_NODE_COL) * 10;
+            let distanceFromEndNode = Math.sqrt((distanceFromEndX * distanceFromEndX) + (distanceFromEndY * distanceFromEndY));
             neighbor.previousNode = currentNode;
-            neighbor.distance = currentNode.distance + 1;
+            neighbor.distance = 1 + distanceFromEndNode;
             neighbor.isVisited = true;
             nodesToVisit.push(neighbor);
           }
