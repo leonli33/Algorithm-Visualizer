@@ -7,7 +7,8 @@ export function dijkstra(grid, startN, GRID_LENGTH, GRID_WIDTH) {
     let nodesToVisit = [];
     let visitedNodes = [];
     let shortestPath = [];
-    let startNode = grid[startN.col][startN.row];
+    // changed
+    let startNode = grid[startN.row][startN.col];
 
     startNode.distance = 0;
     startNode.isVisited = true;
@@ -52,39 +53,41 @@ function getNeighbors(currentNode, grid,GRID_LENGTH,GRID_WIDTH) {
     let x = currentNode.row;
     let y = currentNode.col;
 
-    if(x > 0 && y > 0 && y < GRID_LENGTH - 1 && x < GRID_WIDTH - 1) {
-      neighbors.push(grid[y + NORTH][x]);
-      neighbors.push(grid[y ][x + EAST]);
-      neighbors.push(grid[y+ SOUTH][x ])
-      neighbors.push(grid[y][x + WEST])
+    if(x > 0 && y > 0 && y < GRID_LENGTH - 1 && x < GRID_WIDTH -1 ) {
+      console.log(x + "," + y)
+      neighbors.push(grid[x + NORTH][y]);
+      neighbors.push(grid[x][y + EAST]);
+      neighbors.push(grid[x + SOUTH][y]);
+      neighbors.push(grid[x][y + WEST]);
     } else if(x === 0 && y === 0) {
-      neighbors.push(grid[y][x+ EAST]);
-      neighbors.push(grid[y+ SOUTH][x ])
-    } else if(x===0 && y === GRID_LENGTH) {
-      neighbors.push(grid[y + NORTH][x]);
-      neighbors.push(grid[y][x+ EAST]);
+      neighbors.push(grid[x][y + EAST]);
+      neighbors.push(grid[x + SOUTH][y]);
+    } else if(x === 0 && y === GRID_LENGTH - 1) {
+      neighbors.push(grid[x][y + WEST]);
+      neighbors.push(grid[x + SOUTH][y]);
     } else if(x === GRID_WIDTH - 1 && y === 0) {
-      neighbors.push(grid[y + SOUTH][x])
-      neighbors.push(grid[y ][x+ WEST])
+      neighbors.push(grid[x + NORTH][y]);
+      neighbors.push(grid[x][y + EAST]);
     } else if(x === GRID_WIDTH - 1 && y === GRID_LENGTH - 1) {
-      neighbors.push(grid[y+ NORTH][x ]);
-      neighbors.push(grid[y][x + WEST])
+      neighbors.push(grid[x + NORTH][y]);
+      neighbors.push(grid[x][y + WEST]);
     } else if(y === 0 && x > 0 && x < GRID_WIDTH - 1) {
-      neighbors.push(grid[y][x+ EAST]);
-      neighbors.push(grid[y + SOUTH][x])
-      neighbors.push(grid[y][x + WEST])
+      neighbors.push(grid[x + NORTH][y]);
+      neighbors.push(grid[x][y + EAST]);
+      neighbors.push(grid[x + SOUTH][y]);
     } else if (x === 0 && y > 0 && y < GRID_LENGTH - 1) {
-      neighbors.push(grid[y + NORTH][x]);
-      neighbors.push(grid[y ][x+ EAST]);
-      neighbors.push(grid[y + SOUTH][x])
+      neighbors.push(grid[x][y + EAST]);
+      neighbors.push(grid[x + SOUTH][y]);
+      neighbors.push(grid[x][y + WEST]);
     } else if (y === GRID_LENGTH - 1 && x > 0 && x < GRID_WIDTH - 1) {
-      neighbors.push(grid[y + NORTH][x]);
-      neighbors.push(grid[y][x + EAST]);
-      neighbors.push(grid[y][x + WEST]);
-    } else if(x === GRID_WIDTH - 1 && y > 0 && y < GRID_LENGTH - 1) {
-      neighbors.push(grid[y + NORTH][x]);
-      neighbors.push(grid[y + SOUTH][x])
-      neighbors.push(grid[y][x + WEST])
+      neighbors.push(grid[x + NORTH][y]);
+      neighbors.push(grid[x + SOUTH][y]);
+      neighbors.push(grid[x][y + WEST]);
+    } 
+    else if(x === GRID_WIDTH - 1 && y > 0 && y < GRID_LENGTH - 1) {
+      neighbors.push(grid[x + NORTH][y]);
+      neighbors.push(grid[x][y + EAST]);
+      neighbors.push(grid[x][y + WEST]);
     }
     return (
       neighbors

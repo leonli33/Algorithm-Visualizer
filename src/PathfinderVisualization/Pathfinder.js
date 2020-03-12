@@ -9,10 +9,10 @@ import './Pathfinder.css';
 
 const START_NODE_ROW = 10;
 const START_NODE_COL = 10;
-const FINISH_NODE_ROW = 45;
-const FINISH_NODE_COL = 10;
+const FINISH_NODE_ROW = 10;
+const FINISH_NODE_COL = 45;
 
-const GRID_WIDTH = 50;
+const GRID_WIDTH = 20;
 const GRID_LENGTH = 50;
 
 const NORTH = -1;
@@ -40,8 +40,9 @@ export default class Pathfinder extends Component {
   }
 
   handleMouseDown = (row,col) => {
-    if(!this.state.grid[col][row].isFinish && !this.state.grid[col][row].isStart) {
-      this.state.grid[col][row].isWall = true;
+    // change
+    if(!this.state.grid[row][col].isFinish && !this.state.grid[row][col].isStart) {
+      this.state.grid[row][col].isWall = true;
       document.getElementById(`node-${row}-${col}`).className =
             'node node-wall';
     }
@@ -53,29 +54,27 @@ export default class Pathfinder extends Component {
   }
 
   visualizeDepthFirstSearch = () => {
-    let startNode = this.state.grid[START_NODE_COL][START_NODE_ROW];
+    let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
     let path = DFS(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH);
-    console.log(path);
     this.displayAlgo(path,path);
   }
 
   // this is pretty much the same thing as dijkstra's except we are not sorting
   visualizeBreadthFirstSearch = () => {
-    let startNode = this.state.grid[START_NODE_COL][START_NODE_ROW];
+    let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
     let path = BFS(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH);
     this.displayAlgo(path.visited,path.shortest);
   }
 
-
   visualizeAStar = () => {
-    let startNode = this.state.grid[START_NODE_COL][START_NODE_ROW];
+    let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
     let path = aStar(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH,FINISH_NODE_ROW,FINISH_NODE_COL);
     this.displayAlgo(path.visited,path.shortest);
   }
 
 
   visualizeDijkstra = () => {
-    let startNode = this.state.grid[START_NODE_COL][START_NODE_ROW];
+    let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
     let path = dijkstra(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH);
     this.displayAlgo(path.visited,path.shortest);
   }
@@ -94,7 +93,6 @@ export default class Pathfinder extends Component {
           'node node-visited';
         }}, 5 * i);
       }
-      
       }
   }
 
@@ -109,6 +107,30 @@ export default class Pathfinder extends Component {
       }, 10 * j);
     }
   };
+
+  clearGrid = () => {
+    /*
+                distance: Infinity,
+          isVisited: false,
+          isWall: false,
+          previousNode: null,
+    */
+    for(let i = 0; i < GRID_WIDTH; i++) {
+      for(let j = 0; j < GRID_LENGTH;j++) {
+          if(i === START_NODE_ROW && j === START_NODE_COL) {
+            document.getElementById(`node-${i}-${j}`).className = 'node node-start';
+          } else if(i === FINISH_NODE_ROW && j === FINISH_NODE_COL ) {
+            document.getElementById(`node-${i}-${j}`).className = 'node node-finish';
+          } else {
+            document.getElementById(`node-${i}-${j}`).className = 'node';
+          }
+          this.state.grid[i][j].distance = Infinity;
+          this.state.grid[i][j].isVisited = false;
+          this.state.grid[i][j].isWall = false;
+          this.state.grid[i][j].previousNode = null;
+      }
+    }
+  }
 
   getNeighbors(currentNode, grid) {
     let neighbors = [];
@@ -176,7 +198,7 @@ export default class Pathfinder extends Component {
           <button className="button" onClick={this.visualizeDepthFirstSearch}>
             Depth First Search
           </button>
-          <button className="button button-clear" onClick={this.visualizeDijkstra}>
+          <button className="button button-clear" onClick={this.clearGrid}>
             Clear Grid
           </button>
           <div className="grid">
@@ -215,7 +237,7 @@ export default class Pathfinder extends Component {
         for(let i = 0; i < GRID_WIDTH; i++) {
             const row = [];
             for(let j = 0; j < GRID_LENGTH;j++) {
-                row.push(this.createNode(i,j));
+                row.push(this.createNode(j,i));
             }
             nodes.push(row);
         }
