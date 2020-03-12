@@ -4,6 +4,7 @@ import {dijkstra} from '../Algos/Dijkstra';
 import {aStar} from '../Algos/AStar';
 import {BFS} from '../Algos/BreadthFirstSearch';
 import {DFS} from '../Algos/DepthFirstSearch';
+import {GBFS} from '../Algos/GreedyBestFirstSearch';
 
 import './Pathfinder.css';
 
@@ -15,16 +16,12 @@ const FINISH_NODE_COL = 45;
 const GRID_WIDTH = 20;
 const GRID_LENGTH = 50;
 
-const NORTH = -1;
-const EAST = 1;
-const SOUTH = 1;
-const WEST = -1;
-
 export default class Pathfinder extends Component {
   constructor(props) {
       super(props);
       this.state = {
-          grid:[]
+          grid:[],
+          mousePressed: false
       };
   }
 
@@ -35,28 +32,57 @@ export default class Pathfinder extends Component {
       });
   }
 
-  handleMouseEnter = () => {
-    
+  handleMouseEnter = (row,col) => {
+    if(!this.state.grid[row][col].isFinish && !this.state.grid[row][col].isStart && this.state.mouseIsPressed) {
+      let newGrid = this.toggleGridWalls(this.state.grid,row,col);
+      this.setState({
+        grid: newGrid,
+      })
+    }
   }
 
   handleMouseDown = (row,col) => {
-    // change
     if(!this.state.grid[row][col].isFinish && !this.state.grid[row][col].isStart) {
-      this.state.grid[row][col].isWall = true;
-      document.getElementById(`node-${row}-${col}`).className =
-            'node node-wall';
+      let newGrid = this.toggleGridWalls(this.state.grid,row,col);
+      this.setState({
+        grid: newGrid,
+        mouseIsPressed: true
+      })
     }
   }
 
   handleMouseUp = () => {
+    console.log("mouse is up");
+    this.setState({
+      mouseIsPressed: false
+    });
+  }
 
-    
+  handleMouseMove = (event) => {
+    console.log(event);
+  }
+
+  toggleGridWalls(grid,row,col) {
+      let changedGrid = grid.slice();
+      let nodeToToggle = grid[row][col];
+      let node = {
+        ...nodeToToggle,
+        isWall: !nodeToToggle.isWall,
+      };
+      changedGrid[row][col] = node;
+      return changedGrid;
   }
 
   visualizeDepthFirstSearch = () => {
     let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
     let path = DFS(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH);
     this.displayAlgo(path,path);
+  }
+
+  visualizeGreedyBestFirstSearch = () => {
+    let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
+    let path = GBFS(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH,FINISH_NODE_ROW,FINISH_NODE_COL);
+    this.displayAlgo(path.visited,path.shortest);
   }
 
   // this is pretty much the same thing as dijkstra's except we are not sorting
@@ -84,14 +110,14 @@ export default class Pathfinder extends Component {
       if(i === nodes.length) {
           setTimeout(() => {
             this.visualizeShortestPath(shortestPath);
-          }, 5 * i);
+          }, 6 * i);
       } else {
         setTimeout(() => {
         const node = nodes[i];
         if(!node.isStart && !node.isFinish) {
           document.getElementById(`node-${node.row}-${node.col}`).className =
           'node node-visited';
-        }}, 5 * i);
+        }}, 6 * i);
       }
       }
   }
@@ -126,87 +152,52 @@ export default class Pathfinder extends Component {
     }
   }
 
-  getNeighbors(currentNode, grid) {
-    let neighbors = [];
-    let x = currentNode.row;
-    let y = currentNode.col;
-
-    if(x > 0 && y > 0 && y < GRID_LENGTH - 1 && x < GRID_WIDTH - 1) {
-      neighbors.push(grid[y + NORTH][x]);
-      neighbors.push(grid[y ][x + EAST]);
-      neighbors.push(grid[y+ SOUTH][x ])
-      neighbors.push(grid[y][x + WEST])
-    } else if(x === 0 && y === 0) {
-      neighbors.push(grid[y][x+ EAST]);
-      neighbors.push(grid[y+ SOUTH][x ])
-    } else if(x===0 && y === GRID_LENGTH) {
-      neighbors.push(grid[y + NORTH][x]);
-      neighbors.push(grid[y][x+ EAST]);
-    } else if(x === GRID_WIDTH - 1 && y === 0) {
-      neighbors.push(grid[y + SOUTH][x])
-      neighbors.push(grid[y ][x+ WEST])
-    } else if(x === GRID_WIDTH - 1 && y === GRID_LENGTH - 1) {
-      neighbors.push(grid[y+ NORTH][x ]);
-      neighbors.push(grid[y][x + WEST])
-    } else if(y === 0 && x > 0 && x < GRID_WIDTH - 1) {
-      neighbors.push(grid[y][x+ EAST]);
-      neighbors.push(grid[y + SOUTH][x])
-      neighbors.push(grid[y][x + WEST])
-    } else if (x === 0 && y > 0 && y < GRID_LENGTH - 1) {
-      neighbors.push(grid[y + NORTH][x]);
-      neighbors.push(grid[y ][x+ EAST]);
-      neighbors.push(grid[y + SOUTH][x])
-    } else if (y === GRID_LENGTH - 1 && x > 0 && x < GRID_WIDTH - 1) {
-      neighbors.push(grid[y + NORTH][x]);
-      neighbors.push(grid[y][x + EAST]);
-      neighbors.push(grid[y][x + WEST]);
-    } else if(x === GRID_WIDTH - 1 && y > 0 && y < GRID_LENGTH - 1) {
-      neighbors.push(grid[y + NORTH][x]);
-      neighbors.push(grid[y + SOUTH][x])
-      neighbors.push(grid[y][x + WEST])
-    }
-    return (
-      neighbors
-    );
-  }
-
   render() {
       const {grid, mouseIsPressed} = this.state;
       return (
         <>
-          <button className="button" onClick={this.visualizeAStar}>
-            Greedy Best-First Search
-          </button>
-          <button className="button" onClick={this.visualizeBreadthFirstSearch}>
-            Swarm Algorithm
-          </button>
-          <button className="button" onClick={this.visualizeDijkstra}>
-            Dijkstra's Algorithm
-          </button>
-          <button className="button button-run" onClick={this.visualizeAStar}>
-            Visualize Algorithm!
-          </button>
-          <button className="button" onClick={this.visualizeAStar}>
-            A* Algorithm
-          </button>
-          <button className="button" onClick={this.visualizeBreadthFirstSearch}>
-            Breadth First Search
-          </button>
-          <button className="button" onClick={this.visualizeDepthFirstSearch}>
-            Depth First Search
-          </button>
-          <button className="button button-clear" onClick={this.clearGrid}>
-            Clear Grid
-          </button>
+          <div className="buttons">
+            <button className="button" onClick={this.visualizeGreedyBestFirstSearch}>
+              Greedy Best-First Search
+            </button>
+            <button className="button" onClick={this.visualizeBreadthFirstSearch}>
+              Swarm Algorithm
+            </button>
+            <button className="button" onClick={this.visualizeDijkstra}>
+              Dijkstra's Algorithm
+            </button>
+            <button className="button button-run" onClick={this.visualizeAStar}>
+              Visualize Algorithm!
+            </button>
+            <button className="button" onClick={this.visualizeAStar}>
+              A* Algorithm
+            </button>
+            <button className="button" onClick={this.visualizeBreadthFirstSearch}>
+              Breadth First Search
+            </button>
+            <button className="button" onClick={this.visualizeDepthFirstSearch}>
+              Depth First Search
+            </button>
+            <button className="button button-clear" onClick={this.clearGrid}>
+              Clear Grid
+            </button>
+          </div>
+
           <div className="legend">
 
           </div>
-          <div className="grid">
+          <div className="grid" onMouseMove={(event) => this.handleMouseMove(event)}>
             {this.state.grid.map((row, rowIdx) => {
               return (
                 <div key={rowIdx}>
                   {row.map((node, nodeIdx) => {
-                    const {row, col, isFinish, isStart, isWall} = node;
+                    const {
+                      row, 
+                      col, 
+                      isFinish, 
+                      isStart, 
+                      isWall
+                    } = node;
                     return (
                       <Node
                         key={nodeIdx}
@@ -216,9 +207,7 @@ export default class Pathfinder extends Component {
                         isWall={isWall}
                         mouseIsPressed={mouseIsPressed}
                         onMouseDown={(row, col) => this.handleMouseDown(row, col)}
-                        onMouseEnter={(row, col) =>
-                          this.handleMouseEnter(row, col)
-                        }
+                        onMouseEnter={(row, col) =>this.handleMouseEnter(row, col)}
                         onMouseUp={() => this.handleMouseUp()}
                         row={row}></Node>
                     );
@@ -253,7 +242,7 @@ export default class Pathfinder extends Component {
           distance: Infinity,
           isVisited: false,
           isWall: false,
-          previousNode: null,
+          previousNode: null
         };
-      };
+    };
 }

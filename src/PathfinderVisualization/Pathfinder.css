@@ -22,6 +22,10 @@
     color: #ff2020;
 }
 
+.buttons {
+    background-color: #6A6A6A;
+}
+
 .legend {
     background-color: white;
     height: 60px;

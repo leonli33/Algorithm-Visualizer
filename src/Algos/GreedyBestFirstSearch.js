@@ -3,15 +3,12 @@ const EAST = 1;
 const SOUTH = 1;
 const WEST = -1;
 
-
-export function aStar(grid, startN, GRID_LENGTH, GRID_WIDTH,FINISH_NODE_ROW,FINISH_NODE_COL) {
+export function GBFS(grid, startN, GRID_LENGTH, GRID_WIDTH,FINISH_NODE_ROW,FINISH_NODE_COL) {
     let nodesToVisit = [];
     let visitedNodes = [];
     let shortestPath = [];
     let startNode = grid[startN.col][startN.row];
 
-    startNode.distance = 0;
-    startNode.gCost = 1;
     startNode.isVisited = true;
     nodesToVisit.push(startNode);
 
@@ -40,16 +37,10 @@ export function aStar(grid, startN, GRID_LENGTH, GRID_WIDTH,FINISH_NODE_ROW,FINI
             let distanceFromEndY = (Math.abs(FINISH_NODE_COL - neighbor.col)) * 10;
             let distanceFromEndNode = distanceFromEndX + distanceFromEndY;
 
-            // set the previous node equal to the current node
+            // Greedy best first search only takes into account distance from end node
+            // when calculating cost
             neighbor.previousNode = currentNode;
-
-            neighbor.gCost = 1;
-
-            // get the cost of the previous node (G cost)
-            let previousCost = neighbor.previousNode.gCost;
-
-            // A* is calculated by adding Gcost with Hcost
-            neighbor.distance = previousCost + 1 + distanceFromEndNode;
+            neighbor.distance = 1 + distanceFromEndNode;
             neighbor.isVisited = true;
             nodesToVisit.push(neighbor);
           }

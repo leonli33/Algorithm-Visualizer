@@ -8,21 +8,94 @@
   }
 
   .node-finish {
-    background-color: red;
+    background-color: lightcoral;
   }
 
   .node-start {
-    background-color: green;
+    background-color: lightgreen;
   }
 
   .node-visited {
-    background-color: lightblue;
+    animation-name: get-visited-path-animation;
+    animation-duration: 0.3s;
+    animation-timing-function: ease-out;
+    animation-delay: 0;
+    animation-direction: alternate;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    animation-play-state: running;
   }
 
   .node-wall {
-    background-color: #858585;
+    animation-name: isWallAnimation;
+    animation-duration: 0.3s;
+    animation-timing-function: ease-out;
+    animation-delay: 0;
+    animation-direction: alternate;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    animation-play-state: running;
   }
 
   .node-final-path {
-    background-color: yellow;
+    animation-name: get-shortest-path-animation;
+    animation-duration: 0.3s;
+    animation-timing-function: ease-out;
+    animation-delay: 0;
+    animation-direction: alternate;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    animation-play-state: running;
+  }
+
+  @keyframes get-visited-path-animation {
+    0% {
+      transform: scale(0.8);
+      background-color: #ff89a0;
+    }
+  
+    50% {
+      transform: scale(1.2);
+      background-color: #89ffad;
+    }
+  
+    100% {
+      transform: scale(1);
+      background-color: #89dbff;
+    }
+  }
+
+  @keyframes get-shortest-path-animation {
+    from {
+      transform: scale(0.8);
+      background-color: yellow;
+    }
+  
+    50% {
+      transform: scale(1.2);
+      background-color: yellow;
+    }
+  
+    to {
+      transform: scale(1);
+      background-color: yellow;
+    }
+  }
+
+
+  @keyframes isWallAnimation {
+    from {
+      transform: scale(0.8);
+      background-color: #858585;
+    }
+  
+    50% {
+      transform: scale(1.1);
+      background-color: #858585;
+    }
+  
+    to {
+      transform: scale(1);
+      background-color: #858585;
+    }
   }
