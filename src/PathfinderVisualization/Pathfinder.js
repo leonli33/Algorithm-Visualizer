@@ -109,12 +109,6 @@ export default class Pathfinder extends Component {
   };
 
   clearGrid = () => {
-    /*
-                distance: Infinity,
-          isVisited: false,
-          isWall: false,
-          previousNode: null,
-    */
     for(let i = 0; i < GRID_WIDTH; i++) {
       for(let j = 0; j < GRID_LENGTH;j++) {
           if(i === START_NODE_ROW && j === START_NODE_COL) {
@@ -180,17 +174,20 @@ export default class Pathfinder extends Component {
       const {grid, mouseIsPressed} = this.state;
       return (
         <>
-        <button className="button" onClick={this.visualizeAStar}>
+          <button className="button" onClick={this.visualizeAStar}>
             Greedy Best-First Search
           </button>
-          <button className="button" onClick={this.visualizeAStar}>
-            A* Algorithm
+          <button className="button" onClick={this.visualizeBreadthFirstSearch}>
+            Swarm Algorithm
           </button>
           <button className="button" onClick={this.visualizeDijkstra}>
             Dijkstra's Algorithm
           </button>
           <button className="button button-run" onClick={this.visualizeAStar}>
             Visualize Algorithm!
+          </button>
+          <button className="button" onClick={this.visualizeAStar}>
+            A* Algorithm
           </button>
           <button className="button" onClick={this.visualizeBreadthFirstSearch}>
             Breadth First Search
@@ -201,6 +198,9 @@ export default class Pathfinder extends Component {
           <button className="button button-clear" onClick={this.clearGrid}>
             Clear Grid
           </button>
+          <div className="legend">
+
+          </div>
           <div className="grid">
             {this.state.grid.map((row, rowIdx) => {
               return (
