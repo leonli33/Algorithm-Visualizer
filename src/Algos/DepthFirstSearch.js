@@ -5,18 +5,27 @@ const WEST = -1;
 
 export function DFS(grid, startN, GRID_LENGTH, GRID_WIDTH) {
     let nodesToVisit = [];
+    let shortestPath = [];
     nodesToVisit.push(startN);
     let nodesVisited = [];
-    let path = helperDFS(grid,GRID_LENGTH,GRID_WIDTH,nodesToVisit,nodesVisited);
+    let path = helperDFS(grid,GRID_LENGTH,GRID_WIDTH,nodesToVisit,nodesVisited,0);
     return path;
 }
 
-function helperDFS(grid,GRID_LENGTH,GRID_WIDTH,nodesToVisit,nodesVisited) {
+function helperDFS(grid,GRID_LENGTH,GRID_WIDTH,nodesToVisit,nodesVisited,g) {
     if(nodesToVisit.length !== 0 && nodesToVisit[nodesToVisit.length - 1].isFinish) {
-        return nodesVisited;
+        let path = {
+          visited : nodesVisited,
+          shortest: nodesToVisit
+        }
+        return path;
     }
     else if(nodesToVisit.length === 0) {
-        return null;
+        let path= {
+          visited : nodesVisited,
+          shortest: null
+        }
+        return path;
     }
     else {
         let currentNode = nodesToVisit[nodesToVisit.length - 1];
@@ -25,17 +34,23 @@ function helperDFS(grid,GRID_LENGTH,GRID_WIDTH,nodesToVisit,nodesVisited) {
             if(!neighbors[i].isWall && !neighbors[i].isStart) {
                 let neighbor = neighbors[i];
                 if(!neighbor.isVisited) {
+                    neighbor.previousNode = currentNode;
                     neighbor.isVisited = true;
                     nodesVisited.push(neighbor);
                     nodesToVisit.push(neighbor);
-                    let recursiveResult = helperDFS(grid,GRID_LENGTH,GRID_WIDTH,nodesToVisit,nodesVisited);
-                    if(recursiveResult !== null) {
+                    console.log(g);
+                    let recursiveResult = helperDFS(grid,GRID_LENGTH,GRID_WIDTH,nodesToVisit,nodesVisited,g + 1);
+                    if(recursiveResult === undefined) {
+                      continue;
+                    }
+                    else if (recursiveResult.shortest !== null && recursiveResult.shortest !== undefined) {
                         return recursiveResult;
                     }
                 }
             }
         }
         nodesToVisit.pop();
+        return helperDFS(grid,GRID_LENGTH,GRID_WIDTH,nodesToVisit,nodesVisited,g + 1);
     }
 }
 
@@ -45,7 +60,6 @@ function getNeighbors(currentNode, grid,GRID_LENGTH,GRID_WIDTH) {
   let y = currentNode.col;
 
   if(x > 0 && y > 0 && y < GRID_LENGTH - 1 && x < GRID_WIDTH -1 ) {
-    console.log(x + "," + y)
     neighbors.push(grid[x + NORTH][y]);
     neighbors.push(grid[x][y + EAST]);
     neighbors.push(grid[x + SOUTH][y]);

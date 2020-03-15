@@ -16,7 +16,6 @@ function App() {
         <div className="Grid">
           <Pathfinder></Pathfinder>
         </div>
-        
     </div>
   );
 }

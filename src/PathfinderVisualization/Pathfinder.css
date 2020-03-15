@@ -1,5 +1,5 @@
 .grid {
-    margin: 0 0 100px;
+    margin: 0 0 auto;
 }
 
 .button {
@@ -10,16 +10,37 @@
     padding: 10px;
     margin: 10px;
     margin-left: 15px;
+    transition: 0.8s;
+}
+
+.buttonAlgo:hover {
+    background-color: #61dafb;
+    color: white;
+    transform: scale(1.1);
+}
+
+.buttonWalls:hover {
+    background-color: #F1C399;
+    color: white;
+    transform: scale(1.1);
+}
+
+.buttonClear:hover {
+    background-color: #ffe815;
+    color: white;
+    transform: scale(1.1);
 }
 
 .button-clear {
     border: 2px solid #ffe815;
     color: #ffe815;
+    transition: 0.8s;
 }
 
-.button-run {
-    border: 2px solid #ff2020;
-    color: #ff2020;
+.button-walls {
+    border: 2px solid #F1C399;
+    color: #F1C399;
+    transition: 0.8s;
 }
 
 .buttons {
@@ -29,4 +50,55 @@
 .legend {
     background-color: white;
     height: 60px;
+    text-align: center;
+    vertical-align: center;
+    width: 100%;
+}
+
+.fakeNode {
+    width: 25px;
+    height: 25px;
+    background-color: white;
+    outline: 1px solid black;
+    display: inline-block;
+    vertical-align: center;
+    margin-top: 17px;
+    float: left;
+    margin-left: 25px;
+    margin-right: 10px;
+}
+
+.fakeNodeLabel {
+    float: left;
+    margin-top: 18px;
+}
+
+.fakeNodeStart {
+    background-color: lightgreen;
+}
+
+.fakeNodeEnd {
+    background-color: lightcoral;
+}
+
+.fakeNodeBlock {
+    background-color: #858585;
+}
+
+.fakeNodeExploredFirst {
+    margin-right: 0px;
+    background-color: #89dbff;
+}
+
+.fakeNodeExploredSecond {
+    margin-left: 10px;
+    background-color: #7062d7
+}
+
+.fakeNodeShortestPath {
+    background-color: yellow;
+}
+
+.firstFakeNode {
+    margin-left: 14%;
 }

@@ -15,16 +15,16 @@ export default class Pathfinder extends Component {
             onMouseDown,
             onMouseEnter,
             onMouseUp,
-            row,
+            row          
           } = this.props;
-          const extraClassName = isFinish
+          const extraClassName = 
+            isFinish
             ? 'node-finish'
             : isStart
             ? 'node-start'
             : isWall
             ? 'node-wall'
-            : '';
-      
+            : '';         
           return (
             <div
                 id={`node-${row}-${col}`}

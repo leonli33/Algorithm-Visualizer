@@ -38,9 +38,9 @@ export function GBFS(grid, startN, GRID_LENGTH, GRID_WIDTH,FINISH_NODE_ROW,FINIS
             let distanceFromEndNode = distanceFromEndX + distanceFromEndY;
 
             // Greedy best first search only takes into account distance from end node
-            // when calculating cost
+            // when calculating cost. Thus f(n) = h(n)
             neighbor.previousNode = currentNode;
-            neighbor.distance = 1 + distanceFromEndNode;
+            neighbor.distance = distanceFromEndNode;
             neighbor.isVisited = true;
             nodesToVisit.push(neighbor);
           }

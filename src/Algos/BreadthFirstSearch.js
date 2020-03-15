@@ -14,6 +14,7 @@ export function BFS(grid, startN, GRID_LENGTH, GRID_WIDTH) {
     nodesToVisit.push(startNode);
 
     while(nodesToVisit.length !== 0) {
+      // almost the same as dijkstra but it does not sort
       let currentNode = nodesToVisit.shift();
       if(currentNode.isFinish) {
         shortestPath.push(currentNode);

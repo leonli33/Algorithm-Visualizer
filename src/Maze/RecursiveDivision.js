@@ -3,56 +3,56 @@ const EAST = 1;
 const SOUTH = 1;
 const WEST = -1;
 
-export function dijkstra(grid, startN, GRID_LENGTH, GRID_WIDTH) {
-    let nodesToVisit = [];
-    let visitedNodes = [];
-    let shortestPath = [];
-    
-    let startNode = grid[startN.row][startN.col];
+// width = length
+// height = 
 
-    startNode.distance = 0;
-    startNode.isVisited = true;
-    nodesToVisit.push(startNode);
+export function maze(grid, startN, GRID_LENGTH, GRID_WIDTH,FINISH_NODE_ROW,FINISH_NODE_COL,) {
+    getGrid(grid,0,0,GRID_WIDTH,GRID_LENGTH,getOrientation(GRID_WIDTH,GRID_LENGTH))
+}
 
-    while(nodesToVisit.length !== 0) {
-      nodesToVisit.sort((nodeA, nodeB) => nodeA.distance - nodeB.distance);
-      let currentNode = nodesToVisit.shift();
-      if(currentNode.isFinish) {
-        shortestPath.push(currentNode);
-        let current = currentNode.previousNode;
-        while(current !== null) {
-          shortestPath.push(current);
-          current = current.previousNode;
-        }
-        break;
-      }
-      if(currentNode.isWall) continue;
-      let surroundingNodes = getNeighbors(currentNode,grid,GRID_LENGTH,GRID_WIDTH);
-      for(let i = 0; i < surroundingNodes.length; i++) {
-        if(!surroundingNodes[i].isWall && !surroundingNodes[i].isStart) {
-          let neighbor = surroundingNodes[i];
-          if(!neighbor.isVisited) {
-            neighbor.previousNode = currentNode;
-            neighbor.distance = currentNode.distance + 1;
-            neighbor.isVisited = true;
-            nodesToVisit.push(neighbor);
-          }
-        }
-      }
-      visitedNodes.push(currentNode);
+
+function getGrid(grid,x,y,width,height,orientation) {
+    if(width < 2 || height < 2) return null;
+    let horizontal = orientation === "Horizontal";
+
+    // where will wall start?
+    let wallX = x + (horizontal ? 0 : Math.random(width - 2));
+    let wally = y + (horizontal ? Math.random(height - 2) : 0);
+
+    // determine where passage in the wall will be 
+    let passageX = wallX + (horizontal ? Math.random(width) : 0);
+    let passageY = wallY + (horizontal ? 0 : Math.random(height));
+
+    // direction of wall:
+    let directionX = horizontal ? 1 : 0;
+    let directionY = horizontal ? 0 : 1;
+
+    // determine the length of the wall
+    let length = horizontal ? width : height;
+
+    // what direction is perp to the wall
+    let dir = horizontal ? SOUTH : EAST;
+
+    for(let i = 0; i < length;i++) {
+        
     }
-    let path = {
-        visited : visitedNodes,
-        shortest: shortestPath
+
+}
+
+
+function getOrientation(width, length) {
+    if(length < width) {
+        return "Horizontal";
+    } else {
+        return "Vertical";
     }
-    return path;
 }
 
 function getNeighbors(currentNode, grid,GRID_LENGTH,GRID_WIDTH) {
     let neighbors = [];
     let x = currentNode.row;
     let y = currentNode.col;
-
+  
     if(x > 0 && y > 0 && y < GRID_LENGTH - 1 && x < GRID_WIDTH -1 ) {
       console.log(x + "," + y)
       neighbors.push(grid[x + NORTH][y]);
