@@ -13,13 +13,10 @@ const START_NODE_COL = 10;
 const FINISH_NODE_ROW = 10;
 const FINISH_NODE_COL = 45;
 
-const NORTH = -1;
-const EAST = 1;
-const SOUTH = 1;
-const WEST = -1;
-
 const GRID_WIDTH = 20;
 const GRID_LENGTH = 50;
+
+let gridUsed = false;
 
 export default class Pathfinder extends Component {
   constructor(props) {
@@ -27,7 +24,8 @@ export default class Pathfinder extends Component {
       this.state = {
           grid:[],
           mousePressed: false,
-          gridClear: true
+          gridClear: true,
+          beingUsed: false
       };
   }
 
@@ -164,6 +162,7 @@ export default class Pathfinder extends Component {
     if(!this.state.gridClear) {
       this.clearPath();
     }
+    this.disableElements();
     let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
     let path = DFS(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH);
     if(path.shortest === null) {
@@ -177,9 +176,11 @@ export default class Pathfinder extends Component {
     if(!this.state.gridClear) {
       this.clearPath();
     }
+    this.disableElements();
     let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
     let path = GBFS(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH,FINISH_NODE_ROW,FINISH_NODE_COL);
-    this.displayAlgo(path.visited,path.shortest);
+    let shortestPath = path.shortest.reverse();
+    this.displayAlgo(path.visited,shortestPath);
   }
 
   // this is pretty much the same thing as dijkstra's except we are not sorting
@@ -187,18 +188,22 @@ export default class Pathfinder extends Component {
     if(!this.state.gridClear) {
       this.clearPath();
     }
+    this.disableElements();
     let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
     let path = BFS(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH);
-    this.displayAlgo(path.visited,path.shortest);
+    let shortestPath = path.shortest.reverse();
+    this.displayAlgo(path.visited,shortestPath);
   }
 
   visualizeAStar = () => {
     if(!this.state.gridClear) {
       this.clearPath();
     }
+    this.disableElements();
     let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
     let path = aStar(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH,FINISH_NODE_ROW,FINISH_NODE_COL);
-    this.displayAlgo(path.visited,path.shortest);
+    let shortestPath = path.shortest.reverse();
+    this.displayAlgo(path.visited,shortestPath);
   }
  
 
@@ -206,29 +211,35 @@ export default class Pathfinder extends Component {
     if(!this.state.gridClear) {
       this.clearPath();
     }
+    this.disableElements();
     let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
     let path = dijkstra(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH);
-    this.displayAlgo(path.visited,path.shortest);
+    let shortestPath = path.shortest.reverse();
+    this.displayAlgo(path.visited,shortestPath);
   }
 
   displayAlgoNoPath(nodes) {
     this.setState({
       gridClear: false
     });
-    for(let i = 0; i < nodes.length;i++) {
-      setTimeout(() => {
+    for(let i = 0; i <= nodes.length;i++) {
+      if(i === nodes.length) {
+        setTimeout(() => {
+          this.enableElements();
+        }, 6 * i);
+      }
+      else {
+         setTimeout(() => {
         const node = nodes[i];
         if(!node.isStart && !node.isFinish) {
           document.getElementById(`node-${node.row}-${node.col}`).className =
-          'node node-visited';
+          'node node-visited disabledNode'; //add
         }}, 6 * i);
+      }
     }
   }
 
   displayAlgo(nodes, shortestPath) {
-    this.setState({
-      gridClear: false
-    });
     for(let i = 0; i <= nodes.length;i++) {
       if(i === nodes.length) {
           setTimeout(() => {
@@ -239,21 +250,30 @@ export default class Pathfinder extends Component {
         const node = nodes[i];
         if(!node.isStart && !node.isFinish) {
           document.getElementById(`node-${node.row}-${node.col}`).className =
-          'node node-visited';
+          'node node-visited disabledNode';
         }}, 6 * i);
       }
-      }
+    }
   }
 
   visualizeShortestPath(shortestPath) {
-    for(let j = 0; j < shortestPath.length;j++)  {
-      setTimeout(() => {
-        const node = shortestPath[j];
-        if(!node.isStart && !node.isFinish) {
-          document.getElementById(`node-${node.row}-${node.col}`).className =
-          'node node-final-path';
-        }
-      }, 10 * j);
+    this.setState({
+      gridClear: false
+    });
+    for(let j = 0; j <= shortestPath.length;j++)  {
+      if(j === shortestPath.length) {
+        setTimeout(() => {
+          this.enableElements();
+        }, 10 * j);
+      } else {
+        setTimeout(() => {
+          const node = shortestPath[j];
+          if(!node.isStart && !node.isFinish) {
+            document.getElementById(`node-${node.row}-${node.col}`).className =
+            'node node-final-path disabledNode';
+          }        
+        }, 10 * j);
+      }
     }
   };
 
@@ -313,28 +333,28 @@ export default class Pathfinder extends Component {
       return (
         <>
           <div className="buttons">
-            <button className="button buttonAlgo" onClick={this.visualizeAStar}>
+            <button id="AStar_Visualizer" className="button buttonAlgo" onClick={this.visualizeAStar}>
               A* Algorithm
             </button>
-            <button className="button buttonAlgo" onClick={this.visualizeGreedyBestFirstSearch}>
+            <button id="GBFS_Visualizer" className="button buttonAlgo" onClick={this.visualizeGreedyBestFirstSearch}>
               Greedy Best-First Search
             </button>
-            <button className="button buttonAlgo" onClick={this.visualizeDijkstra}>
+            <button id="Dijkstra_Visualizer" className="button buttonAlgo" onClick={this.visualizeDijkstra}>
               Dijkstra's Algorithm
             </button>
-            <button className="button buttonAlgo" onClick={this.visualizeBreadthFirstSearch}>
+            <button id="BFS_Visualizer" className="button buttonAlgo" onClick={this.visualizeBreadthFirstSearch}>
               Breadth First Search
             </button>
-            <button className="button buttonAlgo" onClick={this.visualizeDepthFirstSearch}>
+            <button id="DFS_Visualizer" className="button buttonAlgo" onClick={this.visualizeDepthFirstSearch}>
               Depth First Search
             </button>
-            <button className="button button-walls buttonWalls" onClick={this.generateWalls}>
+            <button id="GenerateWalls" className="button button-walls buttonWalls" onClick={this.generateWalls}>
               Generate Walls
             </button>
-            <button className="button button-clear buttonClear" onClick={this.clearGrid}>
+            <button id="ClearGrid" className="button button-clear buttonClear" onClick={this.clearGrid}>
               Clear Grid
             </button>
-            <button className="button button-clear buttonClear" onClick={this.clearPath}>
+            <button id="ClearPath" className="button button-clear buttonClear" onClick={this.clearPath}>
               Clear Path
             </button>
           </div>
@@ -355,7 +375,7 @@ export default class Pathfinder extends Component {
               <label className="fakeNodeLabel">Path Found Node</label>
           </div>
 
-          <div className="grid" onMouseMove={(event) => this.handleMouseMove(event)}>
+          <div id="gridNodes" className="grid" onMouseMove={(event) => this.handleMouseMove(event)}>
             {this.state.grid.map((row, rowIdx) => {
               return (
                 <div key={rowIdx}>
@@ -389,6 +409,39 @@ export default class Pathfinder extends Component {
       );
     }
     
+    disableElements() {
+      document.getElementById(`AStar_Visualizer`).setAttribute("disabled","disabled");
+      document.getElementById(`GBFS_Visualizer`).setAttribute("disabled","disabled");
+      document.getElementById(`Dijkstra_Visualizer`).setAttribute("disabled","disabled");
+      document.getElementById(`BFS_Visualizer`).setAttribute("disabled","disabled");
+      document.getElementById(`DFS_Visualizer`).setAttribute("disabled","disabled");
+      document.getElementById(`GenerateWalls`).setAttribute("disabled","disabled");
+      document.getElementById(`ClearGrid`).setAttribute("disabled","disabled");
+      document.getElementById(`ClearPath`).setAttribute("disabled","disabled");
+      for(let i = 0; i < GRID_WIDTH; i++) {
+        for(let j = 0; j < GRID_LENGTH;j++) {
+          document.getElementById(`node-${i}-${j}`).classList.add("disabledNode");
+        }
+      }
+      
+    }
+
+    enableElements() {
+      document.getElementById(`AStar_Visualizer`).removeAttribute("disabled");
+      document.getElementById(`GBFS_Visualizer`).removeAttribute("disabled");
+      document.getElementById(`Dijkstra_Visualizer`).removeAttribute("disabled");
+      document.getElementById(`BFS_Visualizer`).removeAttribute("disabled");
+      document.getElementById(`DFS_Visualizer`).removeAttribute("disabled");
+      document.getElementById(`GenerateWalls`).removeAttribute("disabled");
+      document.getElementById(`ClearGrid`).removeAttribute("disabled");
+      document.getElementById(`ClearPath`).removeAttribute("disabled");
+      for(let i = 0; i < GRID_WIDTH; i++) {
+        for(let j = 0; j < GRID_LENGTH;j++) {
+          document.getElementById(`node-${i}-${j}`).classList.remove("disabledNode");
+        }
+      }
+    }
+
     formulateGrid = () => {
         // draw a grid onto the screen
         const nodes = [];
