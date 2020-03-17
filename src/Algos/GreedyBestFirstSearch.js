@@ -3,6 +3,7 @@ const EAST = 1;
 const SOUTH = 1;
 const WEST = -1;
 
+// Greedier version of A*
 export function GBFS(grid, startN, GRID_LENGTH, GRID_WIDTH,FINISH_NODE_ROW,FINISH_NODE_COL) {
     let nodesToVisit = [];
     let visitedNodes = [];
@@ -60,7 +61,6 @@ function getNeighbors(currentNode, grid,GRID_LENGTH,GRID_WIDTH) {
   let y = currentNode.col;
 
   if(x > 0 && y > 0 && y < GRID_LENGTH - 1 && x < GRID_WIDTH -1 ) {
-    console.log(x + "," + y)
     neighbors.push(grid[x + NORTH][y]);
     neighbors.push(grid[x][y + EAST]);
     neighbors.push(grid[x + SOUTH][y]);

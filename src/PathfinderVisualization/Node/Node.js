@@ -17,6 +17,7 @@ export default class Pathfinder extends Component {
             onMouseUp,
             row          
           } = this.props;
+
           const extraClassName = 
             isFinish
             ? 'node-finish'
@@ -24,14 +25,15 @@ export default class Pathfinder extends Component {
             ? 'node-start'
             : isWall
             ? 'node-wall'
-            : '';         
+            : '';       
+              
           return (
             <div
                 id={`node-${row}-${col}`}
                 className={`node ${extraClassName}`}
-                onMouseDown={() => onMouseDown(row, col)}
-                onMouseEnter={() => onMouseEnter(row, col)}
-                onMouseUp={() => onMouseUp()}>
+                onMouseDown={(e) => onMouseDown(row, col,e)}
+                onMouseEnter={(e) => onMouseEnter(row, col,e)}
+                onMouseUp={(e) => onMouseUp(row,col,e)}>
             </div>
           );
     }
