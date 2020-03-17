@@ -31,7 +31,6 @@ export default class Pathfinder extends Component {
       };
   }
 
-
   componentDidMount() {
       const gridDrawn = this.formulateGrid();
       this.setState({
@@ -55,8 +54,7 @@ export default class Pathfinder extends Component {
   }
 
   handleMouseDown = (row,col,event) => {
-    event.persist();
-    event.preventDefault();
+
     mouseIsPressed = true;
     // set the state of a particular node based on its current status of 
     // being a wall node or regular node
@@ -73,11 +71,11 @@ export default class Pathfinder extends Component {
         startNodeMove: true
       });
     }
+    event.persist();
+    event.preventDefault();
   }
 
   handleMouseUp = (row,col,event) => {
-    event.persist();
-    event.preventDefault();
     console.log("mouse is up" + row + "," + col);
     if(this.state.startNodeMove) {
       this.state.grid[START_NODE_ROW][START_NODE_COL].isStart = false;
@@ -99,81 +97,12 @@ export default class Pathfinder extends Component {
     this.setState({
       startNodeMove:false
     });
+    event.persist();
+    event.preventDefault();
   }
 
   handleMouseMove = (event) => {
   }
-
-  generateWalls = () => {
-    this.getGrid(this.state.grid,0,0,GRID_LENGTH,GRID_WIDTH,this.getOrientation(GRID_WIDTH,GRID_LENGTH))
-  }
-
-
-  getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
-  }
-
-  // width = hor
-  // height = vert
-                   //50  20
-  getGrid(grid,x,y,hor,vert,orientation) {
-    if(vert < 2 || hor < 2) return;
-
-    let horizontal = orientation === "Horizontal";
-
-    // where will wall start?
-    let wallX = x + (horizontal ? this.getRandomInt(0,vert - 1) : 0);
-    let wallY = y + (horizontal ? 0 : this.getRandomInt(0,hor - 1));
-
-    // determine where passage in the wall will be 
-    let passageX = wallX + (horizontal ? 0 : this.getRandomInt(0,vert - 1));
-    let passageY = wallY + (horizontal ? this.getRandomInt(0,hor - 1) : 0);
-
-    // direction of wall:
-    let directionY = horizontal ? 1 : 0;
-    let directionX = horizontal ? 0 : 1;
-
-    // determine the length of the wall
-    let length = horizontal ? hor : vert;
-
-    // what direction is perp to the wall
-   // let dir = horizontal ? SOUTH : EAST;
-
-    // draw the grid
-    for(let i = 0; i < length;i++) {
-        console.log("walls : " + wallX+","+wallY)
-        if(wallX !== passageX || wallY !== passageY) {
-          document.getElementById(`node-${wallX}-${wallY}`).className =
-          'node node-wall';
-          grid[wallX][wallY].isWall = true;
-        }
-        wallX += directionX;
-        wallY += directionY;
-    }
-
-    let nx = x;
-    let ny = y;
-    let newHor = horizontal ? hor : wallY - y + 1;
-    let newVert = horizontal ? wallX-x + 1: vert;
-    this.getGrid(grid, nx, ny, newHor, newVert, this.getOrientation(newVert, newHor));
-
-    nx = horizontal ? x : wallY + 1;
-    ny = horizontal ? wallX +1 : y;
-    newHor = horizontal ? hor : y + hor - wallY -1;
-    newVert = horizontal ? x + vert - wallX -1: vert;
-    this.getGrid(grid, nx, ny, newHor, newVert, this.getOrientation(newVert, newHor));
-    
-  }
-
-  getOrientation(vert,hor) {
-    if(vert < hor) {
-        return "Verticle";
-    } else {
-        return "Horizontal";
-    }
-  } 
 
   visualizeDepthFirstSearch = () => {
     if(!this.state.gridClear) {
@@ -365,10 +294,7 @@ export default class Pathfinder extends Component {
             </button>
             <button id="DFS_Visualizer" className="button buttonAlgo" onClick={this.visualizeDepthFirstSearch}>
               Depth First Search
-            </button>
-            <button id="GenerateWalls" className="button button-walls buttonWalls" onClick={this.generateWalls}>
-              Generate Walls
-            </button>
+            </button> 
             <button id="ClearGrid" className="button button-clear buttonClear" onClick={this.clearGrid}>
               Clear Grid
             </button>
@@ -433,7 +359,6 @@ export default class Pathfinder extends Component {
       document.getElementById(`Dijkstra_Visualizer`).setAttribute("disabled","disabled");
       document.getElementById(`BFS_Visualizer`).setAttribute("disabled","disabled");
       document.getElementById(`DFS_Visualizer`).setAttribute("disabled","disabled");
-      document.getElementById(`GenerateWalls`).setAttribute("disabled","disabled");
       document.getElementById(`ClearGrid`).setAttribute("disabled","disabled");
       document.getElementById(`ClearPath`).setAttribute("disabled","disabled");
       for(let i = 0; i < GRID_WIDTH; i++) {
@@ -450,7 +375,6 @@ export default class Pathfinder extends Component {
       document.getElementById(`Dijkstra_Visualizer`).removeAttribute("disabled");
       document.getElementById(`BFS_Visualizer`).removeAttribute("disabled");
       document.getElementById(`DFS_Visualizer`).removeAttribute("disabled");
-      document.getElementById(`GenerateWalls`).removeAttribute("disabled");
       document.getElementById(`ClearGrid`).removeAttribute("disabled");
       document.getElementById(`ClearPath`).removeAttribute("disabled");
       for(let i = 0; i < GRID_WIDTH; i++) {
