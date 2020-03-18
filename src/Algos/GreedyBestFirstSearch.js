@@ -8,7 +8,7 @@ export function GBFS(grid, startN, GRID_LENGTH, GRID_WIDTH,FINISH_NODE_ROW,FINIS
     let nodesToVisit = [];
     let visitedNodes = [];
     let shortestPath = [];
-    let startNode = grid[startN.col][startN.row];
+    let startNode = grid[startN.row][startN.col];
 
     startNode.isVisited = true;
     nodesToVisit.push(startNode);

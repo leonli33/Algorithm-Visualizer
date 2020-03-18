@@ -13,11 +13,10 @@ export function aStar(grid, startN, GRID_LENGTH, GRID_WIDTH,FINISH_NODE_ROW,FINI
     let nodesToVisit = [];
     let visitedNodes = [];
     let shortestPath = [];
-    let startNode = grid[startN.col][startN.row];
+    let startNode = grid[startN.row][startN.col];
 
     // push the start node into the array to be explored
     startNode.distance = 0;
-    startNode.gCost = 0;
     startNode.isVisited = true;
     nodesToVisit.push(startNode);
 
@@ -27,6 +26,7 @@ export function aStar(grid, startN, GRID_LENGTH, GRID_WIDTH,FINISH_NODE_ROW,FINI
       nodesToVisit.sort((nodeA, nodeB) => nodeA.distance - nodeB.distance);
       // take the first element out of the array
       let currentNode = nodesToVisit.shift();
+      console.log(currentNode.distance);
       // check if the current node is the finish node
       if(currentNode.isFinish) {
         let current = currentNode;
@@ -63,10 +63,9 @@ export function aStar(grid, startN, GRID_LENGTH, GRID_WIDTH,FINISH_NODE_ROW,FINI
             let distanceFromStartX = (Math.abs(START_NODE_ROW - neighbor.row)) * 10;
             let distanceFromStartY = (Math.abs(START_NODE_COL - neighbor.col)) * 10;
             let distanceFromStartNode = distanceFromStartX  + distanceFromStartY;
-            neighbor.gCost = distanceFromStartNode;
 
             // A* is calculated by adding Gcost with Hcost
-            neighbor.distance = neighbor.gCost + distanceFromEndNode;
+            neighbor.distance = distanceFromStartNode + distanceFromEndNode;
             neighbor.isVisited = true;
             nodesToVisit.push(neighbor);
           }

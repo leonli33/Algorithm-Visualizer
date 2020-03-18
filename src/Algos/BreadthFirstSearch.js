@@ -8,7 +8,7 @@ export function BFS(grid, startN, GRID_LENGTH, GRID_WIDTH) {
     let nodesToVisit = [];
     let visitedNodes = [];
     let shortestPath = [];
-    let startNode = grid[startN.col][startN.row];
+    let startNode = grid[startN.row][startN.col];
 
     // push the start node into the array to be explored
     startNode.distance = 0;
