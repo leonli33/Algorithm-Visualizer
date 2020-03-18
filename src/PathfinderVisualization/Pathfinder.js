@@ -20,6 +20,11 @@ let nodeBeforeEnter = -1;
 const GRID_WIDTH = 20;
 const GRID_LENGTH = 50;
 
+// placing start node on end node
+// dragging start node off screen then pressing the start algo button (check)
+// walls are not setting in place correct after algo is done
+
+
 export default class Pathfinder extends Component {
   // last algo: 0= A*, 1 = Greedy, 2= Dijkstra, 3=Breadth, 4 = Depth
   constructor(props) {
@@ -59,7 +64,7 @@ export default class Pathfinder extends Component {
     } else {
       nodeBeforeEnter = 0;
     }
-    if(!this.state.grid[row][col].isFinish && !this.state.grid[row][col].isStart && mouseIsPressed && !this.state.startNodeMove) {
+    if(!this.state.grid[row][col].isFinish && !this.state.grid[row][col].isStart && mouseIsPressed) {
       if(!this.state.grid[row][col].isWall) {
         this.state.grid[row][col].isWall = true;
         document.getElementById(`node-${row}-${col}`).className = "node node-wall";
@@ -97,7 +102,7 @@ export default class Pathfinder extends Component {
       this.state.grid[row][col].isWall = false;
       document.getElementById(`node-${row}-${col}`).className = "node";
     }
-    if(nodeBeforeEnter === 1) {
+    if(nodeBeforeEnter === 1 && (this.state.startNodeMove || this.state.finishNodeMove)) {
       this.state.grid[row][col].isWall = true;
       document.getElementById(`node-${row}-${col}`).className = "node node-wall";
     }  
@@ -141,6 +146,10 @@ export default class Pathfinder extends Component {
   }
 
   handleMouseUp = (row,col) => {
+    this.setState({
+      startNodeMove:false,
+      finishNodeMove: false
+    });
     if(!this.state.grid[row][col].isStart && !this.state.grid[row][col].isFinish) {
       if(this.state.startNodeMove) {
         this.state.grid[START_NODE_ROW][START_NODE_COL].isStart = false;
@@ -166,85 +175,94 @@ export default class Pathfinder extends Component {
       }
     }
     mouseIsPressed = false;
-    this.setState({
-      startNodeMove:false,
-      finishNodeMove: false
-    });
+
   }
 
   visualizeDepthFirstSearch = () => {
-    if(!this.state.gridClear) {
-      this.clearPath();
-    }
-    this.setState({
-      lastAlgo:4
-    });
-    this.disableElements();
-    let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
-    let path = DFS(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH);
-    if(path.shortest === null) {
-      this.displayAlgoNoPath(path.visited);
-    } else {
-      this.displayAlgo(path.visited,path.shortest);
+    if(!this.state.startNodeMove && !this.state.finishNodeMove) {
+      if(!this.state.gridClear) {
+        this.clearPath();
+      }
+      this.setState({
+        lastAlgo:4
+      });
+      this.disableElements();
+      let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
+      let path = DFS(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH);
+      if(path.shortest === null) {
+        this.displayAlgoNoPath(path.visited);
+      } else {
+        this.displayAlgo(path.visited,path.shortest);
+      }
     }
   }
 
   visualizeGreedyBestFirstSearch = () => {
-    if(!this.state.gridClear) {
+    if(!this.state.startNodeMove && !this.state.finishNodeMove) {
+      if(!this.state.gridClear) {
       this.clearPath();
+      }
+      this.setState({
+        lastAlgo:1
+      })
+      this.disableElements();
+      let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
+      let path = GBFS(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH,FINISH_NODE_ROW,FINISH_NODE_COL);
+      let shortestPath = path.shortest.reverse();
+      this.displayAlgo(path.visited,shortestPath);
     }
-    this.setState({
-      lastAlgo:1
-    })
-    this.disableElements();
-    let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
-    let path = GBFS(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH,FINISH_NODE_ROW,FINISH_NODE_COL);
-    let shortestPath = path.shortest.reverse();
-    this.displayAlgo(path.visited,shortestPath);
   }
 
   // this is pretty much the same thing as dijkstra's except we are not sorting
   visualizeBreadthFirstSearch = () => {
-    if(!this.state.gridClear) {
-      this.clearPath();
+    if(!this.state.startNodeMove && !this.state.finishNodeMove) {
+      if(!this.state.gridClear) {
+        this.clearPath();
+      }
+      this.setState({
+        lastAlgo:3
+      })
+      this.disableElements();
+      let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
+      let path = BFS(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH);
+      let shortestPath = path.shortest.reverse();
+      this.displayAlgo(path.visited,shortestPath);
     }
-    this.setState({
-      lastAlgo:3
-    })
-    this.disableElements();
-    let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
-    let path = BFS(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH);
-    let shortestPath = path.shortest.reverse();
-    this.displayAlgo(path.visited,shortestPath);
   }
 
   visualizeAStar = () => {
-    if(!this.state.gridClear) {
-      this.clearPath();
+    if(!this.state.startNodeMove && !this.state.finishNodeMove) {
+      if(!this.state.gridClear) {
+        this.clearPath();
+      }
+      this.setState({
+        lastAlgo:0
+      })
+      this.disableElements();
+      let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
+      let path = aStar(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH,FINISH_NODE_ROW,FINISH_NODE_COL);
+      let shortestPath = path.shortest.reverse();
+      this.displayAlgo(path.visited,shortestPath);
     }
-    this.setState({
-      lastAlgo:0
-    })
-    this.disableElements();
-    let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
-    let path = aStar(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH,FINISH_NODE_ROW,FINISH_NODE_COL);
-    let shortestPath = path.shortest.reverse();
-    this.displayAlgo(path.visited,shortestPath);
+
   }
  
 
   visualizeDijkstra = () => {
-    if(!this.state.gridClear) {
-      this.clearPath();
+    if(!this.state.startNodeMove && !this.state.finishNodeMove) {
+      if(!this.state.gridClear) {
+        this.clearPath();
+      }
+      this.setState({
+        lastAlgo:2
+      })
+      this.disableElements();
+      let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
+      let path = dijkstra(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH);
+      let shortestPath = path.shortest.reverse();
+      this.displayAlgo(path.visited,shortestPath);
     }
-    this.setState({
-      lastAlgo:2
-    })
-    this.disableElements();
-    let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
-    let path = dijkstra(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH);
-    let shortestPath = path.shortest.reverse();
-    this.displayAlgo(path.visited,shortestPath);
+    
   }
 
   displayAlgoNoPath(nodes) {
@@ -307,32 +325,34 @@ export default class Pathfinder extends Component {
   };
 
   clearPath = () => {
-    this.setState({
-      gridClear: true,
-      lastAlgo : -1
-    })
-    nodeBeforeEnter = -1;
-    for(let i = 0; i < GRID_WIDTH; i++) {
-      for(let j = 0; j < GRID_LENGTH;j++) {
-        if(i === START_NODE_ROW && j === START_NODE_COL) {
-          document.getElementById(`node-${i}-${j}`).className = 'node node-start';
-          this.state.grid[i][j].distance = Infinity;
-          this.state.grid[i][j].isVisited = false;
-          this.state.grid[i][j].isWall = false;
-          this.state.grid[i][j].previousNode = null;
-        } else if(i === FINISH_NODE_ROW && j === FINISH_NODE_COL ) {
-          document.getElementById(`node-${i}-${j}`).className = 'node node-finish';
-          this.state.grid[i][j].distance = Infinity;
-          this.state.grid[i][j].isVisited = false;
-          this.state.grid[i][j].isWall = false;
-          this.state.grid[i][j].previousNode = null;
-        }
-        else if(this.state.grid[i][j].isVisited && !this.state.grid[i][j].isFinish) {
-          document.getElementById(`node-${i}-${j}`).className = 'node';
-          this.state.grid[i][j].distance = Infinity;
-          this.state.grid[i][j].isVisited = false;
-          this.state.grid[i][j].isWall = false;
-          this.state.grid[i][j].previousNode = null;
+    if(!this.state.startNodeMove && !this.state.finishNodeMove) { 
+      this.setState({
+        gridClear: true,
+        lastAlgo : -1
+      })
+      nodeBeforeEnter = -1;
+      for(let i = 0; i < GRID_WIDTH; i++) {
+        for(let j = 0; j < GRID_LENGTH;j++) {
+          if(i === START_NODE_ROW && j === START_NODE_COL) {
+            document.getElementById(`node-${i}-${j}`).className = 'node node-start';
+            this.state.grid[i][j].distance = Infinity;
+            this.state.grid[i][j].isVisited = false;
+            this.state.grid[i][j].isWall = false;
+            this.state.grid[i][j].previousNode = null;
+          } else if(i === FINISH_NODE_ROW && j === FINISH_NODE_COL ) {
+            document.getElementById(`node-${i}-${j}`).className = 'node node-finish';
+            this.state.grid[i][j].distance = Infinity;
+            this.state.grid[i][j].isVisited = false;
+            this.state.grid[i][j].isWall = false;
+            this.state.grid[i][j].previousNode = null;
+          }
+          else if(this.state.grid[i][j].isVisited && !this.state.grid[i][j].isFinish) {
+            document.getElementById(`node-${i}-${j}`).className = 'node';
+            this.state.grid[i][j].distance = Infinity;
+            this.state.grid[i][j].isVisited = false;
+            this.state.grid[i][j].isWall = false;
+            this.state.grid[i][j].previousNode = null;
+          }
         }
       }
     }

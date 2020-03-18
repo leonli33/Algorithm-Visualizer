@@ -26,7 +26,6 @@ export function aStar(grid, startN, GRID_LENGTH, GRID_WIDTH,FINISH_NODE_ROW,FINI
       nodesToVisit.sort((nodeA, nodeB) => nodeA.distance - nodeB.distance);
       // take the first element out of the array
       let currentNode = nodesToVisit.shift();
-      console.log(currentNode.distance);
       // check if the current node is the finish node
       if(currentNode.isFinish) {
         let current = currentNode;

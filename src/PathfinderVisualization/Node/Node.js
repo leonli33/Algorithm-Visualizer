@@ -12,10 +12,10 @@ export default class Pathfinder extends Component {
             isFinish,
             isStart,
             isWall,
+            onMouseOut,
             onMouseDown,
             onMouseEnter,
             onMouseUp,
-            onMouseOut,
             row          
           } = this.props;
 
@@ -32,10 +32,10 @@ export default class Pathfinder extends Component {
             <div
                 id={`node-${row}-${col}`}
                 className={`node ${extraClassName}`}
+                onMouseOut={() => onMouseOut(row,col)}
                 onMouseDown={() => onMouseDown(row, col)}
                 onMouseEnter={() => onMouseEnter(row, col)}
-                onMouseUp={() => onMouseUp(row,col)}
-                onMouseOut={() => onMouseOut(row,col)}>
+                onMouseUp={() => onMouseUp(row,col)}>
             </div>
           );
     }
