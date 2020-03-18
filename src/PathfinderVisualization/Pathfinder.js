@@ -64,46 +64,52 @@ export default class Pathfinder extends Component {
     } else {
       nodeBeforeEnter = 0;
     }
-    if(!this.state.grid[row][col].isFinish && !this.state.grid[row][col].isStart && mouseIsPressed) {
+    if(!this.state.grid[row][col].isFinish && !this.state.grid[row][col].isStart && mouseIsPressed
+        && !this.state.startNodeMove && !this.state.finishNodeMove) {
       if(!this.state.grid[row][col].isWall) {
         this.state.grid[row][col].isWall = true;
+        this.state.grid[row][col].isVisited = false;
         document.getElementById(`node-${row}-${col}`).className = "node node-wall";
+
       } else {
         this.state.grid[row][col].isWall = false;
+        this.state.grid[row][col].isVisited = false;
         document.getElementById(`node-${row}-${col}`).className = "node";
       }
     } else if(this.state.startNodeMove && !this.state.grid[row][col].isFinish) {
       this.state.grid[row][col].isStart = true;
+      this.state.grid[row][col].isWall = false;
       document.getElementById(`node-${row}-${col}`).className = "node node-start";
       START_NODE_ROW = row;
       START_NODE_COL = col;
 
     } else if(this.state.finishNodeMove && !this.state.grid[row][col].isStart) {
       this.state.grid[row][col].isFinish = true;
+      this.state.grid[row][col].isWall = false;
       document.getElementById(`node-${row}-${col}`).className = "node node-finish";
       FINISH_NODE_ROW = row;
       FINISH_NODE_COL = col;
     }
   }
 
-
-
-
   handleMouseOut = (row,col) => {
     if(this.state.startNodeMove && !this.state.grid[row][col].isFinish) {
       this.state.grid[row][col].isStart = false;
       this.state.grid[row][col].isFinish = false;
       this.state.grid[row][col].isWall = false;
+      this.state.grid[row][col].isVisited = false;
       document.getElementById(`node-${row}-${col}`).className = "node";
     }
     else if(this.state.finishNodeMove && !this.state.grid[row][col].isStart) {
       this.state.grid[row][col].isStart = false;
       this.state.grid[row][col].isFinish = false;
       this.state.grid[row][col].isWall = false;
+      this.state.grid[row][col].isVisited = false;
       document.getElementById(`node-${row}-${col}`).className = "node";
     }
     if(nodeBeforeEnter === 1 && (this.state.startNodeMove || this.state.finishNodeMove)) {
       this.state.grid[row][col].isWall = true;
+      this.state.grid[row][col].isVisited = false;
       document.getElementById(`node-${row}-${col}`).className = "node node-wall";
     }  
   }
@@ -126,14 +132,18 @@ export default class Pathfinder extends Component {
     if(!this.state.grid[row][col].isFinish && !this.state.grid[row][col].isStart && 
       !this.state.grid[row][col].isWall) {
       mouseIsPressed = true;
+      this.state.grid[row][col].isVisited = false;
       document.getElementById(`node-${row}-${col}`).className = 
       "node node-wall";
       this.state.grid[row][col].isWall = true;
     } else if(!this.state.grid[row][col].isFinish && !this.state.grid[row][col].isStart && 
       this.state.grid[row][col].isWall) {
+
       mouseIsPressed = true;
+      this.state.grid[row][col].isVisited = false;
       document.getElementById(`node-${row}-${col}`).className = "node";
       this.state.grid[row][col].isWall = false;
+
     }else if (this.state.grid[row][col].isStart) {
       this.setState({
         startNodeMove: true
@@ -173,6 +183,41 @@ export default class Pathfinder extends Component {
         FINISH_NODE_ROW = row;
         FINISH_NODE_COL = col;
       }
+    }
+    if(this.state.startNodeMove) {
+        START_NODE_ROW = row;
+        START_NODE_COL = col;
+    } else if(this.state.finishNodeMove) {
+        FINISH_NODE_ROW = row;
+        FINISH_NODE_COL = col;
+    }
+    console.log(FINISH_NODE_ROW +  " + "  + START_NODE_ROW + "\n" + FINISH_NODE_COL + START_NODE_COL)
+
+    if(START_NODE_COL === FINISH_NODE_COL && START_NODE_ROW === FINISH_NODE_ROW) {
+      console.log("here")
+      this.state.grid[row][col].isFinish = false;
+      this.state.grid[row][col].isVisited = false;
+      this.state.grid[row][col].isStart = false;
+      this.state.grid[row][col].isWall = false;
+      document.getElementById(`node-${row}-${col}`).className =
+      'node';
+      START_NODE_ROW = 10;
+      START_NODE_COL = 10;
+      FINISH_NODE_ROW = 10;
+      FINISH_NODE_COL = 45;
+      this.state.grid[START_NODE_ROW][START_NODE_COL].isWall = false;
+      this.state.grid[START_NODE_ROW][START_NODE_COL].isVisited = false;
+      this.state.grid[START_NODE_ROW][START_NODE_COL].isFinish = false;
+      this.state.grid[START_NODE_ROW][START_NODE_COL].isStart = true;
+      document.getElementById(`node-${START_NODE_ROW}-${START_NODE_COL}`).className =
+      'node node-start';
+
+      this.state.grid[FINISH_NODE_ROW][FINISH_NODE_COL].isWall = false;
+      this.state.grid[FINISH_NODE_ROW][FINISH_NODE_COL].isVisited = false;
+      this.state.grid[FINISH_NODE_ROW][FINISH_NODE_COL].isFinish = true;
+      this.state.grid[FINISH_NODE_ROW][FINISH_NODE_COL].isStart = false;
+      document.getElementById(`node-${FINISH_NODE_ROW}-${FINISH_NODE_COL}`).className =
+      'node node-finish';
     }
     mouseIsPressed = false;
 
