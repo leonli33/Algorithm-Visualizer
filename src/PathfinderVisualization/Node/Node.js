@@ -5,7 +5,6 @@ export default class Pathfinder extends Component {
         super(props);
         this.state = {};
     }
-
     render() {
         const {
             col,
@@ -19,15 +18,14 @@ export default class Pathfinder extends Component {
             row          
           } = this.props;
 
-          const extraClassName = 
-            isFinish
-            ? 'node-finish'
-            : isStart
-            ? 'node-start'
-            : isWall
-            ? 'node-wall'
-            : '';       
-
+          let extraClassName = '';
+          if(isFinish) {
+            extraClassName = 'node-finish';
+          } else if (isStart) {
+            extraClassName = 'node-start';
+          } else if(isWall) {
+            extraClassName = 'node-wall';
+          }
           return (
             <div
                 id={`node-${row}-${col}`}

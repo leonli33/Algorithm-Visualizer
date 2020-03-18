@@ -14,15 +14,12 @@ let FINISH_NODE_ROW = 10;
 let FINISH_NODE_COL = 45;
 
 let mouseIsPressed = false;
+
 // 0 = regular node, 1 = wall
 let nodeBeforeEnter = -1;
 
 const GRID_WIDTH = 20;
 const GRID_LENGTH = 50;
-
-// placing start node on end node
-// dragging start node off screen then pressing the start algo button (check)
-// walls are not setting in place correct after algo is done
 
 
 export default class Pathfinder extends Component {
@@ -40,6 +37,7 @@ export default class Pathfinder extends Component {
       };
   }
 
+  // set the grid and also set up a mouseUp listener
   componentDidMount() {
       const gridDrawn = this.formulateGrid();
       this.setState({
@@ -49,14 +47,17 @@ export default class Pathfinder extends Component {
 
   }
 
+  // detech mouseUp listener
   componentWillUnmount() {
     window.removeEventListener('mouseup', this.onMouseUp)
   }
 
+  // set mouseIsPressed to false
   onMouseUp = () => {
     mouseIsPressed = false
   }
 
+  // if mouse enters the boundary of any node
   handleMouseEnter = (row,col) => {
     // use this to take the state of the node back to what it was
     if(this.state.grid[row][col].isWall) {
@@ -64,19 +65,24 @@ export default class Pathfinder extends Component {
     } else {
       nodeBeforeEnter = 0;
     }
+    // if dragging to make walls
     if(!this.state.grid[row][col].isFinish && !this.state.grid[row][col].isStart && mouseIsPressed
         && !this.state.startNodeMove && !this.state.finishNodeMove) {
       if(!this.state.grid[row][col].isWall) {
+        // turn the nodes into wall nodes
         this.state.grid[row][col].isWall = true;
         this.state.grid[row][col].isVisited = false;
         document.getElementById(`node-${row}-${col}`).className = "node node-wall";
 
       } else {
+        // turn the wall nodes back into regular nodes
         this.state.grid[row][col].isWall = false;
         this.state.grid[row][col].isVisited = false;
         document.getElementById(`node-${row}-${col}`).className = "node";
       }
     } else if(this.state.startNodeMove && !this.state.grid[row][col].isFinish) {
+      // if the start node is being dragged, set the nodes in the array accordingly and then
+      // set the row and column of where the start node is
       this.state.grid[row][col].isStart = true;
       this.state.grid[row][col].isWall = false;
       document.getElementById(`node-${row}-${col}`).className = "node node-start";
@@ -84,6 +90,7 @@ export default class Pathfinder extends Component {
       START_NODE_COL = col;
 
     } else if(this.state.finishNodeMove && !this.state.grid[row][col].isStart) {
+      // if the finish node is moving, do the same thing as described above
       this.state.grid[row][col].isFinish = true;
       this.state.grid[row][col].isWall = false;
       document.getElementById(`node-${row}-${col}`).className = "node node-finish";
@@ -92,8 +99,11 @@ export default class Pathfinder extends Component {
     }
   }
 
+  // when the mouse leaves a certain node
   handleMouseOut = (row,col) => {
+    // if the start node is moving
     if(this.state.startNodeMove && !this.state.grid[row][col].isFinish) {
+      // set this node back into a regular node
       this.state.grid[row][col].isStart = false;
       this.state.grid[row][col].isFinish = false;
       this.state.grid[row][col].isWall = false;
@@ -101,6 +111,7 @@ export default class Pathfinder extends Component {
       document.getElementById(`node-${row}-${col}`).className = "node";
     }
     else if(this.state.finishNodeMove && !this.state.grid[row][col].isStart) {
+      // if finish node has moved out of this node, put node back into regular node
       this.state.grid[row][col].isStart = false;
       this.state.grid[row][col].isFinish = false;
       this.state.grid[row][col].isWall = false;
@@ -108,12 +119,15 @@ export default class Pathfinder extends Component {
       document.getElementById(`node-${row}-${col}`).className = "node";
     }
     if(nodeBeforeEnter === 1 && (this.state.startNodeMove || this.state.finishNodeMove)) {
+      // if the node was orinally a wall before the start/end node moved into it, set it
+      // back into a wall
       this.state.grid[row][col].isWall = true;
       this.state.grid[row][col].isVisited = false;
       document.getElementById(`node-${row}-${col}`).className = "node node-wall";
     }  
   }
 
+  // toggle a given wall
   toggleWall(row,col,grid) {
     // make a copy
     let newGrid = grid.slice();
@@ -131,24 +145,28 @@ export default class Pathfinder extends Component {
     // being a wall node or regular node
     if(!this.state.grid[row][col].isFinish && !this.state.grid[row][col].isStart && 
       !this.state.grid[row][col].isWall) {
+      // turn the node into a wall node and indicate that the mouse is currently being pressed
       mouseIsPressed = true;
       this.state.grid[row][col].isVisited = false;
       document.getElementById(`node-${row}-${col}`).className = 
       "node node-wall";
       this.state.grid[row][col].isWall = true;
-    } else if(!this.state.grid[row][col].isFinish && !this.state.grid[row][col].isStart && 
+    } 
+    else if(!this.state.grid[row][col].isFinish && !this.state.grid[row][col].isStart && 
       this.state.grid[row][col].isWall) {
-
+      // turn the node back into a regular node and indicate that the mouse is being pressed
       mouseIsPressed = true;
       this.state.grid[row][col].isVisited = false;
       document.getElementById(`node-${row}-${col}`).className = "node";
       this.state.grid[row][col].isWall = false;
 
     }else if (this.state.grid[row][col].isStart) {
+      // if the user is pressed on the start node, indicate that the start node is moving
       this.setState({
         startNodeMove: true
       });
     } else if (this.state.grid[row][col].isFinish) {
+      // if the user is pressed on the finish  node, indicate that the finish node is moving
       this.setState({
         finishNodeMove: true
       });
@@ -156,22 +174,30 @@ export default class Pathfinder extends Component {
   }
 
   handleMouseUp = (row,col) => {
+    // if the mouse is released
+
+    // the start and finish node are not being moved
     this.setState({
       startNodeMove:false,
       finishNodeMove: false
     });
+    // if the end node is not the start or finish node
     if(!this.state.grid[row][col].isStart && !this.state.grid[row][col].isFinish) {
       if(this.state.startNodeMove) {
+        // set the previous start node into a regular node
         this.state.grid[START_NODE_ROW][START_NODE_COL].isStart = false;
         document.getElementById(`node-${START_NODE_ROW}-${START_NODE_COL}`).className =
             'node';
+        
+        // update start node
         this.state.grid[row][col].isStart = true;
         this.state.grid[row][col].isVisited = false;
         this.state.grid[row][col].isWall = false;
-        
+        // update the position of the start node
         START_NODE_ROW = row;
         START_NODE_COL = col;
       } else if (this.state.finishNodeMove) {
+        // do the same thing as done for start node above
         this.state.grid[FINISH_NODE_ROW][FINISH_NODE_COL].isFinish = false;
         document.getElementById(`node-${FINISH_NODE_ROW}-${FINISH_NODE_COL}`).className =
             'node';
@@ -184,6 +210,7 @@ export default class Pathfinder extends Component {
         FINISH_NODE_COL = col;
       }
     }
+    // if the start or end node is moving, update accoridingly
     if(this.state.startNodeMove) {
         START_NODE_ROW = row;
         START_NODE_COL = col;
@@ -191,20 +218,22 @@ export default class Pathfinder extends Component {
         FINISH_NODE_ROW = row;
         FINISH_NODE_COL = col;
     }
-    console.log(FINISH_NODE_ROW +  " + "  + START_NODE_ROW + "\n" + FINISH_NODE_COL + START_NODE_COL)
 
+    // if the finish node is on top of the start node
     if(START_NODE_COL === FINISH_NODE_COL && START_NODE_ROW === FINISH_NODE_ROW) {
-      console.log("here")
+      // reset the nodes to their original positions
       this.state.grid[row][col].isFinish = false;
       this.state.grid[row][col].isVisited = false;
       this.state.grid[row][col].isStart = false;
       this.state.grid[row][col].isWall = false;
       document.getElementById(`node-${row}-${col}`).className =
       'node';
+
       START_NODE_ROW = 10;
       START_NODE_COL = 10;
       FINISH_NODE_ROW = 10;
       FINISH_NODE_COL = 45;
+
       this.state.grid[START_NODE_ROW][START_NODE_COL].isWall = false;
       this.state.grid[START_NODE_ROW][START_NODE_COL].isVisited = false;
       this.state.grid[START_NODE_ROW][START_NODE_COL].isFinish = false;
@@ -223,17 +252,24 @@ export default class Pathfinder extends Component {
 
   }
 
+  // visualize depth first search algo
   visualizeDepthFirstSearch = () => {
+    // only execute if the stat and end node are not moving
     if(!this.state.startNodeMove && !this.state.finishNodeMove) {
+      // if the grid is not clear, clear the grid
       if(!this.state.gridClear) {
         this.clearPath();
       }
       this.setState({
         lastAlgo:4
       });
+      // disable all elements when visualizing
       this.disableElements();
+      // get the start node
       let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
+      // get the path returned
       let path = DFS(this.state.grid,startNode,GRID_LENGTH,GRID_WIDTH);
+      // visualize the path
       if(path.shortest === null) {
         this.displayAlgoNoPath(path.visited);
       } else {
@@ -242,6 +278,7 @@ export default class Pathfinder extends Component {
     }
   }
 
+  // visualize the greedy best first search algo
   visualizeGreedyBestFirstSearch = () => {
     if(!this.state.startNodeMove && !this.state.finishNodeMove) {
       if(!this.state.gridClear) {
@@ -275,6 +312,7 @@ export default class Pathfinder extends Component {
     }
   }
 
+  // visualize A* algo
   visualizeAStar = () => {
     if(!this.state.startNodeMove && !this.state.finishNodeMove) {
       if(!this.state.gridClear) {
@@ -291,8 +329,8 @@ export default class Pathfinder extends Component {
     }
 
   }
- 
-
+  
+  // visualize Dijkstra's algo
   visualizeDijkstra = () => {
     if(!this.state.startNodeMove && !this.state.finishNodeMove) {
       if(!this.state.gridClear) {
@@ -310,18 +348,22 @@ export default class Pathfinder extends Component {
     
   }
 
+  // if there is no path found, just display the path visited
   displayAlgoNoPath(nodes) {
+    // grid is no longer clear
     this.setState({
       gridClear: false
     });
     for(let i = 0; i <= nodes.length;i++) {
       if(i === nodes.length) {
         setTimeout(() => {
+          // enable all the elements again
           this.enableElements();
         }, 6 * i);
       }
       else {
-         setTimeout(() => {
+        setTimeout(() => {
+        // update the grid
         const node = nodes[i];
         if(!node.isStart && !node.isFinish) {
           document.getElementById(`node-${node.row}-${node.col}`).className =
@@ -331,9 +373,11 @@ export default class Pathfinder extends Component {
     }
   }
 
+  // visualize the path found
   displayAlgo(nodes, shortestPath) {
     for(let i = 0; i <= nodes.length;i++) {
       if(i === nodes.length) {
+        // if the other elements are done updating, show the shortest path
           setTimeout(() => {
             this.visualizeShortestPath(shortestPath);
           }, 6 * i);
@@ -348,6 +392,7 @@ export default class Pathfinder extends Component {
     }
   }
 
+  // show the shortest path
   visualizeShortestPath(shortestPath) {
     this.setState({
       gridClear: false
@@ -369,6 +414,7 @@ export default class Pathfinder extends Component {
     }
   };
 
+  // clear the grid of all path nodes
   clearPath = () => {
     if(!this.state.startNodeMove && !this.state.finishNodeMove) { 
       this.setState({
@@ -403,31 +449,33 @@ export default class Pathfinder extends Component {
     }
   }
 
+  // clear the grid of all wall and path nodes
   clearGrid = () => {
-    this.setState({
-      gridClear: true,
-      lastAlgo: -1
-    })
-    nodeBeforeEnter = -1;
-    for(let i = 0; i < GRID_WIDTH; i++) {
-      for(let j = 0; j < GRID_LENGTH;j++) {
-          if(i === START_NODE_ROW && j === START_NODE_COL) {
-            document.getElementById(`node-${i}-${j}`).className = 'node node-start';
-          } else if(i === FINISH_NODE_ROW && j === FINISH_NODE_COL ) {
-            document.getElementById(`node-${i}-${j}`).className = 'node node-finish';
-          } else {
-            document.getElementById(`node-${i}-${j}`).className = 'node';
-          }
-          this.state.grid[i][j].distance = Infinity;
-          this.state.grid[i][j].isVisited = false;
-          this.state.grid[i][j].isWall = false;
-          this.state.grid[i][j].previousNode = null;
+    if(!this.state.startNodeMove && !this.state.finishNodeMove) { 
+      this.setState({
+        gridClear: true,
+        lastAlgo: -1
+      })
+      nodeBeforeEnter = -1;
+      for(let i = 0; i < GRID_WIDTH; i++) {
+        for(let j = 0; j < GRID_LENGTH;j++) {
+            if(i === START_NODE_ROW && j === START_NODE_COL) {
+              document.getElementById(`node-${i}-${j}`).className = 'node node-start';
+            } else if(i === FINISH_NODE_ROW && j === FINISH_NODE_COL ) {
+              document.getElementById(`node-${i}-${j}`).className = 'node node-finish';
+            } else {
+              document.getElementById(`node-${i}-${j}`).className = 'node';
+            }
+            this.state.grid[i][j].distance = Infinity;
+            this.state.grid[i][j].isVisited = false;
+            this.state.grid[i][j].isWall = false;
+            this.state.grid[i][j].previousNode = null;
+        }
       }
     }
   }
 
   render() {
-      const {grid, mousePressed} = this.state;
       return (
         <>
           <div className="buttons">
@@ -504,7 +552,7 @@ export default class Pathfinder extends Component {
         </>
       );
     }
-    
+    // disable user interaction
     disableElements() {
       document.getElementById(`AStar_Visualizer`).setAttribute("disabled","disabled");
       document.getElementById(`GBFS_Visualizer`).setAttribute("disabled","disabled");
@@ -521,6 +569,7 @@ export default class Pathfinder extends Component {
       
     }
 
+    // enable user interaction
     enableElements() {
       document.getElementById(`AStar_Visualizer`).removeAttribute("disabled");
       document.getElementById(`GBFS_Visualizer`).removeAttribute("disabled");
@@ -536,6 +585,7 @@ export default class Pathfinder extends Component {
       }
     }
 
+    // generate the beginning grid
     formulateGrid = () => {
         // draw a grid onto the screen
         const nodes = [];
@@ -549,6 +599,7 @@ export default class Pathfinder extends Component {
         return nodes;
     }
 
+    // create a node
     createNode = (col, row) => {
         return {
           col,
