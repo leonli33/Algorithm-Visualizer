@@ -18,8 +18,8 @@ let mouseIsPressed = false;
 // 0 = regular node, 1 = wall
 let nodeBeforeEnter = -1;
 
-const GRID_WIDTH = 20;
-const GRID_LENGTH = 50;
+let GRID_WIDTH = 20;
+let GRID_LENGTH = 50;
 
 
 export default class Pathfinder extends Component {
@@ -39,6 +39,15 @@ export default class Pathfinder extends Component {
 
   // set the grid and also set up a mouseUp listener
   componentDidMount() {
+      let windowWidth = window.screen.width;
+      let windowHeight = window.screen.height;
+      GRID_LENGTH = ((windowWidth - 50) / 25);
+      GRID_WIDTH = ((windowHeight - 300) / 25);
+      START_NODE_ROW = Math.floor(GRID_WIDTH / 2);
+      FINISH_NODE_ROW = Math.floor(GRID_WIDTH / 2);
+      START_NODE_COL =  Math.floor(GRID_LENGTH / 4);
+      FINISH_NODE_COL = Math.floor(GRID_LENGTH * (4/5));
+      console.log(START_NODE_ROW);
       const gridDrawn = this.formulateGrid();
       this.setState({
         grid: gridDrawn

@@ -64,14 +64,13 @@
     display: inline-block;
     vertical-align: center;
     margin-top: 17px;
-    float: left;
-    margin-left: 25px;
+    margin-left: 10vw;
     margin-right: 10px;
 }
 
 .fakeNodeLabel {
-    float: left;
-    margin-top: 18px;
+    position: absolute;
+    margin-top: 17px;
 }
 
 .fakeNodeStart {
@@ -88,6 +87,7 @@
 
 .fakeNodeExploredFirst {
     margin-right: 0px;
+    margin-left: 12vw;
     background-color: #89dbff;
 }
 
@@ -101,5 +101,5 @@
 }
 
 .firstFakeNode {
-    margin-left: 14%;
+    margin-left: -10vh;
 }
