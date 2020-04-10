@@ -41,13 +41,12 @@ export default class Pathfinder extends Component {
   componentDidMount() {
       let windowWidth = window.screen.width;
       let windowHeight = window.screen.height;
-      GRID_LENGTH = ((windowWidth - 50) / 25);
-      GRID_WIDTH = ((windowHeight - 300) / 25);
+      GRID_LENGTH = Math.ceil(((windowWidth - 50) / 25));
+      GRID_WIDTH = Math.ceil(((windowHeight - 300) / 25));
       START_NODE_ROW = Math.floor(GRID_WIDTH / 2);
       FINISH_NODE_ROW = Math.floor(GRID_WIDTH / 2);
       START_NODE_COL =  Math.floor(GRID_LENGTH / 4);
       FINISH_NODE_COL = Math.floor(GRID_LENGTH * (4/5));
-      console.log(START_NODE_ROW);
       const gridDrawn = this.formulateGrid();
       this.setState({
         grid: gridDrawn
