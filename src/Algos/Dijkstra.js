@@ -8,7 +8,7 @@ export function dijkstra(grid, startN, GRID_LENGTH, GRID_WIDTH) {
     let visitedNodes = [];
     let shortestPath = [];
     
-    // set the start node
+    // set the start node in the grid
     let startNode = grid[startN.row][startN.col];
 
     // push the first node into the array of nodes to explore
