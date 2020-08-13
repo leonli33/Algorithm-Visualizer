@@ -1,17 +1,17 @@
 .node {
-    width: 25px;
-    height: 25px;
-    margin-bottom: -3px;
-    background-color: white;
-    outline: 1px solid black;
-    display: inline-block;
-    position: relative;
-    user-drag: none; 
-    user-select: none;
-    -moz-user-select: none;
-    -webkit-user-drag: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
+  width: 25px;
+  height: 25px;
+  margin-bottom: -3px;
+  background-color: white;
+  outline: 1px solid black;
+  display: inline-block;
+  position: relative;
+  user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
 
 .node-finish {
@@ -59,7 +59,6 @@
   animation-play-state: running;
 }
 
-
 @keyframes get-visited-path-animation {
   0% {
     transform: scale(0.8);
@@ -93,7 +92,6 @@
     background-color: yellow;
   }
 }
-
 
 @keyframes isWallAnimation {
   from {

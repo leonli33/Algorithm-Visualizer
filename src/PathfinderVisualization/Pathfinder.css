@@ -1,105 +1,136 @@
 .grid {
-    margin: 0 0 auto;
+  margin: 0 0 auto;
+  margin-left: 12px;
+}
+
+.header {
+  font-family: "Helvetica";
+  font-weight: bold;
+  font-size: 30px;
+  margin-top: 20px;
+  color: white;
+  margin-left: 2vw;
+  display: inline-block;
+}
+
+.gridAndLegend {
+  background-color: white;
+}
+
+.dropDown {
+  border-radius: 5px;
+  border: 2px solid black;
+  color: black;
+  padding: 10px;
+  margin: 10px;
+  margin-bottom: 15px;
+  font-family: "Helvetica";
+  background-color: darkgray;
+  height: 40px;
 }
 
 .button {
-    border-radius: 15px;
-    background: #6A6A6A;
-    border: 2px solid #61dafb;
-    color: #61dafb;
-    padding: 10px;
-    margin: 10px;
-    margin-left: 15px;
-    margin-bottom: 15px;
-    transition: 0.8s;
+  border-radius: 5px;
+  border: 2px solid black;
+  color: black;
+  padding: 10px;
+  margin: 10px;
+  margin-bottom: 15px;
+  font-family: "Helvetica";
+  height: 40px;
+  background-color: darkgray;
+}
+
+.button-reset {
+  border-color: white;
+  color: white;
 }
 
 .buttonAlgo:hover {
-    background-color: #61dafb;
-    color: white;
-    transform: scale(1.1);
-}
-
-.buttonWalls:hover {
-    background-color: #F1C399;
-    color: white;
-    transform: scale(1.1);
-}
-
-.buttonClear:hover {
-    background-color: #ffe815;
-    color: white;
-    transform: scale(1.1);
-}
-
-.button-clear {
-    border: 2px solid #ffe815;
-    color: #ffe815;
-    transition: 0.8s;
-}
-
-.button-walls {
-    border: 2px solid #F1C399;
-    color: #F1C399;
-    transition: 0.8s;
+  background-color: black;
+  opacity: 0.8;
+  color: white;
 }
 
 .buttons {
-    background-color: #6A6A6A;
+  display: inline-block;
+}
+
+.buttonWalls:hover {
+  background-color: #f1c399;
+  color: white;
+  transform: scale(1.1);
+}
+
+.buttonClear:hover {
+  background-color: #ffe815;
+  color: white;
+}
+
+.button-clear {
+  border: 2px solid #ffe815;
+  color: #ffe815;
+  transition: 0.8s;
+}
+
+.button-walls {
+  border: 2px solid #f1c399;
+  color: #f1c399;
+  transition: 0.8s;
 }
 
 .legend {
-    background-color: white;
-    height: 60px;
-    text-align: center;
-    vertical-align: center;
-    width: 100%;
+  background-color: white;
+  height: 60px;
+  text-align: center;
+  vertical-align: center;
+  width: 100%;
 }
 
 .fakeNode {
-    width: 25px;
-    height: 25px;
-    background-color: white;
-    outline: 1px solid black;
-    display: inline-block;
-    vertical-align: center;
-    margin-top: 17px;
-    margin-left: 10vw;
-    margin-right: 10px;
+  width: 25px;
+  height: 25px;
+  background-color: white;
+  outline: 1px solid black;
+  display: inline-block;
+  vertical-align: center;
+  margin-top: 17px;
+  margin-left: 10vw;
+  margin-right: 10px;
 }
 
 .fakeNodeLabel {
-    position: absolute;
-    margin-top: 17px;
+  position: absolute;
+  margin-top: 17px;
 }
 
 .fakeNodeStart {
-    background-color: lightgreen;
+  background-color: lightgreen;
 }
 
 .fakeNodeEnd {
-    background-color: lightcoral;
+  background-color: lightcoral;
 }
 
 .fakeNodeBlock {
-    background-color: #858585;
+  background-color: #858585;
 }
 
 .fakeNodeExploredFirst {
-    margin-right: 0px;
-    margin-left: 12vw;
-    background-color: #89dbff;
+  margin-right: 0px;
+  margin-left: 12vw;
+  background-color: #89dbff;
 }
 
 .fakeNodeExploredSecond {
-    margin-left: 10px;
-    background-color: #7062d7
+  margin-left: 10px;
+  background-color: #7062d7;
 }
 
 .fakeNodeShortestPath {
-    background-color: yellow;
+  background-color: yellow;
 }
 
 .firstFakeNode {
-    margin-left: -10vh;
+  margin-left: -10vh;
 }
