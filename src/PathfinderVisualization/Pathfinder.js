@@ -570,6 +570,21 @@ export default class Pathfinder extends Component {
     }
   };
 
+  resetGrid = () => {
+    this.clearGrid();
+    START_NODE_ROW = Math.floor(GRID_WIDTH / 2);
+    FINISH_NODE_ROW = Math.floor(GRID_WIDTH / 2);
+    START_NODE_COL = Math.floor(GRID_LENGTH / 4);
+    FINISH_NODE_COL = Math.floor(GRID_LENGTH * (4 / 5));
+    const gridDrawn = this.formulateGrid();
+    this.setState({
+      grid: gridDrawn,
+      speedIndex: 1,
+      currentAlgo: "A* Algorithm",
+      currentSpeed: "Normal",
+    });
+  };
+
   render() {
     return (
       <>
@@ -615,7 +630,7 @@ export default class Pathfinder extends Component {
             <button
               id="ClearGrid"
               className="button button-reset"
-              onClick={this.clearGrid}
+              onClick={this.resetGrid}
             >
               Reset
             </button>

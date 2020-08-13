@@ -19,6 +19,7 @@ export function aStar(
 
   // push the start node into the array to be explored
   startNode.distance = 0;
+  startNode.gCost = 0;
   startNode.isVisited = true;
   nodesToVisit.push(startNode);
 
@@ -66,12 +67,15 @@ export function aStar(
           neighbor.previousNode = currentNode;
 
           // get the g cost, determined by a nodes distance from the start node
-          let distanceFromStartX = Math.abs(START_NODE_ROW - neighbor.row) * 10;
-          let distanceFromStartY = Math.abs(START_NODE_COL - neighbor.col) * 10;
-          let distanceFromStartNode = distanceFromStartX + distanceFromStartY;
+          let distanceFromStartX =
+            Math.abs(currentNode.row - neighbor.row) * 10;
+          let distanceFromStartY =
+            Math.abs(currentNode.col - neighbor.col) * 10;
+          neighbor.gCost =
+            currentNode.gCost + distanceFromStartX + distanceFromStartY;
 
           // A* is calculated by adding Gcost with Hcost
-          neighbor.distance = distanceFromStartNode + distanceFromEndNode;
+          neighbor.distance = neighbor.gCost + distanceFromEndNode;
           neighbor.isVisited = true;
           nodesToVisit.push(neighbor);
         }
