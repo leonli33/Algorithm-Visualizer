@@ -319,7 +319,7 @@ export default class Pathfinder extends Component {
         lastAlgo: 4,
       });
       // disable all elements when visualizing
-      this.disableElements();
+      this.disableGrid();
       // get the start node
       let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
       // get the path returned
@@ -342,7 +342,7 @@ export default class Pathfinder extends Component {
       this.setState({
         lastAlgo: 1,
       });
-      this.disableElements();
+      this.disableGrid();
       let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
       let path = GBFS(
         this.state.grid,
@@ -366,7 +366,7 @@ export default class Pathfinder extends Component {
       this.setState({
         lastAlgo: 3,
       });
-      this.disableElements();
+      this.disableGrid();
       let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
       let path = BFS(this.state.grid, startNode, GRID_LENGTH, GRID_WIDTH);
       let shortestPath = path.shortest.reverse();
@@ -383,7 +383,7 @@ export default class Pathfinder extends Component {
       this.setState({
         lastAlgo: 0,
       });
-      this.disableElements();
+      this.disableGrid();
       let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
       let path = aStar(
         this.state.grid,
@@ -405,7 +405,7 @@ export default class Pathfinder extends Component {
       this.setState({
         lastAlgo: 2,
       });
-      this.disableElements();
+      this.disableGrid();
       let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
       let path = dijkstra(this.state.grid, startNode, GRID_LENGTH, GRID_WIDTH);
       // console.log(path);
@@ -424,11 +424,11 @@ export default class Pathfinder extends Component {
       if (i === nodes.length) {
         setTimeout(() => {
           // enable all the elements again
-          this.enableElements();
+          this.enableGrid();
           this.setState({
             gridBeingUsed: false,
           });
-        }, this.state.speedValue[this.state.speedIndex] * i);
+        }, this.state.speedValue[this.state.speedIndex + 5] * i);
       } else {
         setTimeout(() => {
           // update the grid
@@ -489,13 +489,13 @@ export default class Pathfinder extends Component {
       if (j === shortestPath.length) {
         if (animate) {
           setTimeout(() => {
-            this.enableElements();
+            this.enableGrid();
             this.setState({
               gridBeingUsed: false,
             });
           }, (this.state.speedValue[this.state.speedIndex] + 4) * j);
         } else {
-          this.enableElements();
+          this.enableGrid();
         }
       } else {
         if (animate) {
@@ -560,8 +560,6 @@ export default class Pathfinder extends Component {
     }
   };
 
-
-
   updateCurrentAlgo = (event) => {
     this.setState({
       currentAlgo: event.target.value,
@@ -609,7 +607,6 @@ export default class Pathfinder extends Component {
         gridBeingUsed: true,
       });
     }
-    // console.log(FINISH_NODE_COL, FINISH_NODE_ROW);
     let algo = this.state.currentAlgo;
     console.log(algo, animate);
     if (algo === "A* Algorithm") {
@@ -631,7 +628,7 @@ export default class Pathfinder extends Component {
       gridBeingUsed: true,
     });
     this.clearGrid();
-    this.disableElements();
+    this.disableGrid();
     if (type === "Recursive Division") {
       let walls = GenerateRecursiveDivisionMaze(
         this.state.grid,
@@ -653,7 +650,7 @@ export default class Pathfinder extends Component {
     for (let i = 0; i <= nodes.length; i++) {
       if (i == nodes.length) {
         setTimeout(() => {
-          this.enableElements();
+          this.enableGrid();
           this.setState({
             gridBeingUsed: false,
           });
@@ -720,9 +717,6 @@ export default class Pathfinder extends Component {
   };
 
   render() {
-    if (this.state.startButtonPhrase !== "Choose Algorithm") {
-      //console.log(document.getElementById(`node-${1}-${2}`).classList);
-    }
     return (
       <>
         <div className="button-container">
@@ -840,7 +834,14 @@ export default class Pathfinder extends Component {
               return (
                 <div key={rowIdx}>
                   {row.map((node, nodeIdx) => {
-                    const { row, col, isFinish, isStart, isWall } = node;
+                    const {
+                      row,
+                      col,
+                      isFinish,
+                      isStart,
+                      isWall,
+                      isDisabled,
+                    } = node;
                     return (
                       <Node
                         key={nodeIdx}
@@ -858,6 +859,7 @@ export default class Pathfinder extends Component {
                         onMouseUp={(row, col) => this.handleMouseUp(row, col)}
                         onMouseOut={(row, col) => this.handleMouseOut(row, col)}
                         row={row}
+                        isDisabled={isDisabled}
                       />
                     );
                   })}
@@ -870,17 +872,26 @@ export default class Pathfinder extends Component {
     );
   }
 
-  // disable user interaction
-  disableElements() {
+  disableGrid() {
+    let newGrid;
     for (let i = 0; i < GRID_WIDTH; i++) {
       for (let j = 0; j < GRID_LENGTH; j++) {
-        document.getElementById(`node-${i}-${j}`).classList.add("disabledNode");
+        newGrid = this.state.grid.slice();
+        let node = this.state.grid[i][j];
+        let newNode = {
+          ...node,
+          isDisabled: true,
+        };
+        newGrid[i][j] = newNode;
       }
+      this.setState({
+        grid: newGrid,
+      });
     }
   }
 
-  // enable user interaction
-  enableElements() {
+  enableGrid() {
+    let newGrid;
     for (let i = 0; i < GRID_WIDTH; i++) {
       for (let j = 0; j < GRID_LENGTH; j++) {
         document
@@ -888,7 +899,6 @@ export default class Pathfinder extends Component {
           .classList.remove("disabledNode");
       }
     }
-    // console.log(document.getElementById(`node-${1}-${1}`).classList, "enable elements");
   }
 
   // generate the beginning grid
@@ -916,6 +926,7 @@ export default class Pathfinder extends Component {
       isVisited: false,
       isWall: false,
       previousNode: null,
+      isDisabled: false,
     };
   };
 }
