@@ -26,6 +26,14 @@
   background-color: lightgreen;
 }
 
+.node-visited-no-animation {
+  background-color: #89dbff;
+}
+
+.node-final-path-no-animation {
+  background-color: yellow;
+}
+
 .node-visited {
   animation-name: get-visited-path-animation;
   animation-duration: 0.3s;
@@ -96,16 +104,16 @@
 @keyframes isWallAnimation {
   from {
     transform: scale(0.4);
-    background-color: #858585;
+    background-color: #011a27;
   }
 
   50% {
     transform: scale(1.1);
-    background-color: #858585;
+    background-color: #011a27;
   }
 
   to {
     transform: scale(1);
-    background-color: #858585;
+    background-color: #011a27;
   }
 }

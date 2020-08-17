@@ -6,8 +6,7 @@
 .header {
   font-family: "Helvetica";
   font-weight: bold;
-  font-size: 30px;
-  margin-top: 20px;
+  font-size: 23px;
   color: white;
   margin-left: 2vw;
   display: inline-block;
@@ -18,32 +17,62 @@
 }
 
 .dropDown {
-  border-radius: 5px;
-  border: 2px solid black;
-  color: black;
+  color: whitesmoke;
   padding: 10px;
   margin: 10px;
   margin-bottom: 15px;
   font-family: "Helvetica";
-  background-color: darkgray;
-  height: 40px;
+  background-color: #011a27;
+  height: 50px;
+  border-bottom-width: 0px;
+  font-size: 15px;
+  border-width: 0px;
+  transition: 0.8s;
+  outline: none;
+}
+
+.dropDown:hover {
+  background-color: #31cadb;
+}
+
+.dropDownDisabled {
+  color: whitesmoke;
+  padding: 10px;
+  margin: 10px;
+  margin-bottom: 15px;
+  font-family: "Helvetica";
+  background-color: #011a27;
+  height: 50px;
+  border-bottom-width: 0px;
+  font-size: 15px;
+  border-width: 0px;
+  transition: 0.8s;
+  outline: none;
+}
+
+.dropDownDisabled:hover {
+  background-color: lightcoral;
+}
+
+.disabled-button {
+  background-color: lightcoral;
+}
+
+.button-container {
+  background-color: #011a27;
+  height: 60px;
 }
 
 .button {
-  border-radius: 5px;
-  border: 2px solid black;
-  color: black;
+  color: whitesmoke;
   padding: 10px;
-  margin: 10px;
-  margin-bottom: 15px;
+  margin-right: 10px;
+  margin-left: 10px;
   font-family: "Helvetica";
-  height: 40px;
-  background-color: darkgray;
-}
-
-.button-reset {
-  border-color: white;
-  color: white;
+  height: 49px;
+  background-color: #011a27;
+  border-width: 0px;
+  font-size: 15px;
 }
 
 .buttonAlgo:hover {
@@ -54,6 +83,7 @@
 
 .buttons {
   display: inline-block;
+  margin-left: 30px;
 }
 
 .buttonWalls:hover {
@@ -62,21 +92,41 @@
   transform: scale(1.1);
 }
 
-.buttonClear:hover {
-  background-color: #ffe815;
-  color: white;
+.button-start {
+  border-radius: 10px;
+  background-color: #31cadb;
+  height: 38px;
+  transition: 0.8s;
+  outline: none;
+}
+
+.button-start-disabled {
+  transition: 0.8s;
+  background-color: lightcoral;
+}
+
+.button-start:hover {
+  transform: scale(1.05);
+}
+
+.button-clear:hover {
+  color: #31cadb;
 }
 
 .button-clear {
-  border: 2px solid #ffe815;
-  color: #ffe815;
+  color: whitesmoke;
   transition: 0.8s;
+  outline: none;
 }
 
-.button-walls {
-  border: 2px solid #f1c399;
-  color: #f1c399;
+.button-clear-disabled {
+  color: whitesmoke;
   transition: 0.8s;
+  outline: none;
+}
+
+.button-clear-disabled:hover {
+  color: lightcoral;
 }
 
 .legend {
@@ -113,7 +163,7 @@
 }
 
 .fakeNodeBlock {
-  background-color: #858585;
+  background-color: #011a27;
 }
 
 .fakeNodeExploredFirst {

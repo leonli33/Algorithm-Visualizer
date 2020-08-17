@@ -9,9 +9,6 @@ export function aStar(
   FINISH_NODE_ROW,
   FINISH_NODE_COL
 ) {
-  // get the position of the start node
-  const START_NODE_ROW = startN.row;
-  const START_NODE_COL = startN.col;
   let nodesToVisit = [];
   let visitedNodes = [];
   let shortestPath = [];
