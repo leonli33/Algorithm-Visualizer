@@ -16,7 +16,6 @@ export default class Pathfinder extends Component {
       onMouseEnter,
       onMouseUp,
       row,
-      isDisabled,
     } = this.props;
 
     let extraClassName = "";
@@ -30,12 +29,12 @@ export default class Pathfinder extends Component {
     return (
       <div
         id={`node-${row}-${col}`}
-        className={`node ${extraClassName} ${isDisabled ? "disabledNode" : ""}`}
+        className={`node ${extraClassName}`}
         onMouseOut={() => onMouseOut(row, col)}
         onMouseDown={() => onMouseDown(row, col)}
         onMouseEnter={() => onMouseEnter(row, col)}
         onMouseUp={() => onMouseUp(row, col)}
-      ></div>
+      />
     );
   }
 }

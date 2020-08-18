@@ -8,8 +8,6 @@ import Pathfinder from "./PathfinderVisualization/Pathfinder";
   His youtube channel can be found here: https://www.youtube.com/channel/UCaO6VoaYJv4kS-TQO_M-N_g
 */
 
-//        <h1 className="Header">Pathfinding Visualized</h1>
-
 function App() {
   return (
     <div className="app">
