@@ -27,6 +27,8 @@ let mouseIsPressed = false;
 // 0 = regular node, 1 = wall
 let nodeBeforeEnter = -1;
 
+let GRID_HEIGHT = 20;
+let GRID_LENGTH = 50;
 export default class Pathfinder extends Component {
   // last algo: 0= A*, 1 = Greedy, 2= Dijkstra, 3=Breadth, 4 = Depth
   constructor(props) {
@@ -55,8 +57,6 @@ export default class Pathfinder extends Component {
       mazeLabel: "Generate Maze",
       startButtonPhrase: "Choose Algorithm",
       gridBeingUsed: false,
-      GRID_WIDTH: 20,
-      GRID_LENGTH: 50,
     };
   }
 
@@ -64,17 +64,15 @@ export default class Pathfinder extends Component {
   componentDidMount() {
     let windowWidth = window.screen.width;
     let windowHeight = window.screen.height;
-    let grid_length = Math.ceil((windowWidth - 50) / 25);
-    let grid_width = Math.ceil((windowHeight - 275) / 25);
-    START_NODE_ROW = Math.floor(grid_width / 2);
-    FINISH_NODE_ROW = Math.floor(grid_width / 2);
-    START_NODE_COL = Math.floor(grid_length / 4);
-    FINISH_NODE_COL = Math.floor(grid_length * (4 / 5));
+    GRID_HEIGHT = Math.ceil((windowHeight - 250) / 25);
+    GRID_LENGTH = Math.ceil((windowWidth - 50) / 25);
+    START_NODE_ROW = Math.floor(GRID_HEIGHT / 2);
+    FINISH_NODE_ROW = Math.floor(GRID_HEIGHT / 2);
+    START_NODE_COL = Math.floor(GRID_LENGTH / 4);
+    FINISH_NODE_COL = Math.floor(GRID_LENGTH * (4 / 5));
     const gridDrawn = this.formulateGrid();
     this.setState({
       grid: gridDrawn,
-      GRID_WIDTH: grid_width,
-      GRID_LENGTH: grid_length,
     });
     window.addEventListener("mouseup", this.onMouseUp);
   }
@@ -239,10 +237,10 @@ export default class Pathfinder extends Component {
       currentNode.isWall = false;
       document.getElementById(`node-${row}-${col}`).className = "node";
 
-      START_NODE_ROW = Math.floor(this.state.GRID_WIDTH / 2);
-      FINISH_NODE_ROW = Math.floor(this.state.GRID_WIDTH / 2);
-      START_NODE_COL = Math.floor(this.state.GRID_LENGTH / 4);
-      FINISH_NODE_COL = Math.floor(this.state.GRID_LENGTH * (4 / 5));
+      START_NODE_ROW = Math.floor(GRID_HEIGHT / 2);
+      FINISH_NODE_ROW = Math.floor(GRID_HEIGHT / 2);
+      START_NODE_COL = Math.floor(GRID_LENGTH / 4);
+      FINISH_NODE_COL = Math.floor(GRID_LENGTH * (4 / 5));
 
       this.state.grid[START_NODE_ROW][START_NODE_COL].isWall = false;
       this.state.grid[START_NODE_ROW][START_NODE_COL].isVisited = false;
@@ -278,7 +276,7 @@ export default class Pathfinder extends Component {
       // get the start node
       let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
       // get the path returned
-      let path = DFS(this.state.grid, startNode, this.state.GRID_LENGTH, this.state.GRID_WIDTH);
+      let path = DFS(this.state.grid, startNode, GRID_LENGTH, GRID_HEIGHT);
       // visualize the path
       if (path.shortest === null) {
         this.displayAlgoNoPath(path.visited);
@@ -302,8 +300,8 @@ export default class Pathfinder extends Component {
       let path = GBFS(
         this.state.grid,
         startNode,
-        this.state.GRID_LENGTH,
-        this.state.GRID_WIDTH,
+        GRID_LENGTH,
+        GRID_HEIGHT,
         FINISH_NODE_ROW,
         FINISH_NODE_COL
       );
@@ -323,7 +321,7 @@ export default class Pathfinder extends Component {
       });
       this.disableGrid();
       let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
-      let path = BFS(this.state.grid, startNode, this.state.GRID_LENGTH, this.state.GRID_WIDTH);
+      let path = BFS(this.state.grid, startNode, GRID_LENGTH, GRID_HEIGHT);
       let shortestPath = path.shortest.reverse();
       this.displayAlgo(path.visited, shortestPath, animate);
     }
@@ -343,8 +341,8 @@ export default class Pathfinder extends Component {
       let path = aStar(
         this.state.grid,
         startNode,
-        this.state.GRID_LENGTH,
-        this.state.GRID_WIDTH,
+        GRID_LENGTH,
+        GRID_HEIGHT,
         FINISH_NODE_ROW,
         FINISH_NODE_COL
       );
@@ -362,7 +360,7 @@ export default class Pathfinder extends Component {
       });
       this.disableGrid();
       let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
-      let path = dijkstra(this.state.grid, startNode, this.state.GRID_LENGTH, this.state.GRID_WIDTH);
+      let path = dijkstra(this.state.grid, startNode, GRID_LENGTH, GRID_HEIGHT);
       let shortestPath = path.shortest.reverse();
       this.displayAlgo(path.visited, shortestPath, animate);
     }
@@ -475,8 +473,8 @@ export default class Pathfinder extends Component {
       lastAlgo: -1,
     });
     nodeBeforeEnter = -1;
-    for (let i = 0; i < this.state.GRID_WIDTH; i++) {
-      for (let j = 0; j < this.state.GRID_LENGTH; j++) {
+    for (let i = 0; i < GRID_HEIGHT; i++) {
+      for (let j = 0; j < GRID_LENGTH; j++) {
         if (i === START_NODE_ROW && j === START_NODE_COL) {
           document.getElementById(`node-${i}-${j}`).className =
             "node node-start";
@@ -520,8 +518,8 @@ export default class Pathfinder extends Component {
         lastAlgo: -1,
       });
       nodeBeforeEnter = -1;
-      for (let i = 0; i < this.state.GRID_WIDTH; i++) {
-        for (let j = 0; j < this.state.GRID_LENGTH; j++) {
+      for (let i = 0; i < GRID_HEIGHT; i++) {
+        for (let j = 0; j < GRID_LENGTH; j++) {
           if (i === START_NODE_ROW && j === START_NODE_COL) {
             document.getElementById(`node-${i}-${j}`).className =
               "node node-start";
@@ -658,10 +656,10 @@ export default class Pathfinder extends Component {
   resetGrid = () => {
     if (!this.state.startNodeMove && !this.state.finishNodeMove) {
       this.clearGrid();
-      START_NODE_ROW = Math.floor(this.state.GRID_WIDTH / 2);
-      FINISH_NODE_ROW = Math.floor(this.state.GRID_WIDTH / 2);
-      START_NODE_COL = Math.floor(this.state.GRID_LENGTH / 4);
-      FINISH_NODE_COL = Math.floor(this.state.GRID_LENGTH * (4 / 5));
+      START_NODE_ROW = Math.floor(GRID_HEIGHT / 2);
+      FINISH_NODE_ROW = Math.floor(GRID_HEIGHT / 2);
+      START_NODE_COL = Math.floor(GRID_LENGTH / 4);
+      FINISH_NODE_COL = Math.floor(GRID_LENGTH * (4 / 5));
       const gridDrawn = this.formulateGrid();
       this.setState({
         grid: gridDrawn,
@@ -822,16 +820,16 @@ export default class Pathfinder extends Component {
   }
 
   disableGrid() {
-    for (let i = 0; i < this.state.GRID_WIDTH; i++) {
-      for (let j = 0; j < this.state.GRID_LENGTH; j++) {
+    for (let i = 0; i < GRID_HEIGHT; i++) {
+      for (let j = 0; j < GRID_LENGTH; j++) {
         document.getElementById(`node-${i}-${j}`).classList.add("disabledNode");
       }
     }
   }
 
   enableGrid() {
-    for (let i = 0; i < this.state.GRID_WIDTH; i++) {
-      for (let j = 0; j < this.state.GRID_LENGTH; j++) {
+    for (let i = 0; i < GRID_HEIGHT; i++) {
+      for (let j = 0; j < GRID_LENGTH; j++) {
         document
           .getElementById(`node-${i}-${j}`)
           .classList.remove("disabledNode");
@@ -843,9 +841,9 @@ export default class Pathfinder extends Component {
   formulateGrid = () => {
     // draw a grid onto the screen
     const nodes = [];
-    for (let i = 0; i < this.state.GRID_WIDTH; i++) {
+    for (let i = 0; i < GRID_HEIGHT; i++) {
       const row = [];
-      for (let j = 0; j < this.state.GRID_LENGTH; j++) {
+      for (let j = 0; j < GRID_LENGTH; j++) {
         row.push(this.createNode(j, i));
       }
       nodes.push(row);
