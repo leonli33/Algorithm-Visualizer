@@ -5,8 +5,9 @@ import { aStar } from "../Algos/AStar";
 import { BFS } from "../Algos/BreadthFirstSearch";
 import { DFS } from "../Algos/DepthFirstSearch";
 import { GBFS } from "../Algos/GreedyBestFirstSearch";
-import { GenerateRecursiveDivisionMaze } from "../Maze/RecursiveDivision";
 import { RandomMaze } from "../Maze/RandomMaze";
+import { VerticalWalls } from "../Maze/VerticalWalls";
+import { HorizontalWalls } from "../Maze/HorizontalWalls";
 import "./Pathfinder.css";
 
 /*
@@ -53,7 +54,7 @@ export default class Pathfinder extends Component {
       currentSpeed: "Speed",
       speedValue: [100, 6, 4],
       speedIndex: 1,
-      mazeAlgorithms: ["Random Maze", "Recursive Division"],
+      mazeAlgorithms: ["Random Walls", "Vertical Walls", "Horizontal Walls"],
       mazeLabel: "Generate Maze",
       startButtonPhrase: "Choose Algorithm",
       gridBeingUsed: false,
@@ -572,7 +573,7 @@ export default class Pathfinder extends Component {
   };
 
   // generate a maze to be displayed
-  generateMaze = (event) => {
+  generateMaze = async (event) => {
     if (!this.state.startNodeMove && !this.state.finishNodeMove) {
       let type = event.target.value;
       this.clearGrid();
@@ -580,15 +581,22 @@ export default class Pathfinder extends Component {
       this.setState({
         gridBeingUsed: true,
       });
-      if (type === "Recursive Division") {
-        let walls = GenerateRecursiveDivisionMaze(
+      if (type === "Random Walls") {
+        let walls = RandomMaze(
           this.state.grid,
           { row: START_NODE_ROW, col: START_NODE_COL },
           { row: FINISH_NODE_ROW, col: FINISH_NODE_COL }
         );
         this.displayMaze(walls);
-      } else if (type === "Random Maze") {
-        let walls = RandomMaze(
+      } else if (type === "Vertical Walls") {
+        let walls = VerticalWalls(
+          this.state.grid,
+          { row: START_NODE_ROW, col: START_NODE_COL },
+          { row: FINISH_NODE_ROW, col: FINISH_NODE_COL }
+        );
+        this.displayMaze(walls);
+      } else if (type === "Horizontal Walls") {
+        let walls = HorizontalWalls(
           this.state.grid,
           { row: START_NODE_ROW, col: START_NODE_COL },
           { row: FINISH_NODE_ROW, col: FINISH_NODE_COL }
@@ -701,12 +709,12 @@ export default class Pathfinder extends Component {
                 this.state.gridBeingUsed ? "dropDownDisabled" : "dropDown"
               }`}
               id="maze-algorithm-selection"
-              value={"Generate Maze"}
+              value={"Generate Walls"}
               onChange={this.generateMaze}
               disabled={this.state.gridBeingUsed ? true : false}
             >
               <option selected disabled hidden>
-                Generate Maze
+                Generate Walls
               </option>
               {this.state.mazeAlgorithms.map((maze) => (
                 <option key={maze} value={maze}>

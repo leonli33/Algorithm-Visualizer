@@ -2,6 +2,8 @@ const HORIZONTAL = "HORIZONTAL";
 const VERTICAL = "VERTICAL";
 // currentHeight = col, currentWidth = row
 
+// This is not ready for production yet
+
 export async function GenerateRecursiveDivisionMaze(
   grid,
   StartNode,
@@ -9,95 +11,113 @@ export async function GenerateRecursiveDivisionMaze(
 ) {
   let height = grid.length;
   let width = grid[0].length;
-
   let wallNodes = [];
+
   // first fill up all the sides with walls
   generateSideWalls(wallNodes, StartNode, FinishNode, width, height);
 
-  await divide(wallNodes, 0, 0, width - 2, height - 2, HORIZONTAL);
+  let currentGrid = [];
+  for (let i = 0; i < height - 2; i++) {
+    let row = [];
+    for (let j = 0; j < width - 2; j++) {
+      row.push("");
+    }
+    currentGrid.push(row);
+  }
+
+  await divide(wallNodes, 1, 1, width - 2, height - 2, HORIZONTAL, currentGrid);
   return wallNodes;
 }
 
-async function divide(wallNodes, row, col, width, height, direction) {
-  if (width <= 2 || height <= 2) return;
-  console.log(width, height, direction, row, col);
-  let vertical = direction === VERTICAL;
+async function divide(wallNodes, x, y, width, height, direction, currentGrid) {
+  if (width < 3 || height < 3) return;
+  let horizontal = direction === HORIZONTAL;
+  let positionOkay = false;
 
-  // start position of the wall, change col and row?
-  let wallPositionCol = vertical
-    ? generateRandomNumber(col + 1, width - 1)
-    : col;
-  let wallPositionRow = vertical
-    ? row
-    : generateRandomNumber(row + 1, height - 1);
+  let wallPositionX;
+  let wallPositionY;
+  let passageX;
+  let passageY;
+  let directionX;
+  let directionY;
+  let length;
+  while (!positionOkay) {
+    wallPositionX = x + (horizontal ? 0 : generateRandomNumber(0, width - 1));
+    wallPositionY = y + (horizontal ? generateRandomNumber(0, height - 1) : 0);
 
-  // passage in the wall
-  let passageRow = vertical
-    ? generateRandomNumber(row, height - 1)
-    : wallPositionRow;
+    // passage in the wall
+    passageX =
+      wallPositionX + (horizontal ? generateRandomNumber(0, width) : 0);
 
-  let passageCol = vertical
-    ? wallPositionCol
-    : generateRandomNumber(col, width - 1);
+    passageY =
+      wallPositionY + (horizontal ? 0 : generateRandomNumber(0, height));
 
-  // direction of wall
-  let directionCol = vertical ? 0 : 1;
-  let directionRow = vertical ? 1 : 0;
+    // direction of wall
+    directionX = horizontal ? 1 : 0;
+    directionY = horizontal ? 0 : 1;
 
-  // how long will the wall be
-  let length = vertical ? height : width;
+    // how long will the wall be
+    length = horizontal ? width : height;
+
+    let allClear = true;
+    /*
+    //check that there are no improper walls next to current
+    for (let i = 1; i <= length; i++) {
+      let posy = wallPositionY + directionY * i;
+      let posx = wallPositionX + directionX * i;
+      if (
+        !checkGridForWallsAround(direction, posx - 1, posy - 1, currentGrid)
+      ) {
+        allClear = false;
+      }
+    }
+    */
+
+    positionOkay = allClear;
+  }
 
   // build the wall
-  for (let i = 0; i < length; i++) {
-    let row = wallPositionRow + directionRow * i;
-    let col = wallPositionCol + directionCol * i;
-
+  for (let i = 1; i <= length; i++) {
+    wallPositionY += directionY;
+    wallPositionX += directionX;
+    let posy = wallPositionY;
+    let posx = wallPositionX;
     // make everything a wall except the designated passage
-    if (passageRow !== row || passageCol !== col) {
+    if (passageX !== x || passageY !== y) {
       let node = {
-        row: row,
-        col: col,
+        row: posy,
+        col: posx,
       };
       wallNodes.push(node);
     }
   }
 
-  let nextHeight = vertical ? height : wallPositionRow;
-  let nextWidth = vertical ? wallPositionCol : width;
+  let nextHeight = horizontal ? wallPositionY - y + 1 : height;
+  let nextWidth = horizontal ? width : wallPositionX - x + 1;
   let nextDirectionToSlice = getDirectionToSlice(nextWidth, nextHeight);
-  let nextRow = row;
-  let nextCol = col;
+  let nextX = x;
+  let nextY = y;
 
   // recurse for the left and top side of the wall:
-  setTimeout(() => {
-    divide(
-      wallNodes,
-      nextRow,
-      nextCol,
-      nextWidth,
-      nextHeight,
-      nextDirectionToSlice
-    );
-  }, 5);
+  divide(wallNodes, nextX, nextY, nextWidth, nextHeight, nextDirectionToSlice);
 
   // recurse right or bottom
-  let nextHeight2 = vertical ? height : height - wallPositionRow;
-  let nextWidth2 = vertical ? width - wallPositionCol : width;
+  let nextX2 = horizontal ? x : wallPositionX + 1;
+  let nextY2 = horizontal ? wallPositionY + 1 : y;
+
+  let nextHeight2 = horizontal ? y + height - wallPositionY - 1 : height;
+  let nextWidth2 = horizontal ? width : x + width - wallPositionX - 1;
   let nextDirectionToSlice2 = getDirectionToSlice(nextWidth2, nextHeight2);
-  let nextCol2 = vertical ? wallPositionCol : col;
-  let nextRow2 = vertical ? row : wallPositionRow;
 
   // recurse for the right and bottom side of the wall:
-  setTimeout(() => {
-    divide(
-      wallNodes,
-      nextRow2,
-      nextCol2,
-      nextWidth2,
-      nextHeight2,
-      nextDirectionToSlice2
-    );
-  }, 5);
+  divide(
+    wallNodes,
+    nextX2,
+    nextY2,
+    nextWidth2,
+    nextHeight2,
+    nextDirectionToSlice2
+  );
 }
 
 function getDirectionToSlice(width, height) {
@@ -114,6 +134,24 @@ function getDirectionToSlice(width, height) {
 function generateRandomNumber(lowNum, highNum) {
   let ans = Math.floor(Math.random() * (highNum - lowNum + 1)) + lowNum;
   return ans;
+}
+
+function checkGridForWallsAround(direction, x, y, totalGrid) {
+  if (direction === HORIZONTAL) {
+    if (isOnGrid(y, x, totalGrid)) {
+      console.log("helo");
+    }
+  } else {
+  }
+}
+
+function isOnGrid(x, y, grid) {
+  if(grid[y]) {
+    if(grid[y][x]) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function generateSideWalls(wallNodes, StartNode, FinishNode, width, height) {
