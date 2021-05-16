@@ -129,58 +129,9 @@
   color: lightcoral;
 }
 
-.legend {
-  background-color: white;
-  height: 60px;
-  text-align: center;
-  vertical-align: center;
+.legend-container {
   width: 100%;
-}
-
-.fakeNode {
-  width: 25px;
-  height: 25px;
-  background-color: white;
-  outline: 1px solid black;
-  display: inline-block;
-  vertical-align: center;
-  margin-top: 17px;
-  margin-left: 10vw;
-  margin-right: 10px;
-}
-
-.fakeNodeLabel {
-  position: absolute;
-  margin-top: 17px;
-}
-
-.fakeNodeStart {
-  background-color: lightgreen;
-}
-
-.fakeNodeEnd {
-  background-color: lightcoral;
-}
-
-.fakeNodeBlock {
-  background-color: #011a27;
-}
-
-.fakeNodeExploredFirst {
-  margin-right: 0px;
-  margin-left: 12vw;
-  background-color: #89dbff;
-}
-
-.fakeNodeExploredSecond {
-  margin-left: 10px;
-  background-color: #7062d7;
-}
-
-.fakeNodeShortestPath {
-  background-color: yellow;
-}
-
-.firstFakeNode {
-  margin-left: -10vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

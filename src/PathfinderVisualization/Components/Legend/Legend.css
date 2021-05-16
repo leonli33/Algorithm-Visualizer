@@ -1,0 +1,51 @@
+.container {
+  height: 60px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border: 1px solid red;
+}
+
+.container-and-label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-right: 45px;
+}
+
+.last-container {
+  margin-right: 0px;
+}
+
+.fake-node {
+  width: 25px;
+  height: 25px;
+  background-color: white;
+  outline: 1px solid black;
+  margin-right: 10px;
+}
+
+.fake-node-start-color {
+  background-color: lightgreen;
+}
+
+.fake-node-end-color {
+  background-color: lightcoral;
+}
+
+.fake-node-wall-color {
+  background-color: #011a27;
+}
+
+.fake-node-explored-first-color {
+  background-color: #89dbff;
+}
+
+.fake-node-explored-second-color {
+  background-color: #7062d7;
+}
+
+.fake-node-shortest-path-color {
+  background-color: yellow;
+}

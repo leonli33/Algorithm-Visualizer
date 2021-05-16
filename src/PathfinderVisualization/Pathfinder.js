@@ -8,6 +8,7 @@ import { GBFS } from "../Algos/GreedyBestFirstSearch";
 import { RandomMaze } from "../Maze/RandomMaze";
 import { VerticalWalls } from "../Maze/VerticalWalls";
 import { HorizontalWalls } from "../Maze/HorizontalWalls";
+import Legend from "./Components/Legend/Legend";
 import "./Pathfinder.css";
 
 /*
@@ -31,14 +32,12 @@ let nodeBeforeEnter = -1;
 let GRID_HEIGHT = 20;
 let GRID_LENGTH = 50;
 export default class Pathfinder extends Component {
-  // last algo: 0= A*, 1 = Greedy, 2= Dijkstra, 3=Breadth, 4 = Depth
+  // last algo: 0 = A*, 1 = Greedy, 2= Dijkstra, 3=Breadth, 4 = Depth
   constructor(props) {
     super(props);
     this.state = {
       grid: [],
       gridClear: true,
-      beingUsed: false,
-      finishNodeMove: false,
       startNodeMove: false,
       finishNodeMove: false,
       lastAlgo: -1,
@@ -56,7 +55,7 @@ export default class Pathfinder extends Component {
       speedIndex: 1,
       mazeAlgorithms: ["Random Walls", "Vertical Walls", "Horizontal Walls"],
       mazeLabel: "Generate Maze",
-      startButtonPhrase: "Choose Algorithm",
+      startButtonText: "Choose Algorithm",
       gridBeingUsed: false,
     };
   }
@@ -507,7 +506,7 @@ export default class Pathfinder extends Component {
   updateCurrentAlgo = (event) => {
     this.setState({
       currentAlgo: event.target.value,
-      startButtonPhrase: "Visualize",
+      startButtonText: "Visualize",
     });
   };
 
@@ -541,34 +540,36 @@ export default class Pathfinder extends Component {
     }
   };
 
-  startAlgorithm = (animate) => {
-    if (
-      this.state.currentSpeed == "Speed" &&
+  startAlgorithm = (shouldAnimate) => {
+    const fieldsAreSelected = !(
+      this.state.currentSpeed === "Speed" &&
       this.state.currentAlgo !== "Algorithms"
-    ) {
-      this.forceUpdateSpeed();
-    }
-    if (
+    );
+    const boardIsBeingUsed =
       this.state.currentAlgo !== "Algorithms" &&
-      animate &&
+      shouldAnimate &&
       !this.state.startNodeMove &&
-      !this.state.finishNodeMove
-    ) {
+      !this.state.finishNodeMove;
+
+    if (boardIsBeingUsed) {
+      if (!fieldsAreSelected) {
+        this.forceUpdateSpeed();
+      }
       this.setState({
         gridBeingUsed: true,
       });
     }
-    let algo = this.state.currentAlgo;
-    if (algo === "A* Algorithm") {
-      this.visualizeAStar(animate);
-    } else if (algo === "Greedy Best-First Search") {
-      this.visualizeGreedyBestFirstSearch(animate);
-    } else if (algo === "Dijkstra's Algorithm") {
-      this.visualizeDijkstra(animate);
-    } else if (algo === "Breadth First Search") {
-      this.visualizeBreadthFirstSearch(animate);
-    } else if (algo === "Depth First Search") {
-      this.visualizeDepthFirstSearch(animate);
+    const { currentAlgo } = this.state;
+    if (currentAlgo === "A* Algorithm") {
+      this.visualizeAStar(shouldAnimate);
+    } else if (currentAlgo === "Greedy Best-First Search") {
+      this.visualizeGreedyBestFirstSearch(shouldAnimate);
+    } else if (currentAlgo === "Dijkstra's Algorithm") {
+      this.visualizeDijkstra(shouldAnimate);
+    } else if (currentAlgo === "Breadth First Search") {
+      this.visualizeBreadthFirstSearch(shouldAnimate);
+    } else if (currentAlgo === "Depth First Search") {
+      this.visualizeDepthFirstSearch(shouldAnimate);
     }
   };
 
@@ -608,7 +609,7 @@ export default class Pathfinder extends Component {
 
   displayMaze = (nodes) => {
     for (let i = 0; i <= nodes.length; i++) {
-      if (i == nodes.length) {
+      if (i === nodes.length) {
         setTimeout(() => {
           this.enableGrid();
           this.setState({
@@ -675,7 +676,7 @@ export default class Pathfinder extends Component {
         currentAlgo: "Algorithms",
         currentSpeed: "Speed",
         mazeLabel: "Generate Maze",
-        startButtonPhrase: "Choose Algorithm",
+        startButtonText: "Choose Algorithm",
       });
     }
   };
@@ -748,7 +749,7 @@ export default class Pathfinder extends Component {
               onClick={() => this.startAlgorithm(true)}
               disabled={this.state.gridBeingUsed ? true : false}
             >
-              {this.state.startButtonPhrase}
+              {this.state.startButtonText}
             </button>
             <button
               id="clear-grid"
@@ -777,20 +778,8 @@ export default class Pathfinder extends Component {
           </div>
         </div>
         <div className="gridAndLegend">
-          <div className="legend">
-            <div className="fakeNode fakeNodeStart firstFakeNode"></div>
-            <label className="fakeNodeLabel">Start Node</label>
-            <div className="fakeNode fakeNodeEnd"></div>
-            <label className="fakeNodeLabel">End Node</label>
-            <div className="fakeNode fakeNodeBlock"></div>
-            <label className="fakeNodeLabel">Wall Node</label>
-            <div className="fakeNode"></div>
-            <label className="fakeNodeLabel">Unvisted Node</label>
-            <div className="fakeNode fakeNodeExploredFirst"></div>
-            <div className="fakeNode fakeNodeExploredSecond"></div>
-            <label className="fakeNodeLabel">Explored Node</label>
-            <div className="fakeNode fakeNodeShortestPath"></div>
-            <label className="fakeNodeLabel">Path Found Node</label>
+          <div className="legend-container">
+            <Legend />
           </div>
           <div id="gridNodes" className="grid">
             {this.state.grid.map((row, rowIdx) => {
