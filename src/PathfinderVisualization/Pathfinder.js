@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Node from "./Node/Node";
 import { dijkstra } from "../Algos/Dijkstra";
-import { aStar } from "../Algos/AStar";
+import { AStar } from "../Algos/AStar";
 import { BFS } from "../Algos/BreadthFirstSearch";
 import { DFS } from "../Algos/DepthFirstSearch";
 import { GBFS } from "../Algos/GreedyBestFirstSearch";
@@ -9,6 +9,8 @@ import { RandomMaze } from "../Maze/RandomMaze";
 import { VerticalWalls } from "../Maze/VerticalWalls";
 import { HorizontalWalls } from "../Maze/HorizontalWalls";
 import Legend from "./Components/Legend/Legend";
+import Dropdown from "./Components/Dropdown/Dropdown";
+import clsx from "clsx";
 import "./Pathfinder.css";
 
 /*
@@ -338,7 +340,7 @@ export default class Pathfinder extends Component {
       });
       this.disableGrid();
       let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
-      let path = aStar(
+      let path = AStar(
         this.state.grid,
         startNode,
         GRID_LENGTH,
@@ -685,66 +687,40 @@ export default class Pathfinder extends Component {
     return (
       <>
         <div className="button-container">
-          <text className="header">Pathfinding Visualized</text>
+          <div className="header" onClick={this.resetGrid}>
+            Pathfinding Visualized
+          </div>
           <div className="buttons">
-            <select
-              className={`${
-                this.state.gridBeingUsed ? "dropDownDisabled" : "dropDown"
-              }`}
+            <Dropdown
+              gridBeingUsed={this.state.gridBeingUsed}
+              placeholder="Algorithms"
               id="pathfinding-algorithm-selection"
-              value={this.state.currentAlgo}
               onChange={this.updateCurrentAlgo}
-              disabled={this.state.gridBeingUsed ? true : false}
-            >
-              <option selected disabled hidden>
-                Algorithms
-              </option>
-              {this.state.algorithms.map((algorithms) => (
-                <option key={algorithms} value={algorithms}>
-                  {algorithms}
-                </option>
-              ))}
-            </select>
-            <select
-              className={`${
-                this.state.gridBeingUsed ? "dropDownDisabled" : "dropDown"
-              }`}
+              value={this.state.currentAlgo}
+              items={this.state.algorithms}
+            />
+            <Dropdown
+              gridBeingUsed={this.state.gridBeingUsed}
+              placeholder="Generate Walls"
               id="maze-algorithm-selection"
-              value={"Generate Walls"}
               onChange={this.generateMaze}
-              disabled={this.state.gridBeingUsed ? true : false}
-            >
-              <option selected disabled hidden>
-                Generate Walls
-              </option>
-              {this.state.mazeAlgorithms.map((maze) => (
-                <option key={maze} value={maze}>
-                  {maze}
-                </option>
-              ))}
-            </select>
-            <select
-              value={this.state.currentSpeed}
-              className={`${
-                this.state.gridBeingUsed ? "dropDownDisabled" : "dropDown"
-              }`}
+              value={"Generate Walls"}
+              items={this.state.mazeAlgorithms}
+            />
+            <Dropdown
+              gridBeingUsed={this.state.gridBeingUsed}
+              placeholder="Speed"
               id="speed-selection"
               onChange={this.updateSpeed}
-              disabled={this.state.gridBeingUsed ? true : false}
-            >
-              <option selected disabled hidden>
-                Speed
-              </option>
-              {this.state.speed.map((speed) => (
-                <option key={speed} value={speed}>
-                  {speed}
-                </option>
-              ))}
-            </select>
+              value={this.state.currentSpeed}
+              items={this.state.speed}
+            />
             <button
-              className={`button button-start ${
-                this.state.gridBeingUsed ? "button-start-disabled" : ""
-              }`}
+              className={clsx(
+                "button",
+                "button-start",
+                this.state.gridBeingUsed && "button-start-disabled"
+              )}
               id="start-algorithm"
               onClick={() => this.startAlgorithm(true)}
               disabled={this.state.gridBeingUsed ? true : false}
@@ -753,11 +729,11 @@ export default class Pathfinder extends Component {
             </button>
             <button
               id="clear-grid"
-              className={`button ${
-                this.state.gridBeingUsed
-                  ? "button-clear-disabled"
-                  : "button-clear"
-              }`}
+              className={clsx(
+                "button",
+                this.state.gridBeingUsed && "button-clear-disabled",
+                !this.state.gridBeingUsed && "button-clear"
+              )}
               onClick={this.clearGrid}
               disabled={this.state.gridBeingUsed ? true : false}
             >
@@ -765,11 +741,11 @@ export default class Pathfinder extends Component {
             </button>
             <button
               id="reset-button"
-              className={`button ${
-                this.state.gridBeingUsed
-                  ? "button-clear-disabled"
-                  : "button-clear"
-              }`}
+              className={clsx(
+                "button",
+                this.state.gridBeingUsed && "button-clear-disabled",
+                !this.state.gridBeingUsed && "button-clear"
+              )}
               onClick={this.resetGrid}
               disabled={this.state.gridBeingUsed ? true : false}
             >
@@ -777,7 +753,7 @@ export default class Pathfinder extends Component {
             </button>
           </div>
         </div>
-        <div className="gridAndLegend">
+        <div className="grid-and-legend">
           <div className="legend-container">
             <Legend />
           </div>

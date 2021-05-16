@@ -1,7 +1,7 @@
 import { getNeighbors } from "../Functions/functions";
 
 // A* algo
-export function aStar(
+export function AStar(
   grid,
   startN,
   GRID_LENGTH,
