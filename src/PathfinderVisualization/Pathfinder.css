@@ -3,6 +3,10 @@
   margin-left: 12px;
 }
 
+.overall-container {
+  min-width: 1200px;
+}
+
 .header {
   font-family: "Helvetica";
   font-weight: bold;

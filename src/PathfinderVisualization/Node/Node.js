@@ -3,8 +3,8 @@ import "./Node.css";
 export default class Pathfinder extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
   }
+  
   render() {
     const {
       col,
@@ -16,6 +16,7 @@ export default class Pathfinder extends Component {
       onMouseEnter,
       onMouseUp,
       row,
+      nodeWidth,
     } = this.props;
 
     let extraClassName = "";
@@ -34,6 +35,7 @@ export default class Pathfinder extends Component {
         onMouseDown={() => onMouseDown(row, col)}
         onMouseEnter={() => onMouseEnter(row, col)}
         onMouseUp={() => onMouseUp(row, col)}
+        style={{ width: nodeWidth }}
       />
     );
   }

@@ -40,9 +40,8 @@ export default class Pathfinder extends Component {
     this.state = {
       grid: [],
       gridClear: true,
-      startNodeMove: false,
+      isStartNodeMoving: false,
       finishNodeMove: false,
-      lastAlgo: -1,
       algorithms: [
         "A* Algorithm",
         "Greedy Best-First Search",
@@ -59,12 +58,13 @@ export default class Pathfinder extends Component {
       mazeLabel: "Generate Maze",
       startButtonText: "Choose Algorithm",
       gridBeingUsed: false,
+      nodeWidth: 25,
     };
   }
 
   // set the grid and also set up a mouseUp listener
   componentDidMount() {
-    let windowWidth = window.screen.width;
+    let windowWidth = window.innerWidth;
     let windowHeight = window.screen.height;
     GRID_HEIGHT = Math.ceil((windowHeight - 250) / 25);
     GRID_LENGTH = Math.ceil((windowWidth - 50) / 25);
@@ -75,14 +75,26 @@ export default class Pathfinder extends Component {
     const gridDrawn = this.formulateGrid();
     this.setState({
       grid: gridDrawn,
+      nodeWidth: 25,
     });
     window.addEventListener("mouseup", this.onMouseUp);
+    window.addEventListener("resize", this.updateDimensions);
   }
 
   // detach mouseUp listener
   componentWillUnmount() {
     window.removeEventListener("mouseup", this.onMouseUp);
+    window.removeEventListener("resize", this.updateDimensions);
   }
+
+  updateDimensions = () => {
+    const GRID_WIDTH_PX = window.innerWidth - 50;
+    const nodeWidth = GRID_WIDTH_PX / GRID_LENGTH;
+    console.log("dim", nodeWidth);
+    this.setState({
+      nodeWidth: Math.floor(nodeWidth),
+    });
+  };
 
   // set mouseIsPressed to false, needed to on mouse up listeners because
   // there was a bug with the one put on the node
@@ -104,7 +116,7 @@ export default class Pathfinder extends Component {
       !node.isFinish &&
       !node.isStart &&
       mouseIsPressed &&
-      !this.state.startNodeMove &&
+      !this.state.isStartNodeMoving &&
       !this.state.finishNodeMove
     ) {
       if (!node.isWall) {
@@ -119,7 +131,7 @@ export default class Pathfinder extends Component {
         node.isVisited = false;
         document.getElementById(`node-${row}-${col}`).className = "node";
       }
-    } else if (this.state.startNodeMove && !node.isFinish) {
+    } else if (this.state.isStartNodeMoving && !node.isFinish) {
       // if the start node is being dragged, set the nodes in the array accordingly and then
       // set the row and column of where the start node is
       node.isStart = true;
@@ -145,7 +157,7 @@ export default class Pathfinder extends Component {
   handleMouseOut = (row, col) => {
     let currentNode = this.state.grid[row][col];
     // if the start node is moving
-    if (this.state.startNodeMove && !currentNode.isFinish) {
+    if (this.state.isStartNodeMoving && !currentNode.isFinish) {
       // set this node back into a regular node
       currentNode.isStart = false;
       currentNode.isFinish = false;
@@ -162,7 +174,7 @@ export default class Pathfinder extends Component {
     }
     if (
       nodeBeforeEnter === 1 &&
-      (this.state.startNodeMove || this.state.finishNodeMove)
+      (this.state.isStartNodeMoving || this.state.finishNodeMove)
     ) {
       // if the node was orinally a wall before the start/end node moved into it, set it
       // back to a wall
@@ -198,7 +210,7 @@ export default class Pathfinder extends Component {
     } else if (currentNode.isStart) {
       // if the user is pressed on the start node, indicate that the start node is moving
       this.setState({
-        startNodeMove: true,
+        isStartNodeMoving: true,
       });
     } else if (currentNode.isFinish) {
       // if the user is pressed on the finish  node, indicate that the finish node is moving
@@ -213,13 +225,13 @@ export default class Pathfinder extends Component {
     let currentNode = this.state.grid[row][col];
     // the start and finish node are not being moved
     this.setState({
-      startNodeMove: false,
+      isStartNodeMoving: false,
       finishNodeMove: false,
     });
     mouseIsPressed = false;
 
     // if the start or end node is moving, update accoridingly
-    if (this.state.startNodeMove) {
+    if (this.state.isStartNodeMoving) {
       START_NODE_ROW = row;
       START_NODE_COL = col;
     } else if (this.state.finishNodeMove) {
@@ -265,14 +277,11 @@ export default class Pathfinder extends Component {
   // visualize depth first search algo
   visualizeDepthFirstSearch = (animate) => {
     // only execute if the stat and end node are not moving
-    if (!this.state.startNodeMove && !this.state.finishNodeMove) {
+    if (!this.state.isStartNodeMoving && !this.state.finishNodeMove) {
       // if the grid is not clear, clear the grid
       if (!this.state.gridClear) {
         this.clearPath();
       }
-      this.setState({
-        lastAlgo: 4,
-      });
       // disable all elements when visualizing
       this.disableGrid();
       // get the start node
@@ -290,13 +299,10 @@ export default class Pathfinder extends Component {
 
   // visualize the greedy best first search algo
   visualizeGreedyBestFirstSearch = (animate) => {
-    if (!this.state.startNodeMove && !this.state.finishNodeMove) {
+    if (!this.state.isStartNodeMoving && !this.state.finishNodeMove) {
       if (!this.state.gridClear) {
         this.clearPath();
       }
-      this.setState({
-        lastAlgo: 1,
-      });
       this.disableGrid();
       let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
       let path = GBFS(
@@ -314,13 +320,10 @@ export default class Pathfinder extends Component {
 
   // this is pretty much the same thing as dijkstra's except we are not sorting
   visualizeBreadthFirstSearch = (animate) => {
-    if (!this.state.startNodeMove && !this.state.finishNodeMove) {
+    if (!this.state.isStartNodeMoving && !this.state.finishNodeMove) {
       if (!this.state.gridClear) {
         this.clearPath();
       }
-      this.setState({
-        lastAlgo: 3,
-      });
       this.disableGrid();
       let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
       let path = BFS(this.state.grid, startNode, GRID_LENGTH, GRID_HEIGHT);
@@ -331,13 +334,10 @@ export default class Pathfinder extends Component {
 
   // visualize A* algo
   visualizeAStar = (animate) => {
-    if (!this.state.startNodeMove && !this.state.finishNodeMove) {
+    if (!this.state.isStartNodeMoving && !this.state.finishNodeMove) {
       if (!this.state.gridClear) {
         this.clearPath();
       }
-      this.setState({
-        lastAlgo: 0,
-      });
       this.disableGrid();
       let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
       let path = AStar(
@@ -355,11 +355,8 @@ export default class Pathfinder extends Component {
 
   // visualize Dijkstra's algo
   visualizeDijkstra = (animate) => {
-    if (!this.state.startNodeMove && !this.state.finishNodeMove) {
+    if (!this.state.isStartNodeMoving && !this.state.finishNodeMove) {
       this.clearPath();
-      this.setState({
-        lastAlgo: 2,
-      });
       this.disableGrid();
       let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
       let path = dijkstra(this.state.grid, startNode, GRID_LENGTH, GRID_HEIGHT);
@@ -434,7 +431,6 @@ export default class Pathfinder extends Component {
     this.setState({
       gridClear: false,
     });
-
     for (let j = 0; j <= shortestPath.length; j++) {
       if (j === shortestPath.length) {
         if (animate) {
@@ -470,10 +466,6 @@ export default class Pathfinder extends Component {
 
   // clear the grid of all path nodes
   clearPath = () => {
-    this.setState({
-      gridClear: true,
-      lastAlgo: -1,
-    });
     nodeBeforeEnter = -1;
     for (let i = 0; i < GRID_HEIGHT; i++) {
       for (let j = 0; j < GRID_LENGTH; j++) {
@@ -514,11 +506,7 @@ export default class Pathfinder extends Component {
 
   // clear the grid of all wall and path nodes
   clearGrid = () => {
-    if (!this.state.startNodeMove && !this.state.finishNodeMove) {
-      this.setState({
-        gridClear: true,
-        lastAlgo: -1,
-      });
+    if (!this.state.isStartNodeMoving && !this.state.finishNodeMove) {
       nodeBeforeEnter = -1;
       for (let i = 0; i < GRID_HEIGHT; i++) {
         for (let j = 0; j < GRID_LENGTH; j++) {
@@ -550,7 +538,7 @@ export default class Pathfinder extends Component {
     const boardIsBeingUsed =
       this.state.currentAlgo !== "Algorithms" &&
       shouldAnimate &&
-      !this.state.startNodeMove &&
+      !this.state.isStartNodeMoving &&
       !this.state.finishNodeMove;
 
     if (boardIsBeingUsed) {
@@ -577,7 +565,7 @@ export default class Pathfinder extends Component {
 
   // generate a maze to be displayed
   generateMaze = async (event) => {
-    if (!this.state.startNodeMove && !this.state.finishNodeMove) {
+    if (!this.state.isStartNodeMoving && !this.state.finishNodeMove) {
       let type = event.target.value;
       this.clearGrid();
       this.disableGrid();
@@ -665,7 +653,7 @@ export default class Pathfinder extends Component {
 
   // Set the grid to how it was when game first started
   resetGrid = () => {
-    if (!this.state.startNodeMove && !this.state.finishNodeMove) {
+    if (!this.state.isStartNodeMoving && !this.state.finishNodeMove) {
       this.clearGrid();
       START_NODE_ROW = Math.floor(GRID_HEIGHT / 2);
       FINISH_NODE_ROW = Math.floor(GRID_HEIGHT / 2);
@@ -685,7 +673,7 @@ export default class Pathfinder extends Component {
 
   render() {
     return (
-      <>
+      <div className="overall-container">
         <div className="button-container">
           <div className="header" onClick={this.resetGrid}>
             Pathfinding Visualized
@@ -758,37 +746,42 @@ export default class Pathfinder extends Component {
             <Legend />
           </div>
           <div id="gridNodes" className="grid">
-            {this.state.grid.map((row, rowIdx) => {
-              return (
-                <div key={rowIdx}>
-                  {row.map((node, nodeIdx) => {
-                    const { row, col, isFinish, isStart, isWall } = node;
-                    return (
-                      <Node
-                        key={nodeIdx}
-                        col={col}
-                        isFinish={isFinish}
-                        isStart={isStart}
-                        isWall={isWall}
-                        mouseIsPressed={mouseIsPressed}
-                        onMouseDown={(row, col) =>
-                          this.handleMouseDown(row, col)
-                        }
-                        onMouseEnter={(row, col) =>
-                          this.handleMouseEnter(row, col)
-                        }
-                        onMouseUp={(row, col) => this.handleMouseUp(row, col)}
-                        onMouseOut={(row, col) => this.handleMouseOut(row, col)}
-                        row={row}
-                      />
-                    );
-                  })}
-                </div>
-              );
-            })}
+            <div>
+              {this.state.grid.map((row, rowIdx) => {
+                return (
+                  <div key={rowIdx}>
+                    {row.map((node, nodeIdx) => {
+                      const { row, col, isFinish, isStart, isWall } = node;
+                      return (
+                        <Node
+                          key={nodeIdx}
+                          col={col}
+                          isFinish={isFinish}
+                          isStart={isStart}
+                          isWall={isWall}
+                          mouseIsPressed={mouseIsPressed}
+                          onMouseDown={(row, col) =>
+                            this.handleMouseDown(row, col)
+                          }
+                          onMouseEnter={(row, col) =>
+                            this.handleMouseEnter(row, col)
+                          }
+                          onMouseUp={(row, col) => this.handleMouseUp(row, col)}
+                          onMouseOut={(row, col) =>
+                            this.handleMouseOut(row, col)
+                          }
+                          row={row}
+                          nodeWidth={this.state.nodeWidth}
+                        />
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
-      </>
+      </div>
     );
   }
 

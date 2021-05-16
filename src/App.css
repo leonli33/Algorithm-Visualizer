@@ -1,5 +1,3 @@
-.grid {
-  background-color: white;
-  border-width: 1px;
-  border-color: black;
+.app {
+  min-width: 1200px;
 }
