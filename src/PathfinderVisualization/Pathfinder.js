@@ -90,7 +90,6 @@ export default class Pathfinder extends Component {
   updateDimensions = () => {
     const GRID_WIDTH_PX = window.innerWidth - 50;
     const nodeWidth = GRID_WIDTH_PX / GRID_LENGTH;
-    console.log("dim", nodeWidth);
     this.setState({
       nodeWidth: Math.floor(nodeWidth),
     });
@@ -675,7 +674,10 @@ export default class Pathfinder extends Component {
     return (
       <div className="overall-container">
         <div className="button-container">
-          <div className="header" onClick={this.resetGrid}>
+          <div
+            className="header"
+            onClick={this.state.gridBeingUsed ? null : this.resetGrid}
+          >
             Pathfinding Visualized
           </div>
           <div className="buttons">
@@ -759,7 +761,6 @@ export default class Pathfinder extends Component {
                           isFinish={isFinish}
                           isStart={isStart}
                           isWall={isWall}
-                          mouseIsPressed={mouseIsPressed}
                           onMouseDown={(row, col) =>
                             this.handleMouseDown(row, col)
                           }

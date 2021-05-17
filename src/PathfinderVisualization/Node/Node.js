@@ -4,7 +4,7 @@ export default class Pathfinder extends Component {
   constructor(props) {
     super(props);
   }
-  
+
   render() {
     const {
       col,
