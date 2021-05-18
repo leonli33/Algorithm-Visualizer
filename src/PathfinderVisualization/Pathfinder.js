@@ -26,8 +26,6 @@ let START_NODE_COL = 10;
 let FINISH_NODE_ROW = 10;
 let FINISH_NODE_COL = 45;
 
-let mouseIsPressed = false;
-
 // 0 = regular node, 1 = wall
 let nodeBeforeEnter = -1;
 
@@ -95,14 +93,8 @@ export default class Pathfinder extends Component {
     });
   };
 
-  // set mouseIsPressed to false, needed to on mouse up listeners because
-  // there was a bug with the one put on the node
-  onMouseUp = () => {
-    mouseIsPressed = false;
-  };
-
   // if mouse enters the boundary of any node
-  handleMouseEnter = (row, col) => {
+  handleMouseEnter = (row, col, isLeftMouseDown, isShiftKeyDown) => {
     let node = this.state.grid[row][col];
     // use this to take the state of the node back to what it was
     if (node.isWall) {
@@ -111,25 +103,18 @@ export default class Pathfinder extends Component {
       nodeBeforeEnter = 0;
     }
     // if dragging to make walls
-    if (
-      !node.isFinish &&
-      !node.isStart &&
-      mouseIsPressed &&
-      !this.state.isStartNodeMoving &&
-      !this.state.finishNodeMove
-    ) {
-      if (!node.isWall) {
-        // turn the nodes into wall nodes
-        node.isWall = true;
-        node.isVisited = false;
-        document.getElementById(`node-${row}-${col}`).className =
-          "node node-wall";
-      } else {
-        // turn the wall nodes back into regular node
-        node.isWall = false;
-        node.isVisited = false;
-        document.getElementById(`node-${row}-${col}`).className = "node";
-      }
+    const isNodeRegular = !node.isFinish && !node.isStart;
+    const isStartOrEndNodeMoving =
+      !this.state.isStartNodeMoving && !this.state.finishNodeMove;
+    if (isNodeRegular && isStartOrEndNodeMoving && isLeftMouseDown) {
+      node.isWall = true;
+      node.isVisited = false;
+      document.getElementById(`node-${row}-${col}`).className =
+        "node node-wall";
+    } else if (isNodeRegular && isStartOrEndNodeMoving && isShiftKeyDown) {
+      node.isWall = false;
+      node.isVisited = false;
+      document.getElementById(`node-${row}-${col}`).className = "node";
     } else if (this.state.isStartNodeMoving && !node.isFinish) {
       // if the start node is being dragged, set the nodes in the array accordingly and then
       // set the row and column of where the start node is
@@ -191,7 +176,6 @@ export default class Pathfinder extends Component {
 
     if (!currentNode.isFinish && !currentNode.isStart && !currentNode.isWall) {
       // turn the node into a wall node and indicate that the mouse is currently being pressed
-      mouseIsPressed = true;
       currentNode.isVisited = false;
       document.getElementById(`node-${row}-${col}`).className =
         "node node-wall";
@@ -202,7 +186,6 @@ export default class Pathfinder extends Component {
       currentNode.isWall
     ) {
       // turn the node back into a regular node and indicate that the mouse is being pressed
-      mouseIsPressed = true;
       currentNode.isVisited = false;
       document.getElementById(`node-${row}-${col}`).className = "node";
       currentNode.isWall = false;
@@ -227,7 +210,6 @@ export default class Pathfinder extends Component {
       isStartNodeMoving: false,
       finishNodeMove: false,
     });
-    mouseIsPressed = false;
 
     // if the start or end node is moving, update accoridingly
     if (this.state.isStartNodeMoving) {
@@ -764,8 +746,18 @@ export default class Pathfinder extends Component {
                           onMouseDown={(row, col) =>
                             this.handleMouseDown(row, col)
                           }
-                          onMouseEnter={(row, col) =>
-                            this.handleMouseEnter(row, col)
+                          onMouseEnter={(
+                            row,
+                            col,
+                            isLeftMouseDown,
+                            isShiftKeyDown
+                          ) =>
+                            this.handleMouseEnter(
+                              row,
+                              col,
+                              isLeftMouseDown,
+                              isShiftKeyDown
+                            )
                           }
                           onMouseUp={(row, col) => this.handleMouseUp(row, col)}
                           onMouseOut={(row, col) =>
