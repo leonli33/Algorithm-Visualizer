@@ -111,7 +111,7 @@ export default class Pathfinder extends Component {
       node.isVisited = false;
       document.getElementById(`node-${row}-${col}`).className =
         "node node-wall";
-    } else if (isNodeRegular && isStartOrEndNodeMoving && isShiftKeyDown) {
+    } else if (isNodeRegular && !isStartOrEndNodeMoving && isShiftKeyDown) {
       node.isWall = false;
       node.isVisited = false;
       document.getElementById(`node-${row}-${col}`).className = "node";
