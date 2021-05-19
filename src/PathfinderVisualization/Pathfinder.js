@@ -97,11 +97,7 @@ export default class Pathfinder extends Component {
   handleMouseEnter = (row, col, isLeftMouseDown, isShiftKeyDown) => {
     const node = this.state.grid[row][col];
     // use this to take the state of the node back to what it was
-    if (node.isWall) {
-      nodeBeforeEnter = 1;
-    } else {
-      nodeBeforeEnter = 0;
-    }
+    nodeBeforeEnter = node.isWall ? 1 : 0;
     // if dragging to make walls
     const isNodeRegular = !node.isFinish && !node.isStart;
     const isStartOrEndNodeMoving =

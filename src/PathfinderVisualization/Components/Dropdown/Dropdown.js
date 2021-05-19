@@ -18,7 +18,7 @@ const Dropdown = (props) => {
         {props.placeholder}
       </option>
       {props.items.map((el) => (
-        <option key={el} value={el}>
+        <option key={el} value={el} style={{marginTop: "15px"}}>
           {el}
         </option>
       ))}

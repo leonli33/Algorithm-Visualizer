@@ -35,72 +35,44 @@
 }
 
 .node-visited {
-  animation-name: get-visited-path-animation;
-  animation-duration: 0.3s;
-  animation-timing-function: ease-out;
-  animation-delay: 0;
-  animation-direction: alternate;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
+  animation: get-visited-path-animation 0.3s ease-in 0s 1 normal forwards;
   animation-play-state: running;
 }
 
 .node-wall {
-  animation-name: isWallAnimation;
-  animation-duration: 0.2s;
-  animation-timing-function: ease-in;
-  animation-delay: 0;
-  animation-direction: alternate;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
+  animation: wall-animation 0.2s ease-in 0s 1 normal forwards;
   animation-play-state: running;
 }
 
 .node-final-path {
-  animation-name: get-shortest-path-animation;
-  animation-duration: 0.3s;
-  animation-timing-function: ease-out;
-  animation-delay: 0;
-  animation-direction: alternate;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
+  animation: get-shortest-path-animation 0.3s ease-in 0s 1 normal forwards;
   animation-play-state: running;
 }
 
 @keyframes get-visited-path-animation {
   0% {
-    /* transform: scale(0.8); */
     background-color: #7062d7;
-    /* background-color: #ff8300; */
   }
   50% {
-    /* transform: scale(1.2); */
     background-color: #89ffad;
   }
   100% {
-    transform: scale(1);
     background-color: #89dbff;
   }
 }
 
 @keyframes get-shortest-path-animation {
   from {
-    transform: scale(0.6);
+    opacity: 0;
     background-color: yellow;
   }
-
-  50% {
-    transform: scale(1.1);
-    background-color: yellow;
-  }
-
   to {
-    transform: scale(1);
+    opacity: 1;
     background-color: yellow;
   }
 }
 
-@keyframes isWallAnimation {
+@keyframes wall-animation {
   from {
     transform: scale(0.6);
     background-color: #011a27;
