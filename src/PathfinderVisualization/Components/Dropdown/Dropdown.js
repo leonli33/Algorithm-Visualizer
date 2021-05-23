@@ -1,28 +1,42 @@
 import React from "react";
-import "./Dropdown.css";
 import clsx from "clsx";
+import "./Dropdown.css";
+import DropdownArrow from "../../../assets/drop-down-down.png";
 
 const Dropdown = (props) => {
   return (
-    <select
-      className={clsx(
-        props.gridBeingUsed && "dropdown-disabled",
-        !props.gridBeingUsed && "dropdown"
+    <div className={"drop-down-container"}>
+      <button
+        className={clsx(
+          "drop-down-button",
+          props.gridBeingUsed && "drop-down-button-disabled"
+        )}
+        id={props.id}
+        onChange={props.onChange}
+        disabled={props.gridBeingUsed ? true : false}
+        onClick={() => props.handleDropdownOpenStateChange(props.type)}
+      >
+        {props.value}
+        <img
+          style={{ width: "16px", marginLeft: "14px" }}
+          src={DropdownArrow}
+        ></img>
+      </button>
+      {props.isOpen && (
+        <div className="drop-down-elements-container">
+          {props.items.map((el) => (
+            <div key={el} value={el} className="drop-down-element">
+              <div
+                className="drop-down-element-text"
+                onClick={() => props.onChange(el)}
+              >
+                {el}
+              </div>
+            </div>
+          ))}
+        </div>
       )}
-      id={props.id}
-      value={props.value}
-      onChange={props.onChange}
-      disabled={props.gridBeingUsed ? true : false}
-    >
-      <option selected disabled hidden>
-        {props.placeholder}
-      </option>
-      {props.items.map((el) => (
-        <option key={el} value={el} style={{marginTop: "15px"}}>
-          {el}
-        </option>
-      ))}
-    </select>
+    </div>
   );
 };
 

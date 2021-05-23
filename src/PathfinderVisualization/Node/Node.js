@@ -48,8 +48,6 @@ function propsAreEqual(prev, next) {
   const startStateSame = prev.isStart === next.isStart;
   const wallStateSame = prev.isWall === next.isWall;
   const sameNodeWidth = prev.nodeWidth === next.nodeWidth;
-  // const equal = finishStateSame && startStateSame && wallStateSame;
-  // const equal = wallStateSame;
   return finishStateSame && startStateSame && wallStateSame && sameNodeWidth;
 }
 

@@ -1,37 +1,67 @@
-.dropdown-disabled {
+.drop-down-container {
   color: whitesmoke;
-  padding: 10px;
-  margin: 10px;
-  margin-bottom: 15px;
   font-family: "Helvetica";
   background-color: #011a27;
-  height: 50px;
-  border-bottom-width: 0px;
-  font-size: 15px;
-  border-width: 0px;
-  transition: 0.8s;
+  height: 55px;
   outline: none;
+  margin-right: 10px;
+  margin-bottom: -4px;
 }
 
-.drop-down-disabled:hover {
+.drop-down-button:hover,
+.drop-down-button:active {
+  background-color: #31cadb;
+}
+
+.drop-down-button-disabled:hover {
   background-color: lightcoral;
 }
 
-.dropdown {
-  color: whitesmoke;
-  padding: 10px;
-  margin: 10px;
-  margin-bottom: 15px;
-  font-family: "Helvetica";
-  background-color: #011a27;
-  height: 50px;
-  border-bottom-width: 0px;
-  font-size: 15px;
-  border-width: 0px;
-  transition: 0.8s;
+.drop-down-button {
+  height: 100%;
   outline: none;
+  border: 0px;
+  background-color: #011a27;
+  color: whitesmoke;
+  font-family: "Helvetica";
+  font-size: 15px;
+  padding: 0px 20px;
+  transition: 0.8s;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.dropdown:hover {
+.drop-down-elements-container {
+  position: absolute;
+  background-color: #011a27;
+  margin-top: 10px;
+  border-radius: 5px;
+  z-index: 1000;
+  padding-right: 10px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.drop-down-element {
+  height: 35px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.drop-down-element-text {
+  height: 100%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding-left: 8px;
+  border-radius: 8px;
+  padding-right: 8px;
+}
+
+.drop-down-element-text:hover {
   background-color: #31cadb;
 }

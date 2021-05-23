@@ -57,6 +57,9 @@ export default class Pathfinder extends Component {
       startButtonText: "Choose Algorithm",
       gridBeingUsed: false,
       nodeWidth: 25,
+      isAlgorithmOpen: false,
+      isMazeOpen: false,
+      isSpeedOpen: false,
     };
   }
 
@@ -474,9 +477,10 @@ export default class Pathfinder extends Component {
     }
   };
 
-  updateCurrentAlgo = (event) => {
+  updateCurrentAlgo = (newAlgorithm) => {
+    this.handleDropdownOpenStateChange("");
     this.setState({
-      currentAlgo: event.target.value,
+      currentAlgo: newAlgorithm,
       startButtonText: "Visualize",
     });
   };
@@ -508,6 +512,7 @@ export default class Pathfinder extends Component {
   };
 
   startAlgorithm = (shouldAnimate) => {
+    this.handleDropdownOpenStateChange("");
     const fieldsAreSelected = !(
       this.state.currentSpeed === "Speed" &&
       this.state.currentAlgo !== "Algorithms"
@@ -541,9 +546,9 @@ export default class Pathfinder extends Component {
   };
 
   // generate a maze to be displayed
-  generateMaze = async (event) => {
+  generateMaze = (type) => {
+    this.handleDropdownOpenStateChange("");
     if (!this.state.isStartNodeMoving && !this.state.finishNodeMove) {
-      let type = event.target.value;
       this.clearGrid();
       this.disableGrid();
       this.setState({
@@ -600,8 +605,8 @@ export default class Pathfinder extends Component {
     }
   };
 
-  updateSpeed = (event) => {
-    let speed = event.target.value;
+  updateSpeed = (speed) => {
+    this.handleDropdownOpenStateChange("");
     if (speed === "Slow") {
       this.setState({
         speedIndex: 0,
@@ -648,6 +653,36 @@ export default class Pathfinder extends Component {
     }
   };
 
+  handleDropdownOpenStateChange = (type) => {
+    if (type === "ALGORITHMS") {
+      this.setState({
+        isMazeOpen: false,
+        isSpeedOpen: false,
+        isAlgorithmOpen: !this.state.isAlgorithmOpen,
+      });
+    } else if (type === "GENERATE_WALLS") {
+      this.setState({
+        isAlgorithmOpen: false,
+        isSpeedOpen: false,
+        isMazeOpen: !this.state.isMazeOpen,
+      });
+    } else if (type === "SPEED") {
+      this.setState({
+        isAlgorithmOpen: false,
+        isMazeOpen: false,
+        isSpeedOpen: !this.state.isSpeedOpen,
+      });
+    } else {
+      this.setState({
+        isAlgorithmOpen: false,
+        isMazeOpen: false,
+        isSpeedOpen: false,
+      });
+    }
+  };
+
+  handleAlgorithmSelected = (type) => {};
+
   render() {
     return (
       <div className="overall-container">
@@ -666,6 +701,9 @@ export default class Pathfinder extends Component {
               onChange={this.updateCurrentAlgo}
               value={this.state.currentAlgo}
               items={this.state.algorithms}
+              handleDropdownOpenStateChange={this.handleDropdownOpenStateChange}
+              type="ALGORITHMS"
+              isOpen={this.state.isAlgorithmOpen}
             />
             <Dropdown
               gridBeingUsed={this.state.gridBeingUsed}
@@ -674,6 +712,9 @@ export default class Pathfinder extends Component {
               onChange={this.generateMaze}
               value={"Generate Walls"}
               items={this.state.mazeAlgorithms}
+              handleDropdownOpenStateChange={this.handleDropdownOpenStateChange}
+              type="GENERATE_WALLS"
+              isOpen={this.state.isMazeOpen}
             />
             <Dropdown
               gridBeingUsed={this.state.gridBeingUsed}
@@ -682,6 +723,9 @@ export default class Pathfinder extends Component {
               onChange={this.updateSpeed}
               value={this.state.currentSpeed}
               items={this.state.speed}
+              handleDropdownOpenStateChange={this.handleDropdownOpenStateChange}
+              type="SPEED"
+              isOpen={this.state.isSpeedOpen}
             />
             <button
               className={clsx(
@@ -722,10 +766,17 @@ export default class Pathfinder extends Component {
           </div>
         </div>
         <div className="grid-and-legend">
-          <div className="legend-container">
+          <div
+            className="legend-container"
+            onClick={() => this.handleDropdownOpenStateChange("")}
+          >
             <Legend />
           </div>
-          <div id="gridNodes" className="grid">
+          <div
+            id="gridNodes"
+            className="grid"
+            onClick={() => this.handleDropdownOpenStateChange("")}
+          >
             <div>
               {this.state.grid.map((row, rowIdx) => {
                 return (
