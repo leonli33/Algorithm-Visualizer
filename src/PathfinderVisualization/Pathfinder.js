@@ -636,6 +636,7 @@ export default class Pathfinder extends Component {
   // Set the grid to how it was when game first started
   resetGrid = () => {
     if (!this.state.isStartNodeMoving && !this.state.finishNodeMove) {
+      this.handleDropdownOpenStateChange("");
       this.clearGrid();
       START_NODE_ROW = Math.floor(GRID_HEIGHT / 2);
       FINISH_NODE_ROW = Math.floor(GRID_HEIGHT / 2);

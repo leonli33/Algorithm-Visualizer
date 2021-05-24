@@ -9,7 +9,8 @@ const Dropdown = (props) => {
       <button
         className={clsx(
           "drop-down-button",
-          props.gridBeingUsed && "drop-down-button-disabled"
+          props.gridBeingUsed && "drop-down-button-disabled",
+          props.isOpen && "drop-down-button-selected"
         )}
         id={props.id}
         onChange={props.onChange}

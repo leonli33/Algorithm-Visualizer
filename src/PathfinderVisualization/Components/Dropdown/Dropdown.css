@@ -33,6 +33,10 @@
   justify-content: space-between;
 }
 
+.drop-down-button-selected {
+  background-color: #31cadb;
+}
+
 .drop-down-elements-container {
   position: absolute;
   background-color: #011a27;
