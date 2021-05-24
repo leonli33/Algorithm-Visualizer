@@ -682,14 +682,15 @@ export default class Pathfinder extends Component {
     }
   };
 
-  handleAlgorithmSelected = (type) => {};
-
   render() {
     return (
       <div className="overall-container">
         <div className="button-container">
           <div
-            className="header"
+            className={clsx(
+              "header",
+              this.state.gridBeingUsed && "header-disabled"
+            )}
             onClick={this.state.gridBeingUsed ? null : this.resetGrid}
           >
             Pathfinding Visualized

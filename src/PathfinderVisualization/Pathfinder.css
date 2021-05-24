@@ -48,6 +48,7 @@
   background-color: #011a27;
   border-width: 0px;
   font-size: 15px;
+  margin-bottom: -5px;
 }
 
 .buttonAlgo:hover {
@@ -111,4 +112,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.header-disabled:hover {
+  color: lightcoral;
 }
