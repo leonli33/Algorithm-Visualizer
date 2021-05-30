@@ -1,20 +1,22 @@
 import { generateRandomNumber } from "../Functions/functions";
-const NORTH = {
-  row: -2,
-  col: 0,
-};
-const SOUTH = {
-  row: 2,
-  col: 0,
-};
-const EAST = {
-  row: 0,
-  col: 2,
-};
-const WEST = {
-  row: 0,
-  col: -2,
-};
+const directions = [
+  {
+    row: -2,
+    col: 0,
+  },
+  {
+    row: 2,
+    col: 0,
+  },
+  {
+    row: 0,
+    col: 2,
+  },
+  {
+    row: 0,
+    col: -2,
+  },
+];
 
 export function PrimsAlgorithm(grid, startNode, finishNode) {
   let height = grid.length;
@@ -33,7 +35,7 @@ export function PrimsAlgorithm(grid, startNode, finishNode) {
   const startCell = { row: 1, col: 1 };
   cellMap[1][1] = 0;
   passageCellAnimations.push(startCell);
-  let currentFrontierCells = getFrontierCells(startCell, cellMap);
+  let currentFrontierCells = getSurroundingCells(startCell, cellMap, false);
   while (currentFrontierCells.length > 0) {
     const randomFrontierCellIndex = generateRandomNumber(
       0,
@@ -45,7 +47,7 @@ export function PrimsAlgorithm(grid, startNode, finishNode) {
       continue;
     }
     // get the neighbors of the frontier cell
-    const neighbors = getFrontierCellNeighbors(frontierCell, cellMap);
+    const neighbors = getSurroundingCells(frontierCell, cellMap, true);
     if (neighbors.length > 0) {
       // cut divider between current frontier cell and neighbor
       const randomNeighborIndex = generateRandomNumber(0, neighbors.length - 1);
@@ -65,10 +67,39 @@ export function PrimsAlgorithm(grid, startNode, finishNode) {
     }
 
     // compute next frontierCells and add them into the list
-    const newFrontierCells = getFrontierCells(frontierCell, cellMap);
+    const newFrontierCells = getSurroundingCells(frontierCell, cellMap, false);
     currentFrontierCells = currentFrontierCells.concat(newFrontierCells);
   }
   return passageCellAnimations;
+}
+
+function getSurroundingCells(currentCell, cellMap, isPath) {
+  const frontierCells = [];
+  const currentRow = currentCell.row;
+  const currentCol = currentCell.col;
+  const height = cellMap.length;
+  const width = cellMap[0].length;
+  const numericalIsPath = isPath ? 0 : 1;
+
+  for (const direction of directions) {
+    const currentFrontierCell = {
+      row: currentRow + direction.row,
+      col: currentCol + direction.col,
+    };
+    const cellIsInbounds = checkCellInBounds(
+      currentFrontierCell,
+      height,
+      width
+    );
+    if (
+      cellIsInbounds &&
+      cellMap[currentFrontierCell.row][currentFrontierCell.col] ===
+        numericalIsPath
+    ) {
+      frontierCells.push(currentFrontierCell);
+    }
+  }
+  return frontierCells;
 }
 
 function isStartOrEndNode(currentNode, startNode, finishNode) {
@@ -76,110 +107,6 @@ function isStartOrEndNode(currentNode, startNode, finishNode) {
     (currentNode.col === startNode.col && currentNode.row === startNode.row) ||
     (currentNode.col === finishNode.col && currentNode.row === finishNode.row)
   );
-}
-
-function getFrontierCellNeighbors(currentCell, cellMap) {
-  const neighborCells = [];
-  const currentRow = currentCell.row;
-  const currentCol = currentCell.col;
-  const width = cellMap[0].length;
-  const height = cellMap.length;
-  if (
-    checkCellInBounds({ ...currentCell, row: currentRow + 2 }, height, width) &&
-    cellMap[currentRow + 2][currentCol] === 0
-  ) {
-    neighborCells.push({ row: currentRow + 2, col: currentCol });
-  }
-  if (
-    checkCellInBounds({ ...currentCell, row: currentRow - 2 }, height, width) &&
-    cellMap[currentRow - 2][currentCol] === 0
-  ) {
-    neighborCells.push({ row: currentRow - 2, col: currentCol });
-  }
-  if (
-    checkCellInBounds({ ...currentCell, col: currentCol + 2 }, height, width) &&
-    cellMap[currentRow][currentCol + 2] === 0
-  ) {
-    neighborCells.push({ row: currentRow, col: currentCol + 2 });
-  }
-  if (
-    checkCellInBounds({ ...currentCell, col: currentCol - 2 }, height, width) &&
-    cellMap[currentRow][currentCol - 2] === 0
-  ) {
-    neighborCells.push({ row: currentRow, col: currentCol - 2 });
-  }
-  return neighborCells;
-}
-
-function getFrontierCells(currentCell, cellMap) {
-  const frontierCells = [];
-  const currentRow = currentCell.row;
-  const currentCol = currentCell.col;
-  let height = cellMap.length;
-  let width = cellMap[0].length;
-
-  const northernFrontierCell = {
-    row: currentRow + NORTH.row,
-    col: currentCol + NORTH.col,
-  };
-  const southernFrontierCell = {
-    row: currentRow + SOUTH.row,
-    col: currentCol + SOUTH.col,
-  };
-  const westernFrontierCell = {
-    row: currentRow + WEST.row,
-    col: currentCol + WEST.col,
-  };
-  const easternFrontierCell = {
-    row: currentRow + EAST.row,
-    col: currentCol + EAST.col,
-  };
-
-  const northernFrontierInbounds = checkCellInBounds(
-    northernFrontierCell,
-    height,
-    width
-  );
-  const southernFrontierInbounds = checkCellInBounds(
-    southernFrontierCell,
-    height,
-    width
-  );
-  const easternFrontierInbounds = checkCellInBounds(
-    easternFrontierCell,
-    height,
-    width
-  );
-  const westernFrontierInbounds = checkCellInBounds(
-    westernFrontierCell,
-    height,
-    width
-  );
-  if (
-    northernFrontierInbounds &&
-    cellMap[northernFrontierCell.row][northernFrontierCell.col] === 1
-  ) {
-    frontierCells.push(northernFrontierCell);
-  }
-  if (
-    southernFrontierInbounds &&
-    cellMap[southernFrontierCell.row][southernFrontierCell.col] === 1
-  ) {
-    frontierCells.push(southernFrontierCell);
-  }
-  if (
-    easternFrontierInbounds &&
-    cellMap[easternFrontierCell.row][easternFrontierCell.col] === 1
-  ) {
-    frontierCells.push(easternFrontierCell);
-  }
-  if (
-    westernFrontierInbounds &&
-    cellMap[westernFrontierCell.row][westernFrontierCell.col] === 1
-  ) {
-    frontierCells.push(westernFrontierCell);
-  }
-  return frontierCells;
 }
 
 function checkCellInBounds(cell, height, width) {
