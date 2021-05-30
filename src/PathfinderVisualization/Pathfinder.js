@@ -599,7 +599,7 @@ export default class Pathfinder extends Component {
         if (i === GRID_HEIGHT - 1 && j === GRID_LENGTH - 1) {
           setTimeout(() => {
             this.displayPrimsPathAnimation(pathAnimations);
-          }, 1000);
+          }, 500);
         } else {
           if (
             (i !== FINISH_NODE_ROW || j !== FINISH_NODE_COL) &&

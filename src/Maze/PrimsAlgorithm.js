@@ -32,8 +32,21 @@ export function PrimsAlgorithm(grid, startNode, finishNode) {
     cellMap.push(row);
   }
   const passageCellAnimations = [];
-  const startCell = { row: 1, col: 1 };
-  cellMap[1][1] = 0;
+  let startCellRow = generateRandomNumber(1, height - 1);
+  let startCellCol = generateRandomNumber(1, width - 1);
+  while (
+    isStartOrEndNode(
+      { row: startCellRow, col: startCellCol },
+      startNode,
+      finishNode
+    ) ||
+    startCellRow % 2 === 0
+  ) {
+    startCellRow = generateRandomNumber(1, height - 1);
+    startCellCol = generateRandomNumber(1, width - 1);
+  }
+  const startCell = { row: startCellRow, col: startCellRow };
+  cellMap[startCell.row][startCell.col] = 0;
   passageCellAnimations.push(startCell);
   let currentFrontierCells = getSurroundingCells(startCell, cellMap, false);
   while (currentFrontierCells.length > 0) {
