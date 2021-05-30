@@ -69,7 +69,6 @@ export default class Pathfinder extends Component {
     };
   }
 
-  // set the grid and also set up a mouseUp listener
   componentDidMount() {
     let windowWidth = window.innerWidth;
     let windowHeight = window.screen.height;
@@ -88,7 +87,6 @@ export default class Pathfinder extends Component {
     window.addEventListener("resize", this.updateDimensions);
   }
 
-  // detach mouseUp listener
   componentWillUnmount() {
     window.removeEventListener("mouseup", this.onMouseUp);
     window.removeEventListener("resize", this.updateDimensions);
@@ -584,27 +582,49 @@ export default class Pathfinder extends Component {
         );
         this.displayMaze(walls);
       } else if (type === "Prim's Algorithm") {
-        this.createGridOfWalls();
         const pathAnimations = PrimsAlgorithm(
           this.state.grid,
           { row: START_NODE_ROW, col: START_NODE_COL },
           { row: FINISH_NODE_ROW, col: FINISH_NODE_COL }
         );
-        setTimeout(() => {
-          this.displayPrimsAlgorithm(pathAnimations);
-        }, 1500);
+        this.displayPrimsAlgorithm(pathAnimations);
       }
     }
   };
 
   displayPrimsAlgorithm = (pathAnimations) => {
+    // create a grid of walls
+    for (let i = 0; i < GRID_HEIGHT; i++) {
+      for (let j = 0; j < GRID_LENGTH; j++) {
+        if (i === GRID_HEIGHT - 1 && j === GRID_LENGTH - 1) {
+          setTimeout(() => {
+            this.displayPrimsPathAnimation(pathAnimations);
+          }, 1000);
+        } else {
+          if (
+            (i !== FINISH_NODE_ROW || j !== FINISH_NODE_COL) &&
+            (i !== START_NODE_ROW || j !== START_NODE_COL)
+          ) {
+            this.state.grid[i][j].isWall = true;
+            this.state.grid[i][j].isVisited = false;
+            this.state.grid[i][j].isStart = false;
+            this.state.grid[i][j].isFinish = false;
+            document.getElementById(`node-${i}-${j}`).className =
+              "node node-wall";
+          }
+        }
+      }
+    }
+  };
+
+  displayPrimsPathAnimation = (pathAnimations) => {
     for (let i = 0; i <= pathAnimations.length; i++) {
       if (i === pathAnimations.length) {
         setTimeout(() => {
           this.setState({
             gridBeingUsed: false,
           });
-        }, this.state.speedValue[this.state.speedIndex] * i);
+        }, 10 * i);
       } else {
         setTimeout(() => {
           const { row, col } = pathAnimations[i];
@@ -615,25 +635,7 @@ export default class Pathfinder extends Component {
           this.state.grid[row][col].isStart = false;
           this.state.grid[row][col].isFinish = false;
           document.getElementById(`node-${row}-${col}`).className = "node";
-        }, this.state.speedValue[this.state.speedIndex] * i);
-      }
-    }
-  };
-
-  createGridOfWalls = () => {
-    for (let i = 0; i < GRID_HEIGHT; i++) {
-      for (let j = 0; j < GRID_LENGTH; j++) {
-        if (
-          (i !== FINISH_NODE_ROW || j !== FINISH_NODE_COL) &&
-          (i !== START_NODE_ROW || j !== START_NODE_COL)
-        ) {
-          this.state.grid[i][j].isWall = true;
-          this.state.grid[i][j].isVisited = false;
-          this.state.grid[i][j].isStart = false;
-          this.state.grid[i][j].isFinish = false;
-          document.getElementById(`node-${i}-${j}`).className =
-            "node node-wall";
-        }
+        }, 10 * i);
       }
     }
   };
@@ -843,7 +845,14 @@ export default class Pathfinder extends Component {
                 return (
                   <div key={rowIdx}>
                     {row.map((node, nodeIdx) => {
-                      const { row, col, isFinish, isStart, isWall } = node;
+                      const {
+                        row,
+                        col,
+                        isFinish,
+                        isStart,
+                        isWall,
+                        isWallAnimate,
+                      } = node;
                       return (
                         <Node
                           key={nodeIdx}
@@ -873,6 +882,7 @@ export default class Pathfinder extends Component {
                           }
                           row={row}
                           nodeWidth={this.state.nodeWidth}
+                          isWallAnimate={isWallAnimate}
                         />
                       );
                     })}
@@ -928,6 +938,7 @@ export default class Pathfinder extends Component {
       distance: Infinity,
       isVisited: false,
       isWall: false,
+      isWallAnimate: false,
       previousNode: null,
     };
   };

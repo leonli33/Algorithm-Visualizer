@@ -12,6 +12,7 @@ const Node = (props) => {
     onMouseUp,
     row,
     nodeWidth,
+    isWallAnimate
   } = props;
 
   let extraClassName = "";
@@ -21,6 +22,8 @@ const Node = (props) => {
     extraClassName = "node-start";
   } else if (isWall) {
     extraClassName = "node-wall";
+  } else if (isWallAnimate) {
+    extraClassName = "node-wall-animate";
   }
 
   return (

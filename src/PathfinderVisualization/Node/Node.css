@@ -40,6 +40,10 @@
 }
 
 .node-wall {
+  background-color: #011a27;
+}
+
+.node-wall-animate {
   animation: wall-animation 0.2s ease-in 0s 1 normal forwards;
   animation-play-state: running;
 }
