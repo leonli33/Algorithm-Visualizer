@@ -47,20 +47,35 @@ export function PrimsAlgorithm(grid, startNode, finishNode) {
   }
   const startCell = { row: startCellRow, col: startCellRow };
   cellMap[startCell.row][startCell.col] = 0;
-  passageCellAnimations.push(startCell);
   let currentFrontierCells = getSurroundingCells(startCell, cellMap, false);
+  const firstIterationAnimation = {
+    selectedNode: startCell,
+    frontierNodes: [...currentFrontierCells],
+    newPassageCells: [startCell],
+  };
+  passageCellAnimations.push(firstIterationAnimation);
+  passageCellAnimations.push(firstIterationAnimation);
   while (currentFrontierCells.length > 0) {
+    const iterationAnimation = {
+      selectedNode: null,
+      frontierNodes: [],
+      newPassageCells: [],
+    };
     const randomFrontierCellIndex = generateRandomNumber(
       0,
       currentFrontierCells.length - 1
     );
     const frontierCell = currentFrontierCells[randomFrontierCellIndex];
+    iterationAnimation.selectedNode = frontierCell;
+
     if (cellMap[frontierCell.row][frontierCell.col] === 0) {
       currentFrontierCells.splice(randomFrontierCellIndex, 1);
       continue;
     }
     // get the neighbors of the frontier cell
     const neighbors = getSurroundingCells(frontierCell, cellMap, true);
+    iterationAnimation.frontierNodes = neighbors;
+
     if (neighbors.length > 0) {
       // cut divider between current frontier cell and neighbor
       const randomNeighborIndex = generateRandomNumber(0, neighbors.length - 1);
@@ -70,18 +85,21 @@ export function PrimsAlgorithm(grid, startNode, finishNode) {
       const middleNodeRow = Math.floor((neighborRow + frontierCell.row) / 2);
       const middleNodeCol = Math.floor((neighborCol + frontierCell.col) / 2);
       cellMap[middleNodeRow][middleNodeCol] = 0;
-      passageCellAnimations.push({ row: middleNodeRow, col: middleNodeCol });
+      const neighborSelectedNode = { row: middleNodeRow, col: middleNodeCol };
+      iterationAnimation.newPassageCells.push(neighborSelectedNode);
     }
     // remove the frontier cell from the frontier list
     cellMap[frontierCell.row][frontierCell.col] = 0;
     currentFrontierCells.splice(randomFrontierCellIndex, 1);
     if (!isStartOrEndNode(frontierCell, startNode, finishNode)) {
-      passageCellAnimations.push(frontierCell);
+      iterationAnimation.newPassageCells.push(frontierCell);
     }
 
     // compute next frontierCells and add them into the list
     const newFrontierCells = getSurroundingCells(frontierCell, cellMap, false);
     currentFrontierCells = currentFrontierCells.concat(newFrontierCells);
+    passageCellAnimations.push(iterationAnimation);
+    passageCellAnimations.push(iterationAnimation);
   }
   return passageCellAnimations;
 }

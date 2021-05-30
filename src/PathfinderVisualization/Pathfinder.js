@@ -601,17 +601,13 @@ export default class Pathfinder extends Component {
             this.displayPrimsPathAnimation(pathAnimations);
           }, 500);
         } else {
-          if (
-            (i !== FINISH_NODE_ROW || j !== FINISH_NODE_COL) &&
-            (i !== START_NODE_ROW || j !== START_NODE_COL)
-          ) {
-            this.state.grid[i][j].isWall = true;
-            this.state.grid[i][j].isVisited = false;
-            this.state.grid[i][j].isStart = false;
-            this.state.grid[i][j].isFinish = false;
-            document.getElementById(`node-${i}-${j}`).className =
-              "node node-wall";
-          }
+          if (this.isStartNodeOrEndNode(i, j)) continue;
+          this.state.grid[i][j].isWall = true;
+          this.state.grid[i][j].isVisited = false;
+          this.state.grid[i][j].isStart = false;
+          this.state.grid[i][j].isFinish = false;
+          document.getElementById(`node-${i}-${j}`).className =
+            "node node-wall";
         }
       }
     }
@@ -624,20 +620,61 @@ export default class Pathfinder extends Component {
           this.setState({
             gridBeingUsed: false,
           });
-        }, 10 * i);
+        }, 20 * i);
       } else {
         setTimeout(() => {
-          const { row, col } = pathAnimations[i];
-          if (row === START_NODE_ROW && col === START_NODE_COL) return;
-          if (row === FINISH_NODE_ROW && col === FINISH_NODE_COL) return;
-          this.state.grid[row][col].isWall = false;
-          this.state.grid[row][col].isVisited = false;
-          this.state.grid[row][col].isStart = false;
-          this.state.grid[row][col].isFinish = false;
-          document.getElementById(`node-${row}-${col}`).className = "node";
-        }, 10 * i);
+          const currentAnimation = pathAnimations[i];
+          if (i % 2 === 0) {
+            for (const frontierCell of currentAnimation.frontierNodes) {
+              const { row, col } = frontierCell;
+              if (this.isStartNodeOrEndNode(row, col)) continue;
+              document.getElementById(`node-${row}-${col}`).className =
+                "node prim-surrounding-node";
+            }
+            const { row, col } = currentAnimation.selectedNode;
+            if (this.isStartNodeOrEndNode(row, col)) return;
+            document.getElementById(`node-${row}-${col}`).className =
+              "node prim-selected-node";
+          } else {
+            for (const frontierCell of currentAnimation.frontierNodes) {
+              const { row, col } = frontierCell;
+              if (this.isStartNodeOrEndNode(row, col)) continue;
+              if (this.state.grid[row][col].isWall) {
+                document.getElementById(`node-${row}-${col}`).className =
+                  "node node-wall";
+              } else {
+                document.getElementById(`node-${row}-${col}`).className =
+                  "node";
+              }
+            }
+            const selectedNodeRow = currentAnimation.selectedNode.row;
+            const selectedNodeCol = currentAnimation.selectedNode.col;
+            if (this.state.grid[selectedNodeRow][selectedNodeCol].isWall) {
+              document.getElementById(
+                `node-${selectedNodeRow}-${selectedNodeCol}`
+              ).className = "node node-wall";
+            } else {
+              document.getElementById(
+                `node-${selectedNodeRow}-${selectedNodeCol}`
+              ).className = "node";
+            }
+            for (const passageCell of currentAnimation.newPassageCells) {
+              const { row, col } = passageCell;
+              if (this.isStartNodeOrEndNode(row, col)) continue;
+              this.state.grid[row][col].isWall = false;
+              document.getElementById(`node-${row}-${col}`).className = "node";
+            }
+          }
+        }, 20 * i);
       }
     }
+  };
+
+  isStartNodeOrEndNode = (row, col) => {
+    return (
+      (row === START_NODE_ROW && col === START_NODE_COL) ||
+      (row === FINISH_NODE_ROW && col === FINISH_NODE_COL)
+    );
   };
 
   displayMaze = (nodes) => {

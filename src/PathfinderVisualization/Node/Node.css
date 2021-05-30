@@ -14,6 +14,14 @@
   -ms-user-select: none;
 }
 
+.prim-surrounding-node {
+  background-color: orange;
+}
+
+.prim-selected-node {
+  background-color: darkblue;
+}
+
 .node-finish {
   background-color: lightcoral;
 }
