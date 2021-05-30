@@ -600,9 +600,11 @@ export default class Pathfinder extends Component {
   displayPrimsAlgorithm = (pathAnimations) => {
     for (let i = 0; i <= pathAnimations.length; i++) {
       if (i === pathAnimations.length) {
-        this.setState({
-          gridBeingUsed: false,
-        });
+        setTimeout(() => {
+          this.setState({
+            gridBeingUsed: false,
+          });
+        }, this.state.speedValue[this.state.speedIndex] * i);
       } else {
         setTimeout(() => {
           const { row, col } = pathAnimations[i];
