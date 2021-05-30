@@ -8,6 +8,7 @@ import { GBFS } from "../Algos/GreedyBestFirstSearch";
 import { RandomMaze } from "../Maze/RandomMaze";
 import { VerticalWalls } from "../Maze/VerticalWalls";
 import { HorizontalWalls } from "../Maze/HorizontalWalls";
+import { PrimsAlgorithm } from "../Maze/PrimsAlgorithm";
 import Legend from "./Components/Legend/Legend";
 import Dropdown from "./Components/Dropdown/Dropdown";
 import clsx from "clsx";
@@ -52,7 +53,12 @@ export default class Pathfinder extends Component {
       currentSpeed: "Speed",
       speedValue: [100, 6, 4],
       speedIndex: 1,
-      mazeAlgorithms: ["Random Walls", "Vertical Walls", "Horizontal Walls"],
+      mazeAlgorithms: [
+        "Random Walls",
+        "Vertical Walls",
+        "Horizontal Walls",
+        "Prim's Algorithm",
+      ],
       mazeLabel: "Generate Maze",
       startButtonText: "Choose Algorithm",
       gridBeingUsed: false,
@@ -98,7 +104,7 @@ export default class Pathfinder extends Component {
 
   // if mouse enters the boundary of any node
   handleMouseEnter = (row, col, isLeftMouseDown, isShiftKeyDown) => {
-    if(this.state.gridBeingUsed) return
+    if (this.state.gridBeingUsed) return;
     const node = this.state.grid[row][col];
     // use this to take the state of the node back to what it was
     nodeBeforeEnter = node.isWall ? 1 : 0;
@@ -172,7 +178,7 @@ export default class Pathfinder extends Component {
   handleMouseDown = (row, col) => {
     // set the state of a particular node based on its current status of
     // being a wall node or regular node
-    if(this.state.gridBeingUsed) return
+    if (this.state.gridBeingUsed) return;
     let currentNode = this.state.grid[row][col];
 
     if (!currentNode.isFinish && !currentNode.isStart && !currentNode.isWall) {
@@ -577,6 +583,55 @@ export default class Pathfinder extends Component {
           { row: FINISH_NODE_ROW, col: FINISH_NODE_COL }
         );
         this.displayMaze(walls);
+      } else if (type === "Prim's Algorithm") {
+        this.createGridOfWalls();
+        const pathAnimations = PrimsAlgorithm(
+          this.state.grid,
+          { row: START_NODE_ROW, col: START_NODE_COL },
+          { row: FINISH_NODE_ROW, col: FINISH_NODE_COL }
+        );
+        setTimeout(() => {
+          this.displayPrimsAlgorithm(pathAnimations);
+        }, 1500);
+      }
+    }
+  };
+
+  displayPrimsAlgorithm = (pathAnimations) => {
+    for (let i = 0; i <= pathAnimations.length; i++) {
+      if (i === pathAnimations.length) {
+        this.setState({
+          gridBeingUsed: false,
+        });
+      } else {
+        setTimeout(() => {
+          const { row, col } = pathAnimations[i];
+          if (row === START_NODE_ROW && col === START_NODE_COL) return;
+          if (row === FINISH_NODE_ROW && col === FINISH_NODE_COL) return;
+          this.state.grid[row][col].isWall = false;
+          this.state.grid[row][col].isVisited = false;
+          this.state.grid[row][col].isStart = false;
+          this.state.grid[row][col].isFinish = false;
+          document.getElementById(`node-${row}-${col}`).className = "node";
+        }, this.state.speedValue[this.state.speedIndex] * i);
+      }
+    }
+  };
+
+  createGridOfWalls = () => {
+    for (let i = 0; i < GRID_HEIGHT; i++) {
+      for (let j = 0; j < GRID_LENGTH; j++) {
+        if (
+          (i !== FINISH_NODE_ROW || j !== FINISH_NODE_COL) &&
+          (i !== START_NODE_ROW || j !== START_NODE_COL)
+        ) {
+          this.state.grid[i][j].isWall = true;
+          this.state.grid[i][j].isVisited = false;
+          this.state.grid[i][j].isStart = false;
+          this.state.grid[i][j].isFinish = false;
+          document.getElementById(`node-${i}-${j}`).className =
+            "node node-wall";
+        }
       }
     }
   };
