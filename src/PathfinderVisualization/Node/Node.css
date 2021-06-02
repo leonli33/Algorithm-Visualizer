@@ -22,6 +22,10 @@
   background-color: darkblue;
 }
 
+.node-backtrack {
+  background-color: orange;
+}
+
 .node-finish {
   background-color: lightcoral;
 }

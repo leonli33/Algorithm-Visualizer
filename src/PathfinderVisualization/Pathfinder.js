@@ -2,13 +2,13 @@ import React, { Component } from "react";
 import Node from "./Node/Node";
 import { dijkstra } from "../Algos/Dijkstra";
 import { AStar } from "../Algos/AStar";
-import { BFS } from "../Algos/BreadthFirstSearch";
 import { DFS } from "../Algos/DepthFirstSearch";
 import { GBFS } from "../Algos/GreedyBestFirstSearch";
 import { RandomMaze } from "../Maze/RandomMaze";
 import { VerticalWalls } from "../Maze/VerticalWalls";
 import { HorizontalWalls } from "../Maze/HorizontalWalls";
 import { PrimsAlgorithm } from "../Maze/PrimsAlgorithm";
+import { RecursiveBacktracking } from "../Maze/RecursiveBacktracking";
 import Legend from "./Components/Legend/Legend";
 import Dropdown from "./Components/Dropdown/Dropdown";
 import clsx from "clsx";
@@ -45,7 +45,6 @@ export default class Pathfinder extends Component {
         "A* Algorithm",
         "Greedy Best-First Search",
         "Dijkstra's Algorithm",
-        "Breadth First Search",
         "Depth First Search",
       ],
       currentAlgo: "Algorithms",
@@ -58,6 +57,7 @@ export default class Pathfinder extends Component {
         "Vertical Walls",
         "Horizontal Walls",
         "Prim's Algorithm",
+        "Recursive Backtracking",
       ],
       mazeLabel: "Generate Maze",
       startButtonText: "Choose Algorithm",
@@ -304,20 +304,6 @@ export default class Pathfinder extends Component {
     }
   };
 
-  // this is pretty much the same thing as dijkstra's except we are not sorting
-  visualizeBreadthFirstSearch = (animate) => {
-    if (!this.state.isStartNodeMoving && !this.state.finishNodeMove) {
-      if (!this.state.gridClear) {
-        this.clearPath();
-      }
-      this.disableGrid();
-      let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
-      let path = BFS(this.state.grid, startNode, GRID_LENGTH, GRID_HEIGHT);
-      let shortestPath = path.shortest.reverse();
-      this.displayAlgo(path.visited, shortestPath, animate);
-    }
-  };
-
   // visualize A* algo
   visualizeAStar = (animate) => {
     if (!this.state.isStartNodeMoving && !this.state.finishNodeMove) {
@@ -544,8 +530,6 @@ export default class Pathfinder extends Component {
       this.visualizeGreedyBestFirstSearch(shouldAnimate);
     } else if (currentAlgo === "Dijkstra's Algorithm") {
       this.visualizeDijkstra(shouldAnimate);
-    } else if (currentAlgo === "Breadth First Search") {
-      this.visualizeBreadthFirstSearch(shouldAnimate);
     } else if (currentAlgo === "Depth First Search") {
       this.visualizeDepthFirstSearch(shouldAnimate);
     }
@@ -587,20 +571,31 @@ export default class Pathfinder extends Component {
           { row: START_NODE_ROW, col: START_NODE_COL },
           { row: FINISH_NODE_ROW, col: FINISH_NODE_COL }
         );
-        this.displayPrimsAlgorithm(pathAnimations);
+        this.createGridOfWalls(pathAnimations, this.displayPrimsPathAnimation);
+      } else if (type === "Recursive Backtracking") {
+        const pathAnimations = RecursiveBacktracking(
+          this.state.grid,
+          { row: START_NODE_ROW, col: START_NODE_COL },
+          { row: FINISH_NODE_ROW, col: FINISH_NODE_COL }
+        );
+        this.createGridOfWalls(
+          pathAnimations,
+          this.displayRecursiveBacktrackingAnimation
+        );
       }
     }
   };
 
-  displayPrimsAlgorithm = (pathAnimations) => {
+  createGridOfWalls = (pathAnimations, mazeAlgorithm) => {
     // create a grid of walls
     for (let i = 0; i < GRID_HEIGHT; i++) {
-      for (let j = 0; j < GRID_LENGTH; j++) {
-        if (i === GRID_HEIGHT - 1 && j === GRID_LENGTH - 1) {
+      for (let j = 0; j <= GRID_LENGTH; j++) {
+        if (i === GRID_HEIGHT - 1 && j === GRID_LENGTH) {
           setTimeout(() => {
-            this.displayPrimsPathAnimation(pathAnimations);
+            mazeAlgorithm(pathAnimations);
           }, 500);
         } else {
+          if (j === GRID_LENGTH) continue;
           if (this.isStartNodeOrEndNode(i, j)) continue;
           this.state.grid[i][j].isWall = true;
           this.state.grid[i][j].isVisited = false;
@@ -609,6 +604,28 @@ export default class Pathfinder extends Component {
           document.getElementById(`node-${i}-${j}`).className =
             "node node-wall";
         }
+      }
+    }
+  };
+
+  displayRecursiveBacktrackingAnimation = (pathAnimations) => {
+    for (let i = 0; i <= pathAnimations.length; i++) {
+      if (i === pathAnimations.length) {
+        setTimeout(() => {
+          this.setState({
+            gridBeingUsed: false,
+          });
+        }, 15 * i);
+      } else {
+        setTimeout(() => {
+          const currentCell = pathAnimations[i];
+          const { row, col, backtrack } = currentCell;
+          if (this.isStartNodeOrEndNode(row, col)) return;
+          this.state.grid[row][col].isWall = false;
+          document.getElementById(`node-${row}-${col}`).className = `node ${
+            backtrack ? "node-backtrack" : ""
+          }`;
+        }, 15 * i);
       }
     }
   };

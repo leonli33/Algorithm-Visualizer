@@ -1,5 +1,8 @@
 import { getNeighbors } from "../Functions/functions";
 
+// I decided not to use this algorithm anymore since it is the same as Dijkstra's in my 
+// graph representation
+
 // Breadth first search
 export function BFS(grid, startN, GRID_LENGTH, GRID_WIDTH) {
   let nodesToVisit = [];
