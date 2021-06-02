@@ -603,6 +603,7 @@ export default class Pathfinder extends Component {
     for (let i = 0; i <= pathAnimations.length; i++) {
       if (i === pathAnimations.length) {
         setTimeout(() => {
+          this.enableGrid();
           this.setState({
             gridBeingUsed: false,
           });
@@ -625,55 +626,21 @@ export default class Pathfinder extends Component {
     for (let i = 0; i <= pathAnimations.length; i++) {
       if (i === pathAnimations.length) {
         setTimeout(() => {
+          this.enableGrid();
           this.setState({
             gridBeingUsed: false,
           });
-        }, 20 * i);
+        }, 15 * i);
       } else {
         setTimeout(() => {
-          const currentAnimation = pathAnimations[i];
-          if (i % 2 === 0) {
-            for (const frontierCell of currentAnimation.frontierNodes) {
-              const { row, col } = frontierCell;
-              if (this.isStartNodeOrEndNode(row, col)) continue;
-              document.getElementById(`node-${row}-${col}`).className =
-                "node prim-surrounding-node";
-            }
-            const { row, col } = currentAnimation.selectedNode;
-            if (this.isStartNodeOrEndNode(row, col)) return;
-            document.getElementById(`node-${row}-${col}`).className =
-              "node prim-selected-node";
-          } else {
-            for (const frontierCell of currentAnimation.frontierNodes) {
-              const { row, col } = frontierCell;
-              if (this.isStartNodeOrEndNode(row, col)) continue;
-              if (this.state.grid[row][col].isWall) {
-                document.getElementById(`node-${row}-${col}`).className =
-                  "node node-wall";
-              } else {
-                document.getElementById(`node-${row}-${col}`).className =
-                  "node";
-              }
-            }
-            const selectedNodeRow = currentAnimation.selectedNode.row;
-            const selectedNodeCol = currentAnimation.selectedNode.col;
-            if (this.state.grid[selectedNodeRow][selectedNodeCol].isWall) {
-              document.getElementById(
-                `node-${selectedNodeRow}-${selectedNodeCol}`
-              ).className = "node node-wall";
-            } else {
-              document.getElementById(
-                `node-${selectedNodeRow}-${selectedNodeCol}`
-              ).className = "node";
-            }
-            for (const passageCell of currentAnimation.newPassageCells) {
-              const { row, col } = passageCell;
-              if (this.isStartNodeOrEndNode(row, col)) continue;
-              this.state.grid[row][col].isWall = false;
-              document.getElementById(`node-${row}-${col}`).className = "node";
-            }
-          }
-        }, 20 * i);
+          const currentCell = pathAnimations[i];
+          const { row, col, frontierCell } = currentCell;
+          if (this.isStartNodeOrEndNode(row, col)) return;
+          this.state.grid[row][col].isWall = false;
+          document.getElementById(`node-${row}-${col}`).className = `node ${
+            frontierCell && "node-frontier"
+          }`;
+        }, 15 * i);
       }
     }
   };
