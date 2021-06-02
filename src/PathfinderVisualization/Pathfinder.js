@@ -6,7 +6,6 @@ import { DFS } from "../Algos/DepthFirstSearch";
 import { GBFS } from "../Algos/GreedyBestFirstSearch";
 import { RandomMaze } from "../Maze/RandomMaze";
 import { VerticalWalls } from "../Maze/VerticalWalls";
-import { HorizontalWalls } from "../Maze/HorizontalWalls";
 import { PrimsAlgorithm } from "../Maze/PrimsAlgorithm";
 import { RecursiveBacktracking } from "../Maze/RecursiveBacktracking";
 import Legend from "./Components/Legend/Legend";
@@ -55,7 +54,6 @@ export default class Pathfinder extends Component {
       mazeAlgorithms: [
         "Random Walls",
         "Vertical Walls",
-        "Horizontal Walls",
         "Prim's Algorithm",
         "Recursive Backtracking",
       ],
@@ -553,13 +551,6 @@ export default class Pathfinder extends Component {
         this.displayMaze(walls);
       } else if (type === "Vertical Walls") {
         let walls = VerticalWalls(
-          this.state.grid,
-          { row: START_NODE_ROW, col: START_NODE_COL },
-          { row: FINISH_NODE_ROW, col: FINISH_NODE_COL }
-        );
-        this.displayMaze(walls);
-      } else if (type === "Horizontal Walls") {
-        let walls = HorizontalWalls(
           this.state.grid,
           { row: START_NODE_ROW, col: START_NODE_COL },
           { row: FINISH_NODE_ROW, col: FINISH_NODE_COL }
