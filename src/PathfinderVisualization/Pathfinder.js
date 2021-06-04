@@ -72,6 +72,8 @@ export default class Pathfinder extends Component {
     let windowHeight = window.screen.height;
     GRID_HEIGHT = Math.ceil((windowHeight - 250) / 25);
     GRID_LENGTH = Math.ceil((windowWidth - 50) / 25);
+    if (GRID_HEIGHT % 2 === 0) GRID_HEIGHT++;
+    if (GRID_LENGTH % 2 === 0) GRID_LENGTH--;
     START_NODE_ROW = Math.floor(GRID_HEIGHT / 2);
     FINISH_NODE_ROW = Math.floor(GRID_HEIGHT / 2);
     START_NODE_COL = Math.floor(GRID_LENGTH / 4);
@@ -869,7 +871,13 @@ export default class Pathfinder extends Component {
             className="grid"
             onClick={() => this.handleDropdownOpenStateChange("")}
           >
-            <div>
+            <div
+              style={{
+                textAlign: "center",
+                marginLeft: "-10px",
+                marginBottom: "10px",
+              }}
+            >
               {this.state.grid.map((row, rowIdx) => {
                 return (
                   <div key={rowIdx}>
