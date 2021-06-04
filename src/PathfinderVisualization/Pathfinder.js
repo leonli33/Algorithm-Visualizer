@@ -8,6 +8,7 @@ import { RandomMaze } from "../Maze/RandomMaze";
 import { VerticalWalls } from "../Maze/VerticalWalls";
 import { PrimsAlgorithm } from "../Maze/PrimsAlgorithm";
 import { RecursiveBacktracking } from "../Maze/RecursiveBacktracking";
+import { KruskalsAlgorithm } from "../Maze/KruskalsAlgorithm";
 import Legend from "./Components/Legend/Legend";
 import Dropdown from "./Components/Dropdown/Dropdown";
 import clsx from "clsx";
@@ -56,6 +57,7 @@ export default class Pathfinder extends Component {
         "Vertical Walls",
         "Prim's Algorithm",
         "Recursive Backtracking",
+        "Kruskal's Algorithm",
       ],
       mazeLabel: "Generate Maze",
       startButtonText: "Choose Algorithm",
@@ -573,6 +575,9 @@ export default class Pathfinder extends Component {
           pathAnimations,
           this.displayRecursiveBacktrackingAnimation
         );
+      } else if (type === "Kruskal's Algorithm") {
+        const pathAnimations = KruskalsAlgorithm(this.state.grid);
+        this.createGridOfWalls(pathAnimations, this.displayKruskalsAnimation);
       }
     }
   };
@@ -595,6 +600,27 @@ export default class Pathfinder extends Component {
           document.getElementById(`node-${i}-${j}`).className =
             "node node-wall";
         }
+      }
+    }
+  };
+
+  displayKruskalsAnimation = (pathAnimations) => {
+    for (let i = 0; i <= pathAnimations.length; i++) {
+      if (i === pathAnimations.length) {
+        setTimeout(() => {
+          this.enableGrid();
+          this.setState({
+            gridBeingUsed: false,
+          });
+        }, 15 * i);
+      } else {
+        setTimeout(() => {
+          const currentCell = pathAnimations[i];
+          const { row, col } = currentCell;
+          if (this.isStartNodeOrEndNode(row, col)) return;
+          this.state.grid[row][col].isWall = false;
+          document.getElementById(`node-${row}-${col}`).className = `node`;
+        }, 15 * i);
       }
     }
   };
