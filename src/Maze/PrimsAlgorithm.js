@@ -1,4 +1,9 @@
-import { generateRandomNumber } from "../Functions/functions";
+import {
+  checkCellInBounds,
+  getStartCell,
+  generateRandomNumber,
+} from "../Functions/functions";
+
 const directions = [
   {
     row: -2,
@@ -100,23 +105,6 @@ export function PrimsAlgorithm(grid, startNode, finishNode) {
   return passageCellAnimations;
 }
 
-function getStartCell(startNode, finishNode, height, width) {
-  let startCellRow = generateRandomNumber(1, height - 1);
-  let startCellCol = generateRandomNumber(1, width - 1);
-  while (
-    isStartOrEndNode(
-      { row: startCellRow, col: startCellCol },
-      startNode,
-      finishNode
-    ) ||
-    startCellRow % 2 === 0
-  ) {
-    startCellRow = generateRandomNumber(1, height - 1);
-    startCellCol = generateRandomNumber(1, width - 1);
-  }
-  return { row: startCellRow, col: startCellRow };
-}
-
 function getSurroundingCells(
   currentCell,
   cellMap,
@@ -153,17 +141,4 @@ function getSurroundingCells(
     }
   }
   return frontierCells;
-}
-
-function isStartOrEndNode(currentNode, startNode, finishNode) {
-  return (
-    (currentNode.col === startNode.col && currentNode.row === startNode.row) ||
-    (currentNode.col === finishNode.col && currentNode.row === finishNode.row)
-  );
-}
-
-function checkCellInBounds(cell, height, width) {
-  return (
-    cell.row >= 1 && cell.row < height && cell.col >= 1 && cell.col < width
-  );
 }

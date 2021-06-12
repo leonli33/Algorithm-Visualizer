@@ -1,4 +1,9 @@
-import { generateRandomNumber } from "../Functions/functions";
+import {
+  checkCellInBounds,
+  createNewDirectionMap,
+  getStartCell,
+  getRandomDirection,
+} from "../Functions/functions";
 
 export function RecursiveBacktracking(grid, startNode, finishNode) {
   let height = grid.length;
@@ -77,64 +82,4 @@ export function RecursiveBacktracking(grid, startNode, finishNode) {
     visitedCells.add(`${neighbor.row}:${neighbor.col}`);
   }
   return passageCellAnimations;
-}
-
-function createNewDirectionMap() {
-  const directions = new Map();
-  directions.set("NORTH", {
-    row: -2,
-    col: 0,
-  });
-  directions.set("SOUTH", {
-    row: 2,
-    col: 0,
-  });
-  directions.set("WEST", {
-    row: 0,
-    col: -2,
-  });
-  directions.set("EAST", {
-    row: 0,
-    col: 2,
-  });
-  return directions;
-}
-
-function getRandomDirection(currentDirections) {
-  const options = [];
-  for (const key of currentDirections.keys()) {
-    options.push(key);
-  }
-  const randomIndex = generateRandomNumber(0, options.length - 1);
-  return options[randomIndex];
-}
-
-function getStartCell(startNode, finishNode, height, width) {
-  let startCellRow = generateRandomNumber(1, height - 1);
-  let startCellCol = generateRandomNumber(1, width - 1);
-  while (
-    isStartOrEndNode(
-      { row: startCellRow, col: startCellCol },
-      startNode,
-      finishNode
-    ) ||
-    startCellRow % 2 === 0
-  ) {
-    startCellRow = generateRandomNumber(1, height - 1);
-    startCellCol = generateRandomNumber(1, width - 1);
-  }
-  return { row: startCellRow, col: startCellRow };
-}
-
-function isStartOrEndNode(currentNode, startNode, finishNode) {
-  return (
-    (currentNode.col === startNode.col && currentNode.row === startNode.row) ||
-    (currentNode.col === finishNode.col && currentNode.row === finishNode.row)
-  );
-}
-
-function checkCellInBounds(cell, height, width) {
-  return (
-    cell.row >= 1 && cell.row < height && cell.col >= 1 && cell.col < width
-  );
 }

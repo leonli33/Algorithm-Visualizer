@@ -1,5 +1,9 @@
 import React from "react";
-import { generateRandomNumber } from "../Functions/functions";
+import {
+  generateRandomNumber,
+  checkCellInBounds,
+  createNewDirectionMap,
+} from "../Functions/functions";
 
 export const MAZE_TYPE = "MAZE_TYPE";
 export const EXPLORE_TYPE = "EXPLORE_TYPE";
@@ -204,38 +208,5 @@ function getRandomCellToBeExplored(allPossibleCells) {
   let cellPlacement = allCellsArr[randomIndex].split(":");
   let cellRow = parseInt(cellPlacement[0]);
   let cellCol = parseInt(cellPlacement[1]);
-  // while (cellRow % 2 === 0) {
-  //   randomIndex = generateRandomNumber(0, allCellsArr.length - 1);
-  //   cellPlacement = allCellsArr[randomIndex].split(":");
-  //   cellRow = parseInt(cellPlacement[0]);
-  //   cellCol = parseInt(cellPlacement[1]);
-  // }
   return { row: cellRow, col: cellCol };
-}
-
-function createNewDirectionMap() {
-  const directions = new Map();
-  directions.set("NORTH", {
-    row: -2,
-    col: 0,
-  });
-  directions.set("SOUTH", {
-    row: 2,
-    col: 0,
-  });
-  directions.set("WEST", {
-    row: 0,
-    col: -2,
-  });
-  directions.set("EAST", {
-    row: 0,
-    col: 2,
-  });
-  return directions;
-}
-
-function checkCellInBounds(cell, height, width) {
-  return (
-    cell.row >= 1 && cell.row < height && cell.col >= 1 && cell.col < width
-  );
 }

@@ -841,10 +841,10 @@ export default class Pathfinder extends Component {
             />
             <Dropdown
               gridBeingUsed={this.state.gridBeingUsed}
-              placeholder="Generate Walls"
+              placeholder="Generate Maze"
               id="maze-algorithm-selection"
               onChange={this.generateMaze}
-              value={"Generate Walls"}
+              value={"Generate Maze"}
               items={this.state.mazeAlgorithms}
               handleDropdownOpenStateChange={this.handleDropdownOpenStateChange}
               type="GENERATE_WALLS"

@@ -45,71 +45,67 @@ export function getNeighbors(currentNode, grid, GRID_LENGTH, GRID_WIDTH) {
   return neighbors;
 }
 
-export function generateSideWalls(
-  wallNodes,
-  StartNode,
-  FinishNode,
-  width,
-  height
-) {
-  // left side
-  for (let row = 0; row < height; row++) {
-    if (
-      (row !== StartNode.row || StartNode.col !== 0) &&
-      (row !== FinishNode.row || FinishNode.col !== 0)
-    ) {
-      let node = {
-        row: row,
-        col: 0,
-      };
-      wallNodes.push(node);
-    }
-  }
-
-  // top side
-  for (let col = 0; col < width; col++) {
-    if (
-      (col !== StartNode.col || StartNode.row !== 0) &&
-      (col !== FinishNode.col || FinishNode.row !== 0)
-    ) {
-      let node = {
-        row: 0,
-        col: col,
-      };
-      wallNodes.push(node);
-    }
-  }
-
-  //right side
-  for (let row = 0; row < height; row++) {
-    if (
-      (row !== StartNode.row || StartNode.col !== width - 1) &&
-      (row !== FinishNode.row || FinishNode.col !== width - 1)
-    ) {
-      let node = {
-        row: row,
-        col: width - 1,
-      };
-      wallNodes.push(node);
-    }
-  }
-
-  // bottom side
-  for (let col = 0; col < width; col++) {
-    if (
-      (col !== StartNode.row || StartNode.col !== height - 1) &&
-      (col !== FinishNode.row || FinishNode.col !== height - 1)
-    ) {
-      let node = {
-        row: height - 1,
-        col: col,
-      };
-      wallNodes.push(node);
-    }
-  }
-}
-
 // Generate a random number netween lowNum and highNum
 export function generateRandomNumber(lowNum, highNum) {
   return Math.floor(Math.random() * (highNum - lowNum + 1)) + lowNum;
+}
+
+export function createNewDirectionMap() {
+  const directions = new Map();
+  directions.set("NORTH", {
+    row: -2,
+    col: 0,
+  });
+  directions.set("SOUTH", {
+    row: 2,
+    col: 0,
+  });
+  directions.set("WEST", {
+    row: 0,
+    col: -2,
+  });
+  directions.set("EAST", {
+    row: 0,
+    col: 2,
+  });
+  return directions;
+}
+
+export function checkCellInBounds(cell, height, width) {
+  return (
+    cell.row >= 1 && cell.row < height && cell.col >= 1 && cell.col < width
+  );
+}
+
+export function isStartOrEndNode(currentNode, startNode, finishNode) {
+  return (
+    (currentNode.col === startNode.col && currentNode.row === startNode.row) ||
+    (currentNode.col === finishNode.col && currentNode.row === finishNode.row)
+  );
+}
+
+export function getStartCell(startNode, finishNode, height, width) {
+  let startCellRow = generateRandomNumber(1, height - 1);
+  let startCellCol = generateRandomNumber(1, width - 1);
+  while (
+    isStartOrEndNode(
+      { row: startCellRow, col: startCellCol },
+      startNode,
+      finishNode
+    ) ||
+    startCellRow % 2 === 0
+  ) {
+    startCellRow = generateRandomNumber(1, height - 1);
+    startCellCol = generateRandomNumber(1, width - 1);
+  }
+  return { row: startCellRow, col: startCellRow };
+}
+
+export function getRandomDirection(currentDirections) {
+  const options = [];
+  for (const key of currentDirections.keys()) {
+    options.push(key);
+  }
+  const randomIndex = generateRandomNumber(0, options.length - 1);
+  return options[randomIndex];
 }

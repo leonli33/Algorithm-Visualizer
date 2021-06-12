@@ -1,4 +1,9 @@
-import { generateRandomNumber } from "../Functions/functions";
+import {
+  checkCellInBounds,
+  generateRandomNumber,
+  createNewDirectionMap,
+  getRandomDirection,
+} from "../Functions/functions";
 
 export function KruskalsAlgorithm(grid) {
   let height = grid.length;
@@ -30,7 +35,7 @@ export function KruskalsAlgorithm(grid) {
       const set = new Set();
       set.add(cell);
       currentSets.set(cell, set);
-      currentCellDirections.set(cell, createDirectionsMap());
+      currentCellDirections.set(cell, createNewDirectionMap());
       allCells.push(cell);
     }
   }
@@ -53,7 +58,7 @@ export function KruskalsAlgorithm(grid) {
       col: parseInt(places[1]) + directionObject.col,
     };
     // if the neighboring cell is out of bounds, then continue
-    if (!cellIsInbounds(neighbor, height, width)) continue;
+    if (!checkCellInBounds(neighbor, height, width)) continue;
     const currentCellSet = currentSets.get(currentCell);
     // if the cells are already in the same set, then continue
     const neighborStringified = `${neighbor.row}:${neighbor.col}`;
@@ -99,47 +104,4 @@ function mergeTwoSets(set1, set2) {
     mergedSet.add(el);
   }
   return mergedSet;
-}
-
-function createDirectionsMap() {
-  const directions = new Map();
-  directions.set("NORTH", {
-    row: -2,
-    col: 0,
-  });
-  directions.set("SOUTH", {
-    row: 2,
-    col: 0,
-  });
-  directions.set("WEST", {
-    row: 0,
-    col: -2,
-  });
-  directions.set("EAST", {
-    row: 0,
-    col: 2,
-  });
-  return directions;
-}
-
-function getRandomDirection(currentDirections) {
-  const options = [];
-  for (const key of currentDirections.keys()) {
-    options.push(key);
-  }
-  const randomIndex = generateRandomNumber(0, options.length - 1);
-  return options[randomIndex];
-}
-
-function isStartOrEndNode(currentNode, startNode, finishNode) {
-  return (
-    (currentNode.col === startNode.col && currentNode.row === startNode.row) ||
-    (currentNode.col === finishNode.col && currentNode.row === finishNode.row)
-  );
-}
-
-function cellIsInbounds(cell, height, width) {
-  return (
-    cell.row >= 1 && cell.row < height && cell.col >= 1 && cell.col < width
-  );
 }
