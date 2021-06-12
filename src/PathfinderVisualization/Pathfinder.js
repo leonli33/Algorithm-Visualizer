@@ -7,7 +7,6 @@ import { GBFS } from "../Algos/GreedyBestFirstSearch";
 import { PrimsAlgorithm } from "../Maze/PrimsAlgorithm";
 import { RecursiveBacktracking } from "../Maze/RecursiveBacktracking";
 import { KruskalsAlgorithm } from "../Maze/KruskalsAlgorithm";
-import { RecursiveDivision } from "../Maze/RecursiveDivision";
 import {
   WilsonsAlgorithm,
   WALL_TYPE,
