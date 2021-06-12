@@ -4,10 +4,16 @@ import { dijkstra } from "../Algos/Dijkstra";
 import { AStar } from "../Algos/AStar";
 import { DFS } from "../Algos/DepthFirstSearch";
 import { GBFS } from "../Algos/GreedyBestFirstSearch";
-import { RandomMaze } from "../Maze/RandomMaze";
 import { PrimsAlgorithm } from "../Maze/PrimsAlgorithm";
 import { RecursiveBacktracking } from "../Maze/RecursiveBacktracking";
 import { KruskalsAlgorithm } from "../Maze/KruskalsAlgorithm";
+import { RecursiveDivision } from "../Maze/RecursiveDivision";
+import {
+  WilsonsAlgorithm,
+  WALL_TYPE,
+  MAZE_TYPE,
+  EXPLORE_TYPE,
+} from "../Maze/WilsonsAlgorithm";
 import Legend from "./Components/Legend/Legend";
 import Dropdown from "./Components/Dropdown/Dropdown";
 import clsx from "clsx";
@@ -52,10 +58,10 @@ export default class Pathfinder extends Component {
       speedValue: [100, 6, 4],
       speedIndex: 1,
       mazeAlgorithms: [
-        "Random Walls",
         "Prim's Algorithm",
         "Recursive Backtracking",
         "Kruskal's Algorithm",
+        "Wilson's Algorithm",
       ],
       mazeLabel: "Generate Maze",
       startButtonText: "Choose Algorithm",
@@ -544,14 +550,7 @@ export default class Pathfinder extends Component {
       this.setState({
         gridBeingUsed: true,
       });
-      if (type === "Random Walls") {
-        let walls = RandomMaze(
-          this.state.grid,
-          { row: START_NODE_ROW, col: START_NODE_COL },
-          { row: FINISH_NODE_ROW, col: FINISH_NODE_COL }
-        );
-        this.displayMaze(walls);
-      } else if (type === "Prim's Algorithm") {
+      if (type === "Prim's Algorithm") {
         const pathAnimations = PrimsAlgorithm(
           this.state.grid,
           { row: START_NODE_ROW, col: START_NODE_COL },
@@ -571,6 +570,9 @@ export default class Pathfinder extends Component {
       } else if (type === "Kruskal's Algorithm") {
         const pathAnimations = KruskalsAlgorithm(this.state.grid);
         this.createGridOfWalls(pathAnimations, this.displayKruskalsAnimation);
+      } else if (type === "Wilson's Algorithm") {
+        const animations = WilsonsAlgorithm(this.state.grid);
+        this.createGridOfWalls(animations, this.displayWilsonsAlgorithm);
       }
     }
   };
@@ -593,6 +595,45 @@ export default class Pathfinder extends Component {
           document.getElementById(`node-${i}-${j}`).className =
             "node node-wall";
         }
+      }
+    }
+  };
+
+  displayWilsonsAlgorithm = (animations) => {
+    for (let i = 0; i <= animations.length; i++) {
+      if (i === animations.length) {
+        setTimeout(() => {
+          this.enableGrid();
+          this.setState({
+            gridBeingUsed: false,
+          });
+        }, 5 * i);
+      } else {
+        setTimeout(() => {
+          const currentAnimations = animations[i];
+          const cellAnimations = currentAnimations.animations;
+          const type = currentAnimations.animationType;
+          for (const cell of cellAnimations) {
+            const { row, col } = cell;
+            if (this.isStartNodeOrEndNode(row, col)) continue;
+            if (type === WALL_TYPE) {
+              document.getElementById(
+                `node-${row}-${col}`
+              ).className = `node node-wall`;
+              this.state.grid[row][col].isWall = true;
+            } else if (type === EXPLORE_TYPE) {
+              document.getElementById(
+                `node-${row}-${col}`
+              ).className = `node node-frontier`;
+              this.state.grid[row][col].isWall = false;
+            } else if (type === MAZE_TYPE) {
+              document.getElementById(`node-${row}-${col}`).className = `node`;
+              this.state.grid[row][col].isWall = false;
+            } else {
+              console.log("this should not happen");
+            }
+          }
+        }, 5 * i);
       }
     }
   };
