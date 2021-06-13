@@ -18,6 +18,12 @@
   background-color: red;
 }
 
+.node-inspection {
+  transition: 0s;
+  outline: 2px solid #89dbff;
+  z-index: 100;
+}
+
 .node-backtrack {
   background-color: orange;
 }

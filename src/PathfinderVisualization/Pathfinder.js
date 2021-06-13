@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { BiSearchAlt2 } from "react-icons/bi";
+import BrickWall from "../assets/brick-wall.png";
 import Node from "./Node/Node";
 import { dijkstra } from "../Algos/Dijkstra";
 import { AStar } from "../Algos/AStar";
@@ -69,6 +71,7 @@ export default class Pathfinder extends Component {
       isAlgorithmOpen: false,
       isMazeOpen: false,
       isSpeedOpen: false,
+      isWallMode: true,
     };
   }
 
@@ -108,6 +111,16 @@ export default class Pathfinder extends Component {
   // if mouse enters the boundary of any node
   handleMouseEnter = (row, col, isLeftMouseDown, isShiftKeyDown) => {
     if (this.state.gridBeingUsed) return;
+    if (this.state.isWallMode) {
+      this.handleMouseEnterWallMode(row, col, isLeftMouseDown, isShiftKeyDown);
+      return;
+    }
+    this.handleMouseEnterSearchMode();
+  };
+
+  handleMouseEnterSearchMode = () => {};
+
+  handleMouseEnterWallMode = (row, col, isLeftMouseDown, isShiftKeyDown) => {
     const node = this.state.grid[row][col];
     // use this to take the state of the node back to what it was
     nodeBeforeEnter = node.isWall ? 1 : 0;
@@ -181,7 +194,7 @@ export default class Pathfinder extends Component {
   handleMouseDown = (row, col) => {
     // set the state of a particular node based on its current status of
     // being a wall node or regular node
-    if (this.state.gridBeingUsed) return;
+    if (this.state.gridBeingUsed || !this.state.isWallMode) return;
     let currentNode = this.state.grid[row][col];
 
     if (!currentNode.isFinish && !currentNode.isStart && !currentNode.isWall) {
@@ -782,6 +795,7 @@ export default class Pathfinder extends Component {
         currentSpeed: "Speed",
         mazeLabel: "Generate Maze",
         startButtonText: "Choose Algorithm",
+        isWallMode: true,
       });
     }
   };
@@ -817,87 +831,113 @@ export default class Pathfinder extends Component {
   render() {
     return (
       <div className="overall-container">
-        <div className="button-container">
-          <div
-            className={clsx(
-              "header",
-              this.state.gridBeingUsed && "header-disabled"
-            )}
-            onClick={this.state.gridBeingUsed ? null : this.resetGrid}
+        <div className="menu-container">
+          <div className="button-container">
+            <div
+              className={clsx(
+                "header",
+                this.state.gridBeingUsed && "header-disabled"
+              )}
+              onClick={this.state.gridBeingUsed ? null : this.resetGrid}
+            >
+              Pathfinding Visualized
+            </div>
+            <div className="buttons">
+              <Dropdown
+                gridBeingUsed={this.state.gridBeingUsed}
+                placeholder="Algorithms"
+                id="pathfinding-algorithm-selection"
+                onChange={this.updateCurrentAlgo}
+                value={this.state.currentAlgo}
+                items={this.state.algorithms}
+                handleDropdownOpenStateChange={
+                  this.handleDropdownOpenStateChange
+                }
+                type="ALGORITHMS"
+                isOpen={this.state.isAlgorithmOpen}
+              />
+              <Dropdown
+                gridBeingUsed={this.state.gridBeingUsed}
+                placeholder="Generate Maze"
+                id="maze-algorithm-selection"
+                onChange={this.generateMaze}
+                value={"Generate Maze"}
+                items={this.state.mazeAlgorithms}
+                handleDropdownOpenStateChange={
+                  this.handleDropdownOpenStateChange
+                }
+                type="GENERATE_WALLS"
+                isOpen={this.state.isMazeOpen}
+              />
+              <Dropdown
+                gridBeingUsed={this.state.gridBeingUsed}
+                placeholder="Speed"
+                id="speed-selection"
+                onChange={this.updateSpeed}
+                value={this.state.currentSpeed}
+                items={this.state.speed}
+                handleDropdownOpenStateChange={
+                  this.handleDropdownOpenStateChange
+                }
+                type="SPEED"
+                isOpen={this.state.isSpeedOpen}
+              />
+              <button
+                className={clsx(
+                  "button",
+                  "button-start",
+                  this.state.gridBeingUsed && "button-start-disabled"
+                )}
+                id="start-algorithm"
+                onClick={() => this.startAlgorithm(true)}
+                disabled={this.state.gridBeingUsed ? true : false}
+              >
+                {this.state.startButtonText}
+              </button>
+              <button
+                id="clear-grid"
+                className={clsx(
+                  "button",
+                  this.state.gridBeingUsed && "button-clear-disabled",
+                  !this.state.gridBeingUsed && "button-clear"
+                )}
+                onClick={this.clearGrid}
+                disabled={this.state.gridBeingUsed ? true : false}
+              >
+                Clear Grid
+              </button>
+              <button
+                id="reset-button"
+                className={clsx(
+                  "button",
+                  this.state.gridBeingUsed && "button-clear-disabled",
+                  !this.state.gridBeingUsed && "button-clear"
+                )}
+                onClick={this.resetGrid}
+                disabled={this.state.gridBeingUsed}
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+          <button
+            className={"inspection-button"}
+            disabled={this.state.gridBeingUsed}
+            onClick={() => {
+              this.setState((prevState) => {
+                return {
+                  ...prevState,
+                  isWallMode: !prevState.isWallMode,
+                };
+              });
+            }}
           >
-            Pathfinding Visualized
-          </div>
-          <div className="buttons">
-            <Dropdown
-              gridBeingUsed={this.state.gridBeingUsed}
-              placeholder="Algorithms"
-              id="pathfinding-algorithm-selection"
-              onChange={this.updateCurrentAlgo}
-              value={this.state.currentAlgo}
-              items={this.state.algorithms}
-              handleDropdownOpenStateChange={this.handleDropdownOpenStateChange}
-              type="ALGORITHMS"
-              isOpen={this.state.isAlgorithmOpen}
-            />
-            <Dropdown
-              gridBeingUsed={this.state.gridBeingUsed}
-              placeholder="Generate Maze"
-              id="maze-algorithm-selection"
-              onChange={this.generateMaze}
-              value={"Generate Maze"}
-              items={this.state.mazeAlgorithms}
-              handleDropdownOpenStateChange={this.handleDropdownOpenStateChange}
-              type="GENERATE_WALLS"
-              isOpen={this.state.isMazeOpen}
-            />
-            <Dropdown
-              gridBeingUsed={this.state.gridBeingUsed}
-              placeholder="Speed"
-              id="speed-selection"
-              onChange={this.updateSpeed}
-              value={this.state.currentSpeed}
-              items={this.state.speed}
-              handleDropdownOpenStateChange={this.handleDropdownOpenStateChange}
-              type="SPEED"
-              isOpen={this.state.isSpeedOpen}
-            />
-            <button
-              className={clsx(
-                "button",
-                "button-start",
-                this.state.gridBeingUsed && "button-start-disabled"
-              )}
-              id="start-algorithm"
-              onClick={() => this.startAlgorithm(true)}
-              disabled={this.state.gridBeingUsed ? true : false}
-            >
-              {this.state.startButtonText}
-            </button>
-            <button
-              id="clear-grid"
-              className={clsx(
-                "button",
-                this.state.gridBeingUsed && "button-clear-disabled",
-                !this.state.gridBeingUsed && "button-clear"
-              )}
-              onClick={this.clearGrid}
-              disabled={this.state.gridBeingUsed ? true : false}
-            >
-              Clear Grid
-            </button>
-            <button
-              id="reset-button"
-              className={clsx(
-                "button",
-                this.state.gridBeingUsed && "button-clear-disabled",
-                !this.state.gridBeingUsed && "button-clear"
-              )}
-              onClick={this.resetGrid}
-              disabled={this.state.gridBeingUsed ? true : false}
-            >
-              Reset
-            </button>
-          </div>
+            {this.state.isWallMode ? (
+              <img style={{ width: "22px", height: "22px" }} src={BrickWall} />
+            ) : (
+              <BiSearchAlt2 style={{ width: "22px", height: "22px" }} />
+            )}
+          </button>
         </div>
         <div className="grid-and-legend">
           <div
@@ -960,6 +1000,9 @@ export default class Pathfinder extends Component {
                           row={row}
                           nodeWidth={this.state.nodeWidth}
                           isWallAnimate={isWallAnimate}
+                          isWallMode={this.state.isWallMode}
+                          nodeIndex={rowIdx * GRID_LENGTH + nodeIdx}
+                          gridBeingUsed={this.state.gridBeingUsed}
                         />
                       );
                     })}

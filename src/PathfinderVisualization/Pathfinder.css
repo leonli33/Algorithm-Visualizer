@@ -5,6 +5,7 @@
 
 .overall-container {
   min-width: 1200px;
+  width: "100%";
 }
 
 .header {
@@ -31,10 +32,19 @@
 }
 
 .button-container {
-  background-color: #011a27;
   height: 60px;
   display: flex;
   flex-direction: row;
+  align-items: center;
+}
+
+.menu-container {
+  height: 60px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: "100%";
+  background-color: #011a27;
   align-items: center;
 }
 
@@ -116,4 +126,23 @@
 
 .header-disabled:hover {
   color: lightcoral;
+}
+
+.inspection-button {
+  height: 38px;
+  width: 38px;
+  margin-right: 12px;
+  border-radius: 19px;
+  background-color: whitesmoke;
+  cursor: pointer;
+  transition: 0.5s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  outline: none;
+  border: none;
+}
+
+.inspection-button:hover {
+  background-color: blanchedalmond;
 }
