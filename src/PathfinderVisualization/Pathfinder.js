@@ -60,11 +60,10 @@ export default class Pathfinder extends Component {
       speedIndex: 1,
       mazeAlgorithms: [
         "Prim's Algorithm",
-        "Recursive Backtracking",
-        "Kruskal's Algorithm",
         "Wilson's Algorithm",
+        "Kruskal's Algorithm",
+        "Recursive Backtracking",
       ],
-      mazeLabel: "Generate Maze",
       startButtonText: "Choose Algorithm",
       gridBeingUsed: false,
       nodeWidth: 25,
@@ -160,7 +159,6 @@ export default class Pathfinder extends Component {
         "node node-finish";
       FINISH_NODE_ROW = row;
       FINISH_NODE_COL = col;
-      // this.startAlgorithm(false);
     }
   };
 
@@ -788,7 +786,6 @@ export default class Pathfinder extends Component {
         speedIndex: 1,
         currentAlgo: "Algorithms",
         currentSpeed: "Speed",
-        mazeLabel: "Generate Maze",
         startButtonText: "Choose Algorithm",
         isWallMode: true,
       });
