@@ -53,6 +53,10 @@ const Node = (props) => {
 
   const endNodeDistance =
     Math.abs(props.finishNodeRow - row) + Math.abs(props.finishNodeCol - col);
+  let cost = "--";
+  if (isExploredNode || isShortestPathNode) {
+    cost = 100;
+  }
 
   return (
     <>
@@ -107,8 +111,8 @@ const Node = (props) => {
             }}
           >
             <div>Type: {types[typeIndex]}</div>
-            <div>Node #: {props.nodeIndex}</div>
-            <div>Cost: {}</div>
+            <div>Node Num: {props.nodeIndex}</div>
+            <div>Cost: {cost}</div>
             <div>Start Distance: {startNodeDistance}</div>
             <div>End Distance: {endNodeDistance}</div>
           </div>
