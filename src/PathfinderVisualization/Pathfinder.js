@@ -201,17 +201,13 @@ export default class Pathfinder extends Component {
   };
 
   handleMouseDown = (row, col) => {
-    // set the state of a particular node based on its current status of
-    // being a wall node or regular node
     if (this.state.gridBeingUsed || !this.state.isWallMode) return;
     let currentNode = this.state.grid[row][col];
-
     if (!currentNode.isFinish && !currentNode.isStart && !currentNode.isWall) {
-      // turn the node into a wall node and indicate that the mouse is currently being pressed
       currentNode.isVisited = false;
+      currentNode.isWall = true;
       document.getElementById(`node-${row}-${col}`).className =
         "node node-wall";
-      currentNode.isWall = true;
     } else if (
       !currentNode.isFinish &&
       !currentNode.isStart &&
@@ -219,8 +215,8 @@ export default class Pathfinder extends Component {
     ) {
       // turn the node back into a regular node and indicate that the mouse is being pressed
       currentNode.isVisited = false;
-      document.getElementById(`node-${row}-${col}`).className = "node";
       currentNode.isWall = false;
+      document.getElementById(`node-${row}-${col}`).className = "node";
     } else if (currentNode.isStart) {
       // if the user is pressed on the start node, indicate that the start node is moving
       this.setState({
