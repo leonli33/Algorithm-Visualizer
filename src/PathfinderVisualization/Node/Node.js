@@ -19,6 +19,7 @@ const Node = (props) => {
     isShortestPathNode,
     isExploredNode,
   } = props;
+
   let extraClassName = "";
   let hoverBackgroundColor = "white";
   let typeIndex = 0;
@@ -53,11 +54,11 @@ const Node = (props) => {
 
   const endNodeDistance =
     Math.abs(props.finishNodeRow - row) + Math.abs(props.finishNodeCol - col);
+
   let cost = "--";
   if (isExploredNode || isShortestPathNode) {
     cost = 100;
   }
-
   return (
     <>
       <div

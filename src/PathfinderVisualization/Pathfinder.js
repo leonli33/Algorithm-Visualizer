@@ -39,14 +39,14 @@ let nodeBeforeEnter = -1;
 let GRID_HEIGHT = 20;
 let GRID_LENGTH = 50;
 export default class Pathfinder extends Component {
-  // last algo: 0 = A*, 1 = Greedy, 2= Dijkstra, 3=Breadth, 4 = Depth
+  // last algo: 0 = A*, 1 = Greedy, 2= Dijkstra, 3= DFS
   constructor(props) {
     super(props);
     this.state = {
       grid: [],
       gridClear: true,
       isStartNodeMoving: false,
-      finishNodeMove: false,
+      isFinishNodeMoving: false,
       algorithms: [
         "A* Algorithm",
         "Greedy Best-First Search",
@@ -131,7 +131,7 @@ export default class Pathfinder extends Component {
     // if dragging to make walls
     const isNodeRegular = !node.isFinish && !node.isStart;
     const isStartOrEndNodeMoving =
-      this.state.isStartNodeMoving || this.state.finishNodeMove;
+      this.state.isStartNodeMoving || this.state.isFinishNodeMoving;
     if (isNodeRegular && !isStartOrEndNodeMoving && isLeftMouseDown) {
       node.isWall = true;
       node.isVisited = false;
@@ -146,11 +146,12 @@ export default class Pathfinder extends Component {
       // set the row and column of where the start node is
       node.isStart = true;
       node.isWall = false;
+      node.isVisited = false;
       document.getElementById(`node-${row}-${col}`).className =
         "node node-start";
       START_NODE_ROW = row;
       START_NODE_COL = col;
-    } else if (this.state.finishNodeMove && !node.isStart) {
+    } else if (this.state.isFinishNodeMoving && !node.isStart) {
       // if the finish node is moving, do the same thing as described above
       node.isFinish = true;
       node.isWall = false;
@@ -159,7 +160,7 @@ export default class Pathfinder extends Component {
         "node node-finish";
       FINISH_NODE_ROW = row;
       FINISH_NODE_COL = col;
-      this.startAlgorithm(false);
+      // this.startAlgorithm(false);
     }
   };
 
@@ -174,7 +175,7 @@ export default class Pathfinder extends Component {
       currentNode.isWall = false;
       currentNode.isVisited = false;
       document.getElementById(`node-${row}-${col}`).className = "node";
-    } else if (this.state.finishNodeMove && !currentNode.isStart) {
+    } else if (this.state.isFinishNodeMoving && !currentNode.isStart) {
       // if finish node has moved out of this node, put node back into regular node
       currentNode.isStart = false;
       currentNode.isFinish = false;
@@ -182,7 +183,7 @@ export default class Pathfinder extends Component {
       currentNode.isVisited = false;
       document.getElementById(`node-${row}-${col}`).className = "node";
     }
-    if (this.state.isStartNodeMoving || this.state.finishNodeMove) {
+    if (this.state.isStartNodeMoving || this.state.isFinishNodeMoving) {
       if (nodeBeforeEnter === 1) {
         // if the node was orinally a wall before the start/end node moved into it, set it
         // back to a wall
@@ -236,7 +237,7 @@ export default class Pathfinder extends Component {
     } else if (currentNode.isFinish) {
       // if the user is pressed on the finish  node, indicate that the finish node is moving
       this.setState({
-        finishNodeMove: true,
+        isFinishNodeMoving: true,
       });
     }
   };
@@ -247,14 +248,14 @@ export default class Pathfinder extends Component {
     // the start and finish node are not being moved
     this.setState({
       isStartNodeMoving: false,
-      finishNodeMove: false,
+      isFinishNodeMoving: false,
     });
 
     // if the start or end node is moving, update accordingly
     if (this.state.isStartNodeMoving) {
       START_NODE_ROW = row;
       START_NODE_COL = col;
-    } else if (this.state.finishNodeMove) {
+    } else if (this.state.isFinishNodeMoving) {
       FINISH_NODE_ROW = row;
       FINISH_NODE_COL = col;
     }
@@ -297,7 +298,7 @@ export default class Pathfinder extends Component {
   // visualize depth first search algo
   visualizeDepthFirstSearch = (animate) => {
     // only execute if the stat and end node are not moving
-    if (!this.state.isStartNodeMoving && !this.state.finishNodeMove) {
+    if (!this.state.isStartNodeMoving && !this.state.isFinishNodeMoving) {
       // if the grid is not clear, clear the grid
       if (!this.state.gridClear) {
         this.clearPath();
@@ -319,7 +320,7 @@ export default class Pathfinder extends Component {
 
   // visualize the greedy best first search algo
   visualizeGreedyBestFirstSearch = (animate) => {
-    if (!this.state.isStartNodeMoving && !this.state.finishNodeMove) {
+    if (!this.state.isStartNodeMoving && !this.state.isFinishNodeMoving) {
       if (!this.state.gridClear) {
         this.clearPath();
       }
@@ -340,7 +341,7 @@ export default class Pathfinder extends Component {
 
   // visualize A* algo
   visualizeAStar = (animate) => {
-    if (!this.state.isStartNodeMoving && !this.state.finishNodeMove) {
+    if (!this.state.isStartNodeMoving && !this.state.isFinishNodeMoving) {
       if (!this.state.gridClear) {
         this.clearPath();
       }
@@ -361,7 +362,7 @@ export default class Pathfinder extends Component {
 
   // visualize Dijkstra's algo
   visualizeDijkstra = (animate) => {
-    if (!this.state.isStartNodeMoving && !this.state.finishNodeMove) {
+    if (!this.state.isStartNodeMoving && !this.state.isFinishNodeMoving) {
       this.clearPath();
       this.disableGrid();
       let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
@@ -518,7 +519,7 @@ export default class Pathfinder extends Component {
 
   // clear the grid of all wall and path nodes
   clearGrid = () => {
-    if (!this.state.isStartNodeMoving && !this.state.finishNodeMove) {
+    if (!this.state.isStartNodeMoving && !this.state.isFinishNodeMoving) {
       nodeBeforeEnter = -1;
       for (let i = 0; i < GRID_HEIGHT; i++) {
         for (let j = 0; j < GRID_LENGTH; j++) {
@@ -552,7 +553,7 @@ export default class Pathfinder extends Component {
       this.state.currentAlgo !== "Algorithms" &&
       shouldAnimate &&
       !this.state.isStartNodeMoving &&
-      !this.state.finishNodeMove;
+      !this.state.isFinishNodeMoving;
 
     if (boardIsBeingUsed) {
       if (!fieldsAreSelected) {
@@ -577,7 +578,7 @@ export default class Pathfinder extends Component {
   // generate a maze to be displayed
   generateMaze = (type) => {
     this.handleDropdownOpenStateChange("");
-    if (!this.state.isStartNodeMoving && !this.state.finishNodeMove) {
+    if (!this.state.isStartNodeMoving && !this.state.isFinishNodeMoving) {
       this.clearGrid();
       this.disableGrid();
       this.setState({
@@ -801,7 +802,7 @@ export default class Pathfinder extends Component {
 
   // Set the grid to how it was when game first started
   resetGrid = () => {
-    if (!this.state.isStartNodeMoving && !this.state.finishNodeMove) {
+    if (!this.state.isStartNodeMoving && !this.state.isFinishNodeMoving) {
       this.handleDropdownOpenStateChange("");
       this.clearGrid();
       START_NODE_ROW = Math.floor(GRID_HEIGHT / 2);
