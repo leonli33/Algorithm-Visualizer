@@ -296,7 +296,7 @@ export default class Pathfinder extends Component {
   };
 
   // visualize depth first search algo
-  visualizeDepthFirstSearch = (animate) => {
+  visualizeDepthFirstSearch = () => {
     // only execute if the stat and end node are not moving
     if (!this.state.isStartNodeMoving && !this.state.isFinishNodeMoving) {
       // if the grid is not clear, clear the grid
@@ -313,13 +313,13 @@ export default class Pathfinder extends Component {
       if (path.shortest === null) {
         this.displayAlgoNoPath(path.visited);
       } else {
-        this.displayAlgo(path.visited, path.shortest, animate);
+        this.displayAlgo(path.visited, path.shortest);
       }
     }
   };
 
   // visualize the greedy best first search algo
-  visualizeGreedyBestFirstSearch = (animate) => {
+  visualizeGreedyBestFirstSearch = () => {
     if (!this.state.isStartNodeMoving && !this.state.isFinishNodeMoving) {
       if (!this.state.gridClear) {
         this.clearPath();
@@ -335,12 +335,12 @@ export default class Pathfinder extends Component {
         FINISH_NODE_COL
       );
       let shortestPath = path.shortest.reverse();
-      this.displayAlgo(path.visited, shortestPath, animate);
+      this.displayAlgo(path.visited, shortestPath);
     }
   };
 
   // visualize A* algo
-  visualizeAStar = (animate) => {
+  visualizeAStar = () => {
     if (!this.state.isStartNodeMoving && !this.state.isFinishNodeMoving) {
       if (!this.state.gridClear) {
         this.clearPath();
@@ -356,19 +356,19 @@ export default class Pathfinder extends Component {
         FINISH_NODE_COL
       );
       let shortestPath = path.shortest.reverse();
-      this.displayAlgo(path.visited, shortestPath, animate);
+      this.displayAlgo(path.visited, shortestPath);
     }
   };
 
   // visualize Dijkstra's algo
-  visualizeDijkstra = (animate) => {
+  visualizeDijkstra = () => {
     if (!this.state.isStartNodeMoving && !this.state.isFinishNodeMoving) {
       this.clearPath();
       this.disableGrid();
       let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
       let path = dijkstra(this.state.grid, startNode, GRID_LENGTH, GRID_HEIGHT);
       let shortestPath = path.shortest.reverse();
-      this.displayAlgo(path.visited, shortestPath, animate);
+      this.displayAlgo(path.visited, shortestPath);
     }
   };
 
@@ -401,75 +401,49 @@ export default class Pathfinder extends Component {
   }
 
   // visualize the path found
-  displayAlgo(nodes, shortestPath, animate) {
+  displayAlgo(nodes, shortestPath) {
     for (let i = 0; i <= nodes.length; i++) {
       if (i === nodes.length) {
         // if the other elements are done updating, show the shortest path
-        if (animate) {
-          setTimeout(() => {
-            this.visualizeShortestPath(shortestPath, animate);
-          }, this.state.speedValue[this.state.speedIndex] * i);
-        } else {
-          this.visualizeShortestPath(shortestPath, animate);
-        }
+        setTimeout(() => {
+          this.visualizeShortestPath(shortestPath);
+        }, this.state.speedValue[this.state.speedIndex] * i);
       } else {
-        if (animate) {
-          setTimeout(() => {
-            if (!node.isStart && !node.isFinish) {
-              this.state.grid[node.row][node.col].isExploredNode = true;
-              document.getElementById(
-                `node-${node.row}-${node.col}`
-              ).className = "node node-visited disabledNode";
-            }
-          }, this.state.speedValue[this.state.speedIndex] * i);
-          const node = nodes[i];
-        } else {
-          const node = nodes[i];
+        setTimeout(() => {
           if (!node.isStart && !node.isFinish) {
+            this.state.grid[node.row][node.col].isExploredNode = true;
             document.getElementById(`node-${node.row}-${node.col}`).className =
-              "node node-visited-no-animation";
+              "node node-visited disabledNode";
           }
-        }
+        }, this.state.speedValue[this.state.speedIndex] * i);
+        const node = nodes[i];
       }
     }
   }
 
   // show the shortest path
-  visualizeShortestPath(shortestPath, animate) {
+  visualizeShortestPath(shortestPath) {
     this.setState({
       gridClear: false,
     });
     for (let j = 0; j <= shortestPath.length; j++) {
       if (j === shortestPath.length) {
-        if (animate) {
-          setTimeout(() => {
-            this.enableGrid();
-            this.setState({
-              gridBeingUsed: false,
-            });
-          }, (this.state.speedValue[this.state.speedIndex] + 4) * j);
-        } else {
+        setTimeout(() => {
           this.enableGrid();
-        }
+          this.setState({
+            gridBeingUsed: false,
+          });
+        }, (this.state.speedValue[this.state.speedIndex] + 4) * j);
       } else {
-        if (animate) {
-          setTimeout(() => {
-            const node = shortestPath[j];
-            if (!node.isStart && !node.isFinish) {
-              this.state.grid[node.row][node.col].isExploredNode = false;
-              this.state.grid[node.row][node.col].isShortestPathNode = true;
-              document.getElementById(
-                `node-${node.row}-${node.col}`
-              ).className = "node node-final-path disabledNode";
-            }
-          }, (this.state.speedValue[this.state.speedIndex] + 4) * j);
-        } else {
+        setTimeout(() => {
           const node = shortestPath[j];
           if (!node.isStart && !node.isFinish) {
+            this.state.grid[node.row][node.col].isExploredNode = false;
+            this.state.grid[node.row][node.col].isShortestPathNode = true;
             document.getElementById(`node-${node.row}-${node.col}`).className =
-              "node node-final-path-no-animation";
+              "node node-final-path disabledNode";
           }
-        }
+        }, (this.state.speedValue[this.state.speedIndex] + 4) * j);
       }
     }
   }
@@ -543,7 +517,7 @@ export default class Pathfinder extends Component {
     }
   };
 
-  startAlgorithm = (shouldAnimate) => {
+  startAlgorithm = () => {
     this.handleDropdownOpenStateChange("");
     const fieldsAreSelected = !(
       this.state.currentSpeed === "Speed" &&
@@ -551,7 +525,6 @@ export default class Pathfinder extends Component {
     );
     const boardIsBeingUsed =
       this.state.currentAlgo !== "Algorithms" &&
-      shouldAnimate &&
       !this.state.isStartNodeMoving &&
       !this.state.isFinishNodeMoving;
 
@@ -565,13 +538,13 @@ export default class Pathfinder extends Component {
     }
     const { currentAlgo } = this.state;
     if (currentAlgo === "A* Algorithm") {
-      this.visualizeAStar(shouldAnimate);
+      this.visualizeAStar();
     } else if (currentAlgo === "Greedy Best-First Search") {
-      this.visualizeGreedyBestFirstSearch(shouldAnimate);
+      this.visualizeGreedyBestFirstSearch();
     } else if (currentAlgo === "Dijkstra's Algorithm") {
-      this.visualizeDijkstra(shouldAnimate);
+      this.visualizeDijkstra();
     } else if (currentAlgo === "Depth First Search") {
-      this.visualizeDepthFirstSearch(shouldAnimate);
+      this.visualizeDepthFirstSearch();
     }
   };
 
