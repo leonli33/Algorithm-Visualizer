@@ -2,7 +2,7 @@ import React from "react";
 import "./Node.css";
 const Node = (props) => {
   const [isHovered, setIsHovered] = React.useState(false);
-  const types = ["Unvisited", "Finish", "Start", "Wall", "Path", "Explored"];
+  const types = ["Unvisited", "End", "Start", "Wall", "Path", "Explored"];
 
   const {
     col,
@@ -16,27 +16,43 @@ const Node = (props) => {
     row,
     nodeWidth,
     isWallAnimate,
+    isShortestPathNode,
+    isExploredNode,
   } = props;
   let extraClassName = "";
-  let hoverBackgrounColor = "white";
+  let hoverBackgroundColor = "white";
   let typeIndex = 0;
   if (isFinish) {
     extraClassName = "node-finish";
-    hoverBackgrounColor = "lightcoral";
+    hoverBackgroundColor = "lightcoral";
     typeIndex = 1;
   } else if (isStart) {
     extraClassName = "node-start";
-    hoverBackgrounColor = "lightgreen";
+    hoverBackgroundColor = "lightgreen";
     typeIndex = 2;
   } else if (isWall) {
     extraClassName = "node-wall";
-    hoverBackgrounColor = "#011a27";
+    hoverBackgroundColor = "#011a27";
     typeIndex = 3;
   } else if (isWallAnimate) {
     extraClassName = "node-wall-animate";
-    hoverBackgrounColor = "#011a27";
+    hoverBackgroundColor = "#011a27";
     typeIndex = 3;
+  } else if (isShortestPathNode) {
+    extraClassName = "node-final-path";
+    hoverBackgroundColor = "yellow";
+    typeIndex = 4;
+  } else if (isExploredNode) {
+    extraClassName = "node-visited";
+    typeIndex = 5;
+    hoverBackgroundColor = "#89dbff";
   }
+
+  const startNodeDistance =
+    Math.abs(props.startNodeRow - row) + Math.abs(props.startNodeCol - col);
+
+  const endNodeDistance =
+    Math.abs(props.finishNodeRow - row) + Math.abs(props.finishNodeCol - col);
 
   return (
     <>
@@ -75,7 +91,7 @@ const Node = (props) => {
             style={{
               width: "100px",
               height: "100px",
-              backgroundColor: hoverBackgrounColor,
+              backgroundColor: hoverBackgroundColor,
               zIndex: 1000,
               position: "absolute",
               bottom: "45px",
@@ -92,9 +108,9 @@ const Node = (props) => {
           >
             <div>Type: {types[typeIndex]}</div>
             <div>Node #: {props.nodeIndex}</div>
-            <div>Cost: </div>
-            <div>Distance Start: </div>
-            <div>Distance End: </div>
+            <div>Cost: {}</div>
+            <div>Start Distance: {startNodeDistance}</div>
+            <div>End Distance: {endNodeDistance}</div>
           </div>
         )}
       </div>

@@ -33,7 +33,7 @@ let START_NODE_COL = 10;
 let FINISH_NODE_ROW = 10;
 let FINISH_NODE_COL = 45;
 
-// 0 = regular node, 1 = wall
+// 0 = regular node, 1 = wall, 2 = explored, 3 = shortest-path
 let nodeBeforeEnter = -1;
 
 let GRID_HEIGHT = 20;
@@ -115,15 +115,19 @@ export default class Pathfinder extends Component {
       this.handleMouseEnterWallMode(row, col, isLeftMouseDown, isShiftKeyDown);
       return;
     }
-    this.handleMouseEnterSearchMode();
   };
-
-  handleMouseEnterSearchMode = () => {};
 
   handleMouseEnterWallMode = (row, col, isLeftMouseDown, isShiftKeyDown) => {
     const node = this.state.grid[row][col];
     // use this to take the state of the node back to what it was
-    nodeBeforeEnter = node.isWall ? 1 : 0;
+    nodeBeforeEnter = -1;
+    if (node.isWall) {
+      nodeBeforeEnter = 1;
+    } else if (node.isExploredNode) {
+      nodeBeforeEnter = 2;
+    } else if (node.isShortestPathNode) {
+      nodeBeforeEnter = 3;
+    }
     // if dragging to make walls
     const isNodeRegular = !node.isFinish && !node.isStart;
     const isStartOrEndNodeMoving =
@@ -178,16 +182,28 @@ export default class Pathfinder extends Component {
       currentNode.isVisited = false;
       document.getElementById(`node-${row}-${col}`).className = "node";
     }
-    if (
-      nodeBeforeEnter === 1 &&
-      (this.state.isStartNodeMoving || this.state.finishNodeMove)
-    ) {
-      // if the node was orinally a wall before the start/end node moved into it, set it
-      // back to a wall
-      currentNode.isWall = true;
-      currentNode.isVisited = false;
-      document.getElementById(`node-${row}-${col}`).className =
-        "node node-wall";
+    if (this.state.isStartNodeMoving || this.state.finishNodeMove) {
+      if (nodeBeforeEnter === 1) {
+        // if the node was orinally a wall before the start/end node moved into it, set it
+        // back to a wall
+        currentNode.isWall = true;
+        currentNode.isVisited = false;
+        document.getElementById(`node-${row}-${col}`).className =
+          "node node-wall";
+      } else if (nodeBeforeEnter === 2) {
+        currentNode.isWall = false;
+        currentNode.isVisited = true;
+        currentNode.isExploredNode = true;
+        document.getElementById(`node-${row}-${col}`).className =
+          "node node-visited";
+      } else if (nodeBeforeEnter === 3) {
+        currentNode.isWall = false;
+        currentNode.isVisited = true;
+        currentNode.isExploredNode = false;
+        currentNode.isShortestPathNode = true;
+        document.getElementById(`node-${row}-${col}`).className =
+          "node node-final-path";
+      }
     }
   };
 
@@ -234,7 +250,7 @@ export default class Pathfinder extends Component {
       finishNodeMove: false,
     });
 
-    // if the start or end node is moving, update accoridingly
+    // if the start or end node is moving, update accordingly
     if (this.state.isStartNodeMoving) {
       START_NODE_ROW = row;
       START_NODE_COL = col;
@@ -399,6 +415,7 @@ export default class Pathfinder extends Component {
         if (animate) {
           setTimeout(() => {
             if (!node.isStart && !node.isFinish) {
+              this.state.grid[node.row][node.col].isExploredNode = true;
               document.getElementById(
                 `node-${node.row}-${node.col}`
               ).className = "node node-visited disabledNode";
@@ -438,6 +455,8 @@ export default class Pathfinder extends Component {
           setTimeout(() => {
             const node = shortestPath[j];
             if (!node.isStart && !node.isFinish) {
+              this.state.grid[node.row][node.col].isExploredNode = false;
+              this.state.grid[node.row][node.col].isShortestPathNode = true;
               document.getElementById(
                 `node-${node.row}-${node.col}`
               ).className = "node node-final-path disabledNode";
@@ -483,6 +502,8 @@ export default class Pathfinder extends Component {
           this.state.grid[i][j].isWall = false;
           this.state.grid[i][j].previousNode = null;
         }
+        this.state.grid[i][j].isExploredNode = false;
+        this.state.grid[i][j].isShortestPathNode = false;
       }
     }
   };
@@ -969,6 +990,8 @@ export default class Pathfinder extends Component {
                         isStart,
                         isWall,
                         isWallAnimate,
+                        isShortestPathNode,
+                        isExploredNode,
                       } = node;
                       return (
                         <Node
@@ -1003,6 +1026,12 @@ export default class Pathfinder extends Component {
                           isWallMode={this.state.isWallMode}
                           nodeIndex={rowIdx * GRID_LENGTH + nodeIdx}
                           gridBeingUsed={this.state.gridBeingUsed}
+                          isShortestPathNode={isShortestPathNode}
+                          isExploredNode={isExploredNode}
+                          startNodeRow={START_NODE_ROW}
+                          startNodeCol={START_NODE_COL}
+                          finishNodeRow={FINISH_NODE_ROW}
+                          finishNodeCol={FINISH_NODE_COL}
                         />
                       );
                     })}
@@ -1060,6 +1089,8 @@ export default class Pathfinder extends Component {
       isWall: false,
       isWallAnimate: false,
       previousNode: null,
+      isShortestPathNode: false,
+      isExploredNode: false,
     };
   };
 }
