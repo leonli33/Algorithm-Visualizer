@@ -401,6 +401,7 @@ export default class Pathfinder extends Component {
   };
 
   startAlgorithm = () => {
+    if (this.state.gridBeingUsed) return;
     this.handleDropdownOpenStateChange("");
     const fieldsAreSelected = !(
       this.state.currentSpeed === "Speed" &&
@@ -611,7 +612,7 @@ export default class Pathfinder extends Component {
           this.setState({
             gridBeingUsed: false,
           });
-        }, 15 * i);
+        }, 12 * i);
       } else {
         setTimeout(() => {
           const currentCell = pathAnimations[i];
@@ -621,7 +622,7 @@ export default class Pathfinder extends Component {
           document.getElementById(`node-${row}-${col}`).className = `node ${
             frontierCell && "node-frontier"
           }`;
-        }, 15 * i);
+        }, 12 * i);
       }
     }
   };
@@ -851,7 +852,10 @@ export default class Pathfinder extends Component {
             )}
           </button>
         </div>
-        <div className="grid-and-legend">
+        <div
+          className="grid-and-legend"
+          style={{ pointerEvents: this.state.gridBeingUsed ? "none" : "" }}
+        >
           <div
             className="legend-container"
             onClick={() => this.handleDropdownOpenStateChange("")}
