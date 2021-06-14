@@ -283,111 +283,6 @@ export default class Pathfinder extends Component {
     }
   };
 
-  // visualize depth first search algo
-  visualizeDepthFirstSearch = () => {
-    // only execute if the stat and end node are not moving
-    if (!this.state.isStartNodeMoving && !this.state.isFinishNodeMoving) {
-      // if the grid is not clear, clear the grid
-      if (!this.state.gridClear) {
-        this.clearPath();
-      }
-      // disable all elements when visualizing
-      this.disableGrid();
-      // get the start node
-      let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
-      // get the path returned
-      let path = DFS(this.state.grid, startNode, GRID_LENGTH, GRID_HEIGHT);
-      // visualize the path
-      if (path.shortest === null) {
-        this.displayAlgoNoPath(path.visited);
-      } else {
-        this.displayAlgo(path.visited, path.shortest);
-      }
-    }
-  };
-
-  // visualize the greedy best first search algo
-  visualizeGreedyBestFirstSearch = () => {
-    if (!this.state.isStartNodeMoving && !this.state.isFinishNodeMoving) {
-      if (!this.state.gridClear) {
-        this.clearPath();
-      }
-      this.disableGrid();
-      let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
-      let path = GBFS(
-        this.state.grid,
-        startNode,
-        GRID_LENGTH,
-        GRID_HEIGHT,
-        FINISH_NODE_ROW,
-        FINISH_NODE_COL
-      );
-      let shortestPath = path.shortest.reverse();
-      this.displayAlgo(path.visited, shortestPath);
-    }
-  };
-
-  // visualize A* algo
-  visualizeAStar = () => {
-    if (!this.state.isStartNodeMoving && !this.state.isFinishNodeMoving) {
-      if (!this.state.gridClear) {
-        this.clearPath();
-      }
-      this.disableGrid();
-      let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
-      let path = AStar(
-        this.state.grid,
-        startNode,
-        GRID_LENGTH,
-        GRID_HEIGHT,
-        FINISH_NODE_ROW,
-        FINISH_NODE_COL
-      );
-      let shortestPath = path.shortest.reverse();
-      this.displayAlgo(path.visited, shortestPath);
-    }
-  };
-
-  // visualize Dijkstra's algo
-  visualizeDijkstra = () => {
-    if (!this.state.isStartNodeMoving && !this.state.isFinishNodeMoving) {
-      this.clearPath();
-      this.disableGrid();
-      let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
-      let path = dijkstra(this.state.grid, startNode, GRID_LENGTH, GRID_HEIGHT);
-      let shortestPath = path.shortest.reverse();
-      this.displayAlgo(path.visited, shortestPath);
-    }
-  };
-
-  // if there is no path found, just display the path visited
-  displayAlgoNoPath(nodes) {
-    // grid is no longer clear
-    this.setState({
-      gridClear: false,
-    });
-    for (let i = 0; i <= nodes.length; i++) {
-      if (i === nodes.length) {
-        setTimeout(() => {
-          // enable all the elements again
-          this.enableGrid();
-          this.setState({
-            gridBeingUsed: false,
-          });
-        }, this.state.speedValue[this.state.speedIndex + 5] * i);
-      } else {
-        setTimeout(() => {
-          // update the grid
-          const node = nodes[i];
-          if (!node.isStart && !node.isFinish) {
-            document.getElementById(`node-${node.row}-${node.col}`).className =
-              "node node-visited disabledNode";
-          }
-        }, this.state.speedValue[this.state.speedIndex] * i);
-      }
-    }
-  }
-
   // visualize the path found
   displayAlgo(nodes, shortestPath) {
     for (let i = 0; i <= nodes.length; i++) {
@@ -525,14 +420,45 @@ export default class Pathfinder extends Component {
       });
     }
     const { currentAlgo } = this.state;
+    if (this.state.isStartNodeMoving || this.state.isFinishNodeMoving) return;
+    if (!this.state.gridClear) {
+      this.clearPath();
+    }
+    this.disableGrid();
+    let startNode = this.state.grid[START_NODE_ROW][START_NODE_COL];
+    let path;
     if (currentAlgo === "A* Algorithm") {
-      this.visualizeAStar();
+      path = AStar(
+        this.state.grid,
+        startNode,
+        GRID_LENGTH,
+        GRID_HEIGHT,
+        FINISH_NODE_ROW,
+        FINISH_NODE_COL
+      );
+      let shortestPath = path.shortest.reverse();
+      this.displayAlgo(path.visited, shortestPath);
     } else if (currentAlgo === "Greedy Best-First Search") {
-      this.visualizeGreedyBestFirstSearch();
+      path = GBFS(
+        this.state.grid,
+        startNode,
+        GRID_LENGTH,
+        GRID_HEIGHT,
+        FINISH_NODE_ROW,
+        FINISH_NODE_COL
+      );
+      let shortestPath = path.shortest.reverse();
+      this.displayAlgo(path.visited, shortestPath);
     } else if (currentAlgo === "Dijkstra's Algorithm") {
-      this.visualizeDijkstra();
+      path = dijkstra(this.state.grid, startNode, GRID_LENGTH, GRID_HEIGHT);
+      let shortestPath = path.shortest.reverse();
+      this.displayAlgo(path.visited, shortestPath);
     } else if (currentAlgo === "Depth First Search") {
-      this.visualizeDepthFirstSearch();
+      path = DFS(this.state.grid, startNode, GRID_LENGTH, GRID_HEIGHT);
+      this.displayAlgo(
+        path.visited,
+        path.shortest === null ? [] : path.shortest
+      );
     }
   };
 
@@ -904,7 +830,11 @@ export default class Pathfinder extends Component {
           </div>
           <button
             className={"inspection-button"}
-            disabled={this.state.gridBeingUsed}
+            disabled={
+              this.state.gridBeingUsed ||
+              this.state.isStartNodeMoving ||
+              this.state.isFinishNodeMoving
+            }
             onClick={() => {
               this.setState((prevState) => {
                 return {
