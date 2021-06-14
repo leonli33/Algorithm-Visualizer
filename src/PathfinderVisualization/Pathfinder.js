@@ -110,13 +110,7 @@ export default class Pathfinder extends Component {
   // if mouse enters the boundary of any node
   handleMouseEnter = (row, col, isLeftMouseDown, isShiftKeyDown) => {
     if (this.state.gridBeingUsed) return;
-    if (this.state.isWallMode) {
-      this.handleMouseEnterWallMode(row, col, isLeftMouseDown, isShiftKeyDown);
-      return;
-    }
-  };
-
-  handleMouseEnterWallMode = (row, col, isLeftMouseDown, isShiftKeyDown) => {
+    if (!this.state.isWallMode) return;
     const node = this.state.grid[row][col];
     // use this to take the state of the node back to what it was
     nodeBeforeEnter = -1;
