@@ -395,6 +395,8 @@ export default class Pathfinder extends Component {
           this.state.grid[i][j].isVisited = false;
           this.state.grid[i][j].isWall = false;
           this.state.grid[i][j].previousNode = null;
+          this.state.grid[i][j].isExploredNode = false;
+          this.state.grid[i][j].isShortestPathNode = false;
         }
       }
     }
