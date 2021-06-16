@@ -43,13 +43,15 @@ export function dijkstra(grid, startN, GRID_LENGTH, GRID_WIDTH) {
         if (!neighbor.isVisited) {
           // set previous node accordingly and push all of neighbors into the array to be visited
           neighbor.previousNode = currentNode;
-          neighbor.distance = currentNode.distance + 1;
+          neighbor.distance = currentNode.distance + 10;
+          neighbor.totalCost = currentNode.distance + 10;
           neighbor.isVisited = true;
           nodesToVisit.push(neighbor);
+          visitedNodes.push({ node: neighbor, type: "NEIGHBOR" });
         }
       }
     }
-    visitedNodes.push(currentNode);
+    visitedNodes.push({ node: currentNode, type: "VISITED" });
   }
   // return the path and shortest path calculated
   let path = {

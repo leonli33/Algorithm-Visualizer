@@ -500,7 +500,7 @@ export default class Pathfinder extends Component {
     } else if (currentAlgo === "Dijkstra's Algorithm") {
       path = dijkstra(this.state.grid, startNode, GRID_LENGTH, GRID_HEIGHT);
       let shortestPath = path.shortest.reverse();
-      this.displayAlgo(path.visited, shortestPath);
+      this.visualizePathfindingAlgorithm(path.visited, shortestPath);
     } else if (currentAlgo === "Depth First Search") {
       path = DFS(this.state.grid, startNode, GRID_LENGTH, GRID_HEIGHT);
       this.displayAlgo(
