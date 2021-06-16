@@ -1,6 +1,5 @@
 import { getNeighbors } from "../Functions/functions";
 
-
 // Greedier version of A*
 export function GBFS(
   grid,
@@ -52,12 +51,14 @@ export function GBFS(
           // when calculating cost. Thus f(n) = h(n)
           neighbor.previousNode = currentNode;
           neighbor.distance = distanceFromEndNode;
+          neighbor.totalCost = distanceFromEndNode;
           neighbor.isVisited = true;
           nodesToVisit.push(neighbor);
+          visitedNodes.push({ node: neighbor, type: "NEIGHBOR" });
         }
       }
     }
-    visitedNodes.push(currentNode);
+    visitedNodes.push({ node: currentNode, type: "VISITED" });
   }
   let path = {
     visited: visitedNodes,

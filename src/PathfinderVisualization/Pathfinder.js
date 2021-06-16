@@ -293,7 +293,7 @@ export default class Pathfinder extends Component {
     }
   };
 
-  visualizeAStar(nodes, shortestPath) {
+  visualizePathfindingAlgorithm(nodes, shortestPath) {
     for (let i = 0; i <= nodes.length; i++) {
       if (i === nodes.length) {
         // if the other elements are done updating, show the shortest path
@@ -485,7 +485,7 @@ export default class Pathfinder extends Component {
         FINISH_NODE_COL
       );
       let shortestPath = path.shortest.reverse();
-      this.visualizeAStar(path.visited, shortestPath);
+      this.visualizePathfindingAlgorithm(path.visited, shortestPath);
     } else if (currentAlgo === "Greedy Best-First Search") {
       path = GBFS(
         this.state.grid,
@@ -496,7 +496,7 @@ export default class Pathfinder extends Component {
         FINISH_NODE_COL
       );
       let shortestPath = path.shortest.reverse();
-      this.displayAlgo(path.visited, shortestPath);
+      this.visualizePathfindingAlgorithm(path.visited, shortestPath);
     } else if (currentAlgo === "Dijkstra's Algorithm") {
       path = dijkstra(this.state.grid, startNode, GRID_LENGTH, GRID_HEIGHT);
       let shortestPath = path.shortest.reverse();
