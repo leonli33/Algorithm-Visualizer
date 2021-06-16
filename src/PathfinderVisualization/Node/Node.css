@@ -48,6 +48,10 @@
   background-color: yellow;
 }
 
+.node-neighbor {
+  background-color: lightsalmon;
+}
+
 .node-visited {
   animation: get-visited-path-animation 0.3s ease-in 0s 1 normal forwards;
   animation-play-state: running;

@@ -54,6 +54,8 @@
   cursor: pointer;
   display: flex;
   align-items: center;
+  margin-top: 2px;
+  margin-bottom: 2px;
 }
 
 .drop-down-element-text {

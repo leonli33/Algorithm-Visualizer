@@ -54,32 +54,28 @@ export function AStar(
       if (!surroundingNodes[i].isWall && !surroundingNodes[i].isStart) {
         let neighbor = surroundingNodes[i];
         // if the neighbor has not already been visited
-        if (!neighbor.isVisited) {
-          // get the distance between current node and end node (H cost)
-          let distanceFromEndX = Math.abs(FINISH_NODE_ROW - neighbor.row) * 10;
-          let distanceFromEndY = Math.abs(FINISH_NODE_COL - neighbor.col) * 10;
-          let distanceFromEndNode = distanceFromEndX + distanceFromEndY;
+        if (neighbor.isVisited) continue;
+        // get the distance between current node and end node (H cost)
+        let distanceFromEndX = Math.abs(FINISH_NODE_ROW - neighbor.row);
+        let distanceFromEndY = Math.abs(FINISH_NODE_COL - neighbor.col);
+        let distanceFromEndNode = (distanceFromEndX + distanceFromEndY) * 10;
 
-          // set the previous node equal to the current node
-          neighbor.previousNode = currentNode;
+        // set the previous node equal to the current node
+        neighbor.previousNode = currentNode;
 
-          // get the g cost, determined by a nodes distance from the start node
-          let distanceFromStartX =
-            Math.abs(currentNode.row - neighbor.row) * 10;
-          let distanceFromStartY =
-            Math.abs(currentNode.col - neighbor.col) * 10;
-          neighbor.gCost =
-            currentNode.gCost + distanceFromStartX + distanceFromStartY;
+        // get the g cost, determined by a nodes distance from the start node
+        neighbor.gCost = currentNode.gCost + 10;
 
-          // A* is calculated by adding Gcost with Hcost
-          neighbor.distance = neighbor.gCost + distanceFromEndNode;
-          neighbor.isVisited = true;
-          nodesToVisit.push(neighbor);
-        }
+        // A* is calculated by adding Gcost with Hcost
+        neighbor.distance = neighbor.gCost + distanceFromEndNode;
+        neighbor.totalCost = neighbor.gCost + distanceFromEndNode;
+        neighbor.isVisited = true;
+        nodesToVisit.push(neighbor);
+        visitedNodes.push({ node: neighbor, type: "NEIGHBOR" });
       }
     }
     // push currentNode into the visited array
-    visitedNodes.push(currentNode);
+    visitedNodes.push({ node: currentNode, type: "VISITED" });
   }
   // return the path and the shortest path
   let path = {

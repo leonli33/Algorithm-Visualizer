@@ -2,7 +2,15 @@ import React from "react";
 import "./Node.css";
 const Node = (props) => {
   const [isHovered, setIsHovered] = React.useState(false);
-  const types = ["Unvisited", "End", "Start", "Wall", "Path", "Explored"];
+  const types = [
+    "Unvisited",
+    "End",
+    "Start",
+    "Wall",
+    "Path",
+    "Explored",
+    "Neighbor",
+  ];
 
   const {
     col,
@@ -18,6 +26,7 @@ const Node = (props) => {
     isWallAnimate,
     isShortestPathNode,
     isExploredNode,
+    isNeighborNode,
   } = props;
 
   let extraClassName = "";
@@ -47,6 +56,10 @@ const Node = (props) => {
     extraClassName = "node-visited";
     typeIndex = 5;
     hoverBackgroundColor = "#89dbff";
+  } else if (isNeighborNode) {
+    extraClassName = "node-neighbor";
+    typeIndex = 6;
+    hoverBackgroundColor = "lightsalmon";
   }
 
   const startNodeDistance =
@@ -56,8 +69,11 @@ const Node = (props) => {
     Math.abs(props.finishNodeRow - row) + Math.abs(props.finishNodeCol - col);
 
   let cost = "--";
-  if (isExploredNode || isShortestPathNode) {
-    cost = 100;
+  if (isExploredNode || isShortestPathNode || isNeighborNode) {
+    cost = props.totalCost;
+  }
+  if (isStart || isFinish) {
+    cost = 0;
   }
   return (
     <>

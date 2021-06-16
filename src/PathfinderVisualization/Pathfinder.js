@@ -120,6 +120,8 @@ export default class Pathfinder extends Component {
       nodeBeforeEnter = 2;
     } else if (node.isShortestPathNode) {
       nodeBeforeEnter = 3;
+    } else if (node.isNeighborNode) {
+      nodeBeforeEnter = 4;
     }
     // if dragging to make walls
     const isNodeRegular = !node.isFinish && !node.isStart;
@@ -196,6 +198,14 @@ export default class Pathfinder extends Component {
         currentNode.isShortestPathNode = true;
         document.getElementById(`node-${row}-${col}`).className =
           "node node-final-path";
+      } else if (nodeBeforeEnter === 4) {
+        currentNode.isWall = false;
+        currentNode.isVisited = true;
+        currentNode.isExploredNode = false;
+        currentNode.isShortestPathNode = false;
+        currentNode.isNeighborNode = true;
+        document.getElementById(`node-${row}-${col}`).className =
+          "node node-neighbor";
       }
     }
   };
@@ -283,6 +293,38 @@ export default class Pathfinder extends Component {
     }
   };
 
+  visualizeAStar(nodes, shortestPath) {
+    for (let i = 0; i <= nodes.length; i++) {
+      if (i === nodes.length) {
+        // if the other elements are done updating, show the shortest path
+        setTimeout(() => {
+          this.visualizeShortestPath(shortestPath);
+        }, this.state.speedValue[this.state.speedIndex] * i);
+      } else {
+        setTimeout(() => {
+          const currentElement = nodes[i];
+          const { node, type } = currentElement;
+          if (!node.isStart && !node.isFinish) {
+            if (type === "VISITED") {
+              this.state.grid[node.row][node.col].isExploredNode = true;
+              this.state.grid[node.row][node.col].isNeighborNode = false;
+
+              document.getElementById(
+                `node-${node.row}-${node.col}`
+              ).className = `node node-visited disabledNode`;
+            } else {
+              this.state.grid[node.row][node.col].isExploredNode = false;
+              this.state.grid[node.row][node.col].isNeighborNode = true;
+              document.getElementById(
+                `node-${node.row}-${node.col}`
+              ).className = `node node-neighbor disabledNode`;
+            }
+          }
+        }, this.state.speedValue[this.state.speedIndex] * i);
+      }
+    }
+  }
+
   // visualize the path found
   displayAlgo(nodes, shortestPath) {
     for (let i = 0; i <= nodes.length; i++) {
@@ -362,6 +404,7 @@ export default class Pathfinder extends Component {
         }
         this.state.grid[i][j].isExploredNode = false;
         this.state.grid[i][j].isShortestPathNode = false;
+        this.state.grid[i][j].isNeighborNode = false;
       }
     }
   };
@@ -397,6 +440,8 @@ export default class Pathfinder extends Component {
           this.state.grid[i][j].previousNode = null;
           this.state.grid[i][j].isExploredNode = false;
           this.state.grid[i][j].isShortestPathNode = false;
+          this.state.grid[i][j].isNeighborNode = false;
+          this.state.grid[i][j].totalCost = 0;
         }
       }
     }
@@ -440,7 +485,7 @@ export default class Pathfinder extends Component {
         FINISH_NODE_COL
       );
       let shortestPath = path.shortest.reverse();
-      this.displayAlgo(path.visited, shortestPath);
+      this.visualizeAStar(path.visited, shortestPath);
     } else if (currentAlgo === "Greedy Best-First Search") {
       path = GBFS(
         this.state.grid,
@@ -889,6 +934,8 @@ export default class Pathfinder extends Component {
                         isWallAnimate,
                         isShortestPathNode,
                         isExploredNode,
+                        totalCost,
+                        isNeighborNode,
                       } = node;
                       return (
                         <Node
@@ -925,10 +972,12 @@ export default class Pathfinder extends Component {
                           gridBeingUsed={this.state.gridBeingUsed}
                           isShortestPathNode={isShortestPathNode}
                           isExploredNode={isExploredNode}
+                          isNeighborNode={isNeighborNode}
                           startNodeRow={START_NODE_ROW}
                           startNodeCol={START_NODE_COL}
                           finishNodeRow={FINISH_NODE_ROW}
                           finishNodeCol={FINISH_NODE_COL}
+                          totalCost={totalCost}
                         />
                       );
                     })}
@@ -988,6 +1037,8 @@ export default class Pathfinder extends Component {
       previousNode: null,
       isShortestPathNode: false,
       isExploredNode: false,
+      totalCost: 0,
+      isNeighborNode: false,
     };
   };
 }
