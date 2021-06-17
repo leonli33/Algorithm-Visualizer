@@ -503,7 +503,7 @@ export default class Pathfinder extends Component {
       this.visualizePathfindingAlgorithm(path.visited, shortestPath);
     } else if (currentAlgo === "Depth First Search") {
       path = DFS(this.state.grid, startNode, GRID_LENGTH, GRID_HEIGHT);
-      this.displayAlgo(
+      this.visualizePathfindingAlgorithm(
         path.visited,
         path.shortest === null ? [] : path.shortest
       );

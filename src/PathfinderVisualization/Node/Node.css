@@ -14,8 +14,9 @@
   -ms-user-select: none;
 }
 
-.node-frontier {
-  background-color: red;
+.node-frontier,
+.node-backtrack {
+  background-color: lightpink;
 }
 
 .node-inspection {
@@ -24,9 +25,9 @@
   z-index: 100;
 }
 
-.node-backtrack {
-  background-color: orange;
-}
+/* .node-backtrack {
+  background-color: lightpink;
+} */
 
 .node-finish {
   background-color: lightcoral;

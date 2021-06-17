@@ -1,47 +1,34 @@
-const NORTH = -1;
-const EAST = 1;
-const SOUTH = 1;
-const WEST = -1;
+function pathNodeInbounds(currentNode, length, height) {
+  const { row, col } = currentNode;
+  return row >= 0 && col >= 0 && row < height && col < length;
+}
 
-export function getNeighbors(currentNode, grid, GRID_LENGTH, GRID_WIDTH) {
+export function getNeighbors(currentNode, grid, length, height) {
+  // 34, 73
   let neighbors = [];
-  let x = currentNode.row;
-  let y = currentNode.col;
-
-  if (x > 0 && y > 0 && y < GRID_LENGTH - 1 && x < GRID_WIDTH - 1) {
-    neighbors.push(grid[x + NORTH][y]);
-    neighbors.push(grid[x][y + EAST]);
-    neighbors.push(grid[x + SOUTH][y]);
-    neighbors.push(grid[x][y + WEST]);
-  } else if (x === 0 && y === 0) {
-    neighbors.push(grid[x][y + EAST]);
-    neighbors.push(grid[x + SOUTH][y]);
-  } else if (x === 0 && y === GRID_LENGTH - 1) {
-    neighbors.push(grid[x][y + WEST]);
-    neighbors.push(grid[x + SOUTH][y]);
-  } else if (x === GRID_WIDTH - 1 && y === 0) {
-    neighbors.push(grid[x + NORTH][y]);
-    neighbors.push(grid[x][y + EAST]);
-  } else if (x === GRID_WIDTH - 1 && y === GRID_LENGTH - 1) {
-    neighbors.push(grid[x + NORTH][y]);
-    neighbors.push(grid[x][y + WEST]);
-  } else if (y === 0 && x > 0 && x < GRID_WIDTH - 1) {
-    neighbors.push(grid[x + NORTH][y]);
-    neighbors.push(grid[x][y + EAST]);
-    neighbors.push(grid[x + SOUTH][y]);
-  } else if (x === 0 && y > 0 && y < GRID_LENGTH - 1) {
-    neighbors.push(grid[x][y + EAST]);
-    neighbors.push(grid[x + SOUTH][y]);
-    neighbors.push(grid[x][y + WEST]);
-  } else if (y === GRID_LENGTH - 1 && x > 0 && x < GRID_WIDTH - 1) {
-    neighbors.push(grid[x + NORTH][y]);
-    neighbors.push(grid[x + SOUTH][y]);
-    neighbors.push(grid[x][y + WEST]);
-  } else if (x === GRID_WIDTH - 1 && y > 0 && y < GRID_LENGTH - 1) {
-    neighbors.push(grid[x + NORTH][y]);
-    neighbors.push(grid[x][y + EAST]);
-    neighbors.push(grid[x][y + WEST]);
+  let row = currentNode.row;
+  let col = currentNode.col;
+  const north = { row: -1, col: 0 };
+  const east = { row: 0, col: 1 };
+  const south = { row: 1, col: 0 };
+  const west = { row: 0, col: -1 };
+  const northNode = { row: row + north.row, col: col + north.col };
+  const eastNode = { row: row + east.row, col: col + east.col };
+  const southNode = { row: row + south.row, col: col + south.col };
+  const westNode = { row: row + west.row, col: col + west.col };
+  if (pathNodeInbounds(westNode, length, height)) {
+    neighbors.push(grid[westNode.row][westNode.col]);
   }
+  if (pathNodeInbounds(southNode, length, height)) {
+    neighbors.push(grid[southNode.row][southNode.col]);
+  }
+  if (pathNodeInbounds(eastNode, length, height)) {
+    neighbors.push(grid[eastNode.row][eastNode.col]);
+  }
+  if (pathNodeInbounds(northNode, length, height)) {
+    neighbors.push(grid[northNode.row][northNode.col]);
+  }
+  console.log(neighbors, row, col);
   return neighbors;
 }
 
