@@ -110,13 +110,13 @@ const Node = (props) => {
         {isHovered && (
           <div
             style={{
-              width: "100px",
-              height: "100px",
+              width: "120px",
+              height: "140px",
               backgroundColor: hoverBackgroundColor,
               zIndex: 1000,
               position: "absolute",
               bottom: "45px",
-              left: "-45px",
+              left: "-55px",
               border: `1px solid ${isWall ? "white" : "black"}`,
               display: "flex",
               flexDirection: "column",
@@ -130,6 +130,8 @@ const Node = (props) => {
             <div>Type: {types[typeIndex]}</div>
             <div>Node Num: {props.nodeIndex}</div>
             <div>Cost: {cost}</div>
+            <div>Row Number: {row}</div>
+            <div>Col Number: {col}</div>
             <div>Start Distance: {startNodeDistance}</div>
             <div>End Distance: {endNodeDistance}</div>
           </div>

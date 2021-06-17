@@ -21,13 +21,9 @@
 
 .node-inspection {
   transition: 0s;
-  outline: 2px solid darkblue;
+  outline: 2px solid lightpink;
   z-index: 100;
 }
-
-/* .node-backtrack {
-  background-color: lightpink;
-} */
 
 .node-finish {
   background-color: lightcoral;
