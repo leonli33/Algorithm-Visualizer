@@ -22,8 +22,11 @@ const Legend = () => {
       </div>
       <div className="container-and-label">
         <div className="fake-node fake-node-explored-first-color"></div>
-        <div className="fake-node fake-node-explored-second-color"></div>
         <div>Explored Node</div>
+      </div>
+      <div className="container-and-label">
+        <div className="fake-node fake-node-neighbor"></div>
+        <div>Neighbor Node</div>
       </div>
       <div className="container-and-label last-container">
         <div className="fake-node fake-node-shortest-path-color"></div>

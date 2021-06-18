@@ -48,3 +48,8 @@
 .fake-node-shortest-path-color {
   background-color: yellow;
 }
+
+.fake-node-neighbor {
+  background-color: lightsalmon;
+}
+
