@@ -44,10 +44,6 @@ const Node = (props) => {
     extraClassName = "node-wall";
     hoverBackgroundColor = "#011a27";
     typeIndex = 3;
-  } else if (isWallAnimate) {
-    extraClassName = "node-wall-animate";
-    hoverBackgroundColor = "#011a27";
-    typeIndex = 3;
   } else if (isShortestPathNode) {
     extraClassName = "node-final-path";
     hoverBackgroundColor = "yellow";

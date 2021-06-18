@@ -131,7 +131,7 @@ export default class Pathfinder extends Component {
       node.isWall = true;
       node.isVisited = false;
       document.getElementById(`node-${row}-${col}`).className =
-        "node node-wall";
+        "node node-wall-animate";
     } else if (isNodeRegular && !isStartOrEndNodeMoving && isShiftKeyDown) {
       node.isWall = false;
       node.isVisited = false;
@@ -184,7 +184,7 @@ export default class Pathfinder extends Component {
         currentNode.isWall = true;
         currentNode.isVisited = false;
         document.getElementById(`node-${row}-${col}`).className =
-          "node node-wall";
+          "node node-wall-animate";
       } else if (nodeBeforeEnter === 2) {
         currentNode.isWall = false;
         currentNode.isVisited = true;
@@ -217,7 +217,7 @@ export default class Pathfinder extends Component {
       currentNode.isVisited = false;
       currentNode.isWall = true;
       document.getElementById(`node-${row}-${col}`).className =
-        "node node-wall";
+        "node node-wall-animate";
     } else if (
       !currentNode.isFinish &&
       !currentNode.isStart &&
@@ -942,7 +942,6 @@ export default class Pathfinder extends Component {
                         isFinish,
                         isStart,
                         isWall,
-                        isWallAnimate,
                         isShortestPathNode,
                         isExploredNode,
                         totalCost,
@@ -977,7 +976,6 @@ export default class Pathfinder extends Component {
                           }
                           row={row}
                           nodeWidth={this.state.nodeWidth}
-                          isWallAnimate={isWallAnimate}
                           isWallMode={this.state.isWallMode}
                           nodeIndex={rowIdx * GRID_LENGTH + nodeIdx}
                           gridBeingUsed={this.state.gridBeingUsed}
@@ -1044,7 +1042,6 @@ export default class Pathfinder extends Component {
       distance: Infinity,
       isVisited: false,
       isWall: false,
-      isWallAnimate: false,
       previousNode: null,
       isShortestPathNode: false,
       isExploredNode: false,
