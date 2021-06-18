@@ -450,6 +450,17 @@ export default class Pathfinder extends Component {
   startAlgorithm = () => {
     if (this.state.gridBeingUsed) return;
     this.handleDropdownOpenStateChange("");
+    if (this.state.currentAlgo === "Algorithms") {
+      document
+        .getElementById("pathfinding-algorithm-selection")
+        .classList.add("drop-down-button-selected");
+      setTimeout(() => {
+        document
+          .getElementById("pathfinding-algorithm-selection")
+          .classList.remove("drop-down-button-selected");
+      }, 450);
+      return;
+    }
     const fieldsAreSelected = !(
       this.state.currentSpeed === "Speed" &&
       this.state.currentAlgo !== "Algorithms"
@@ -845,7 +856,7 @@ export default class Pathfinder extends Component {
                   this.state.gridBeingUsed && "button-start-disabled"
                 )}
                 id="start-algorithm"
-                onClick={() => this.startAlgorithm(true)}
+                onClick={() => this.startAlgorithm()}
                 disabled={this.state.gridBeingUsed ? true : false}
               >
                 {this.state.startButtonText}
