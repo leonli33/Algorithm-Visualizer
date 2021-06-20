@@ -59,7 +59,7 @@
 }
 
 .node-wall-animate {
-  animation: wall-animation 0.3s ease-in 0s 1 normal forwards;
+  animation: wall-animation 0.3s linear 0s 1 normal forwards;
   animation-play-state: running;
 }
 
@@ -97,7 +97,7 @@
     background-color: #011a27;
   }
   50% {
-    transform: scale(1.2);
+    transform: scale(1.3);
     background-color: #011a27;
   }
   to {
