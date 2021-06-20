@@ -584,7 +584,7 @@ export default class Pathfinder extends Component {
         if (i === GRID_HEIGHT - 1 && j === GRID_LENGTH) {
           setTimeout(() => {
             mazeAlgorithm(pathAnimations);
-          }, (i * GRID_HEIGHT + j) * 8 + 500);
+          }, (i * GRID_HEIGHT + j) * 10 + 500);
         } else {
           if (j === GRID_LENGTH) continue;
           setTimeout(() => {
@@ -598,7 +598,7 @@ export default class Pathfinder extends Component {
             this.state.grid[i][j].isFinish = false;
             document.getElementById(`node-${i}-${j}`).className =
               "node node-wall";
-          }, (i * GRID_HEIGHT + j) * 8);
+          }, (i * GRID_HEIGHT + j) * 10);
         }
       }
     }
