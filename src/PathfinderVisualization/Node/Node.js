@@ -23,7 +23,6 @@ const Node = (props) => {
     onMouseUp,
     row,
     nodeWidth,
-    isWallAnimate,
     isShortestPathNode,
     isExploredNode,
     isNeighborNode,
@@ -94,7 +93,6 @@ const Node = (props) => {
           setIsHovered(true);
         }}
         onMouseUp={(e) => {
-          e.preventDefault();
           onMouseUp(row, col);
         }}
         onMouseLeave={() => {

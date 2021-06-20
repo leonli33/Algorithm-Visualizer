@@ -90,12 +90,10 @@ export default class Pathfinder extends Component {
       grid: gridDrawn,
       nodeWidth: 25,
     });
-    window.addEventListener("mouseup", this.onMouseUp);
     window.addEventListener("resize", this.updateDimensions);
   }
 
   componentWillUnmount() {
-    window.removeEventListener("mouseup", this.onMouseUp);
     window.removeEventListener("resize", this.updateDimensions);
   }
 
@@ -109,8 +107,7 @@ export default class Pathfinder extends Component {
 
   // if mouse enters the boundary of any node
   handleMouseEnter = (row, col, isLeftMouseDown, isShiftKeyDown) => {
-    if (this.state.gridBeingUsed) return;
-    if (!this.state.isWallMode) return;
+    if (this.state.gridBeingUsed || !this.state.isWallMode) return;
     const node = this.state.grid[row][col];
     // use this to take the state of the node back to what it was
     nodeBeforeEnter = -1;
@@ -134,7 +131,7 @@ export default class Pathfinder extends Component {
       node.isExploredNode = false;
       node.isNeighborNode = false;
       document.getElementById(`node-${row}-${col}`).className =
-        "node node-wall-animate";
+        "node node-wall";
     } else if (isNodeRegular && !isStartOrEndNodeMoving && isShiftKeyDown) {
       node.isWall = false;
       node.isVisited = false;
@@ -196,7 +193,7 @@ export default class Pathfinder extends Component {
         currentNode.isWall = true;
         currentNode.isVisited = false;
         document.getElementById(`node-${row}-${col}`).className =
-          "node node-wall-animate";
+          "node node-wall";
       } else if (nodeBeforeEnter === 2) {
         currentNode.isWall = false;
         currentNode.isVisited = true;
@@ -229,7 +226,7 @@ export default class Pathfinder extends Component {
       currentNode.isVisited = false;
       currentNode.isWall = true;
       document.getElementById(`node-${row}-${col}`).className =
-        "node node-wall-animate";
+        "node node-wall";
     } else if (
       !currentNode.isFinish &&
       !currentNode.isStart &&
@@ -256,10 +253,12 @@ export default class Pathfinder extends Component {
     // if the mouse is released
     let currentNode = this.state.grid[row][col];
     // the start and finish node are not being moved
-    this.setState({
-      isStartNodeMoving: false,
-      isFinishNodeMoving: false,
-    });
+    if (this.state.isStartNodeMoving || this.state.isFinishNodeMoving) {
+      this.setState({
+        isStartNodeMoving: false,
+        isFinishNodeMoving: false,
+      });
+    }
 
     // if the start or end node is moving, update accordingly
     if (this.state.isStartNodeMoving) {
@@ -290,6 +289,11 @@ export default class Pathfinder extends Component {
       this.state.grid[START_NODE_ROW][START_NODE_COL].isWall = false;
       this.state.grid[START_NODE_ROW][START_NODE_COL].isVisited = false;
       this.state.grid[START_NODE_ROW][START_NODE_COL].isFinish = false;
+      this.state.grid[START_NODE_ROW][
+        START_NODE_COL
+      ].isShortestPathNode = false;
+      this.state.grid[START_NODE_ROW][START_NODE_COL].isExploredNode = false;
+      this.state.grid[START_NODE_ROW][START_NODE_COL].isNeighborNode = false;
       this.state.grid[START_NODE_ROW][START_NODE_COL].isStart = true;
       document.getElementById(
         `node-${START_NODE_ROW}-${START_NODE_COL}`
@@ -299,6 +303,11 @@ export default class Pathfinder extends Component {
       this.state.grid[FINISH_NODE_ROW][FINISH_NODE_COL].isVisited = false;
       this.state.grid[FINISH_NODE_ROW][FINISH_NODE_COL].isFinish = true;
       this.state.grid[FINISH_NODE_ROW][FINISH_NODE_COL].isStart = false;
+      this.state.grid[START_NODE_ROW][
+        START_NODE_COL
+      ].isShortestPathNode = false;
+      this.state.grid[START_NODE_ROW][START_NODE_COL].isExploredNode = false;
+      this.state.grid[START_NODE_ROW][START_NODE_COL].isNeighborNode = false;
       document.getElementById(
         `node-${FINISH_NODE_ROW}-${FINISH_NODE_COL}`
       ).className = "node node-finish";
@@ -536,36 +545,35 @@ export default class Pathfinder extends Component {
   // generate a maze to be displayed
   generateMaze = (type) => {
     this.handleDropdownOpenStateChange("");
-    if (!this.state.isStartNodeMoving && !this.state.isFinishNodeMoving) {
-      this.clearGrid();
-      this.disableGrid();
-      this.setState({
-        gridBeingUsed: true,
-      });
-      if (type === "Prim's Algorithm") {
-        const pathAnimations = PrimsAlgorithm(
-          this.state.grid,
-          { row: START_NODE_ROW, col: START_NODE_COL },
-          { row: FINISH_NODE_ROW, col: FINISH_NODE_COL }
-        );
-        this.createGridOfWalls(pathAnimations, this.displayPrimsPathAnimation);
-      } else if (type === "Recursive Backtracking") {
-        const pathAnimations = RecursiveBacktracking(
-          this.state.grid,
-          { row: START_NODE_ROW, col: START_NODE_COL },
-          { row: FINISH_NODE_ROW, col: FINISH_NODE_COL }
-        );
-        this.createGridOfWalls(
-          pathAnimations,
-          this.displayRecursiveBacktrackingAnimation
-        );
-      } else if (type === "Kruskal's Algorithm") {
-        const pathAnimations = KruskalsAlgorithm(this.state.grid);
-        this.createGridOfWalls(pathAnimations, this.displayKruskalsAnimation);
-      } else if (type === "Wilson's Algorithm") {
-        const animations = WilsonsAlgorithm(this.state.grid);
-        this.createGridOfWalls(animations, this.displayWilsonsAlgorithm);
-      }
+    if (this.state.isStartNodeMoving || this.state.isFinishNodeMoving) return;
+    this.clearGrid();
+    this.disableGrid();
+    this.setState({
+      gridBeingUsed: true,
+    });
+    if (type === "Prim's Algorithm") {
+      const pathAnimations = PrimsAlgorithm(
+        this.state.grid,
+        { row: START_NODE_ROW, col: START_NODE_COL },
+        { row: FINISH_NODE_ROW, col: FINISH_NODE_COL }
+      );
+      this.createGridOfWalls(pathAnimations, this.displayPrimsPathAnimation);
+    } else if (type === "Recursive Backtracking") {
+      const pathAnimations = RecursiveBacktracking(
+        this.state.grid,
+        { row: START_NODE_ROW, col: START_NODE_COL },
+        { row: FINISH_NODE_ROW, col: FINISH_NODE_COL }
+      );
+      this.createGridOfWalls(
+        pathAnimations,
+        this.displayRecursiveBacktrackingAnimation
+      );
+    } else if (type === "Kruskal's Algorithm") {
+      const pathAnimations = KruskalsAlgorithm(this.state.grid);
+      this.createGridOfWalls(pathAnimations, this.displayKruskalsAnimation);
+    } else if (type === "Wilson's Algorithm") {
+      const animations = WilsonsAlgorithm(this.state.grid);
+      this.createGridOfWalls(animations, this.displayWilsonsAlgorithm);
     }
   };
 
@@ -576,16 +584,21 @@ export default class Pathfinder extends Component {
         if (i === GRID_HEIGHT - 1 && j === GRID_LENGTH) {
           setTimeout(() => {
             mazeAlgorithm(pathAnimations);
-          }, 500);
+          }, (i * GRID_HEIGHT + j) * 8 + 500);
         } else {
           if (j === GRID_LENGTH) continue;
-          if (this.isStartNodeOrEndNode(i, j)) continue;
-          this.state.grid[i][j].isWall = true;
-          this.state.grid[i][j].isVisited = false;
-          this.state.grid[i][j].isStart = false;
-          this.state.grid[i][j].isFinish = false;
-          document.getElementById(`node-${i}-${j}`).className =
-            "node node-wall";
+          setTimeout(() => {
+            if (this.isStartNodeOrEndNode(i, j)) return;
+            this.state.grid[i][j].isWall = true;
+            this.state.grid[i][j].isVisited = false;
+            this.state.grid[i][j].isStart = false;
+            this.state.grid[i][j].isExploredNode = false;
+            this.state.grid[i][j].isShortestPathNode = false;
+            this.state.grid[i][j].isNeighborNode = false;
+            this.state.grid[i][j].isFinish = false;
+            document.getElementById(`node-${i}-${j}`).className =
+              "node node-wall";
+          }, (i * GRID_HEIGHT + j) * 8);
         }
       }
     }
@@ -990,7 +1003,6 @@ export default class Pathfinder extends Component {
                           nodeWidth={this.state.nodeWidth}
                           isWallMode={this.state.isWallMode}
                           nodeIndex={rowIdx * GRID_LENGTH + nodeIdx}
-                          gridBeingUsed={this.state.gridBeingUsed}
                           isShortestPathNode={isShortestPathNode}
                           isExploredNode={isExploredNode}
                           isNeighborNode={isNeighborNode}

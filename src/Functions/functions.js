@@ -28,7 +28,6 @@ export function getNeighbors(currentNode, grid, length, height) {
   if (pathNodeInbounds(northNode, length, height)) {
     neighbors.push(grid[northNode.row][northNode.col]);
   }
-  console.log(neighbors, row, col);
   return neighbors;
 }
 

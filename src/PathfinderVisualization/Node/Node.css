@@ -55,11 +55,7 @@
 }
 
 .node-wall {
-  background-color: #011a27;
-}
-
-.node-wall-animate {
-  animation: wall-animation 0.3s linear 0s 1 normal forwards;
+  animation: wall-animation 0.2s linear 0s 1 normal forwards;
   animation-play-state: running;
 }
 
