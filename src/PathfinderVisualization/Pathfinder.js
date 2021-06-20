@@ -444,6 +444,14 @@ export default class Pathfinder extends Component {
       nodeBeforeEnter = -1;
       for (let i = 0; i < GRID_HEIGHT; i++) {
         for (let j = 0; j < GRID_LENGTH; j++) {
+          this.state.grid[i][j].distance = Infinity;
+          this.state.grid[i][j].isVisited = false;
+          this.state.grid[i][j].isWall = false;
+          this.state.grid[i][j].previousNode = null;
+          this.state.grid[i][j].isExploredNode = false;
+          this.state.grid[i][j].isShortestPathNode = false;
+          this.state.grid[i][j].isNeighborNode = false;
+          this.state.grid[i][j].totalCost = 0;
           if (i === START_NODE_ROW && j === START_NODE_COL) {
             document.getElementById(`node-${i}-${j}`).className =
               "node node-start";
@@ -455,14 +463,6 @@ export default class Pathfinder extends Component {
           } else {
             document.getElementById(`node-${i}-${j}`).className = "node";
           }
-          this.state.grid[i][j].distance = Infinity;
-          this.state.grid[i][j].isVisited = false;
-          this.state.grid[i][j].isWall = false;
-          this.state.grid[i][j].previousNode = null;
-          this.state.grid[i][j].isExploredNode = false;
-          this.state.grid[i][j].isShortestPathNode = false;
-          this.state.grid[i][j].isNeighborNode = false;
-          this.state.grid[i][j].totalCost = 0;
         }
       }
     }
@@ -668,6 +668,12 @@ export default class Pathfinder extends Component {
     for (let i = 0; i <= pathAnimations.length; i++) {
       if (i === pathAnimations.length) {
         setTimeout(() => {
+          for (const cell of pathAnimations) {
+            const { row, col, backtrack } = cell;
+            if (this.isStartNodeOrEndNode(row, col)) continue;
+            if (!backtrack) continue;
+            document.getElementById(`node-${row}-${col}`).className = `node`;
+          }
           this.enableGrid();
           this.setState({
             gridBeingUsed: false,
@@ -715,32 +721,6 @@ export default class Pathfinder extends Component {
       (row === START_NODE_ROW && col === START_NODE_COL) ||
       (row === FINISH_NODE_ROW && col === FINISH_NODE_COL)
     );
-  };
-
-  displayMaze = (nodes) => {
-    for (let i = 0; i <= nodes.length; i++) {
-      if (i === nodes.length) {
-        setTimeout(() => {
-          this.enableGrid();
-          this.setState({
-            gridBeingUsed: false,
-          });
-        }, 7 * i);
-      } else {
-        setTimeout(() => {
-          let node = nodes[i];
-          if (
-            (node.row !== FINISH_NODE_ROW || node.col !== FINISH_NODE_COL) &&
-            (node.row !== START_NODE_ROW || node.col !== START_NODE_COL)
-          ) {
-            document.getElementById(`node-${node.row}-${node.col}`).className =
-              "node node-wall";
-            this.state.grid[node.row][node.col].isVisited = false;
-            this.state.grid[node.row][node.col].isWall = true;
-          }
-        }, 7 * i);
-      }
-    }
   };
 
   updateSpeed = (speed) => {
