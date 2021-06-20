@@ -130,11 +130,17 @@ export default class Pathfinder extends Component {
     if (isNodeRegular && !isStartOrEndNodeMoving && isLeftMouseDown) {
       node.isWall = true;
       node.isVisited = false;
+      node.isShortestPathNode = false;
+      node.isExploredNode = false;
+      node.isNeighborNode = false;
       document.getElementById(`node-${row}-${col}`).className =
         "node node-wall-animate";
     } else if (isNodeRegular && !isStartOrEndNodeMoving && isShiftKeyDown) {
       node.isWall = false;
       node.isVisited = false;
+      node.isShortestPathNode = false;
+      node.isExploredNode = false;
+      node.isNeighborNode = false;
       document.getElementById(`node-${row}-${col}`).className = "node";
     } else if (this.state.isStartNodeMoving && !node.isFinish) {
       // if the start node is being dragged, set the nodes in the array accordingly and then
@@ -142,6 +148,9 @@ export default class Pathfinder extends Component {
       node.isStart = true;
       node.isWall = false;
       node.isVisited = false;
+      node.isShortestPathNode = false;
+      node.isExploredNode = false;
+      node.isNeighborNode = false;
       document.getElementById(`node-${row}-${col}`).className =
         "node node-start";
       START_NODE_ROW = row;
@@ -151,6 +160,9 @@ export default class Pathfinder extends Component {
       node.isFinish = true;
       node.isWall = false;
       node.isVisited = false;
+      node.isShortestPathNode = false;
+      node.isExploredNode = false;
+      node.isNeighborNode = false;
       document.getElementById(`node-${row}-${col}`).className =
         "node node-finish";
       FINISH_NODE_ROW = row;
